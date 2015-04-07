@@ -1,0 +1,21 @@
+[
+    {
+    	"model": "pais.Pais",
+    	"pk": 1,
+    	"fields": {
+    		"cdpais": "01058",
+            "sgpais": "BR",
+            "nmpais": "Brasil"
+    	}
+    },
+    {
+    	"model": "pais.Pais",
+    	"pk": 2,
+        "fields": {
+            "cdpais": "00639",
+            "sgpais": "AR",
+            "nmpais": "Argentina"
+        }
+    }
+]
+

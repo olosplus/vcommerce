@@ -39,7 +39,7 @@ deactivate () {
 # unset irrelevant variables
 deactivate nondestructive
 
-VIRTUAL_ENV="/home/jeffersongouvea/workspace_172_332/vmsis"
+VIRTUAL_ENV="/opt/workspace/vtestes/vmsis/"
 export VIRTUAL_ENV
 
 _OLD_VIRTUAL_PATH="$PATH"
