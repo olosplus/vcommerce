@@ -1,6 +1,0 @@
-$(document).ready(function() {
-  $('input').addClass('form-control');
-  $('select').addClass('form-control');
-  $('button').addClass('btn btn-outline btn-primary btn-lg');
-  $('#reset').addClass('btn btn-outline btn-primary btn-lg');
-});
