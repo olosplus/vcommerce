@@ -1,0 +1,18 @@
+body div div div.container-fluid img{
+  width: 70%;
+  height: 10em;
+  position: absolute;
+  top: 0; 
+  bottom: 0;
+  left: 17%; 
+  right: 0;
+  margin: auto;
+  opacity:0.10;
+   -moz-opacity: 0.10;
+   filter: alpha(opacity=10);
+}
+
+div.navbar-header a.navbar-brand img{
+  width: 12em;
+  height: 120%;
+}
