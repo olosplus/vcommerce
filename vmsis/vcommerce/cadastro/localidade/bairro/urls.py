@@ -5,4 +5,4 @@ from cadastro.localidade.bairro.models import Bairro
 
 Crud = CrudView(Bairro)
 
-urlpatterns = Crud.AsUrl()
+urlpatterns = Crud.AsUrl()#GridFields  = ('cdibge','nmbairro',))

@@ -5,4 +5,4 @@ from cadastro.produto.localizacao.models import Localizacao
 
 Crud = CrudView(Localizacao)
 
-urlpatterns = Crud.AsUrl()
+urlpatterns = Crud.AsUrl(GridFields  = ('almoxarifado','dslocalizacao',))

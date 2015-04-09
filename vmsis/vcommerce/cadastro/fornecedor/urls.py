@@ -5,4 +5,4 @@ from cadastro.fornecedor.models import Fornecedor
 
 Crud = CrudView(Fornecedor)
 
-urlpatterns = Crud.AsUrl()
+urlpatterns = Crud.AsUrl(GridFields  = ('nrinscjurd','nmfornecedor',))

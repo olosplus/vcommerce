@@ -9,8 +9,8 @@ class Unimedida(models.Model):
 		verbose_name = "Unidade de Medida"
 		verbose_name_plural = "Unidades de Medidas"
 
-	sgmedida = models.CharField(max_length=5,verbose_name='Abreviatura')
 	nmmedida = models.CharField(max_length=100,verbose_name='Nome')
+	sgmedida = models.CharField(max_length=5,verbose_name='Abreviatura')
 	empresa = models.ForeignKey(Empresa,verbose_name="Empresa")
 
 	def __str__(self):

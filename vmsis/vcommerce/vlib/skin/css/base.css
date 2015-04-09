@@ -16,3 +16,10 @@ div.navbar-header a.navbar-brand img{
   width: 12em;
   height: 120%;
 }
+
+form ul.alert{
+  list-style: none;
+  padding: 5px;
+  margin-bottom: 0px;
+  border: 0px;
+}

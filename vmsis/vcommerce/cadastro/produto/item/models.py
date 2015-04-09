@@ -10,8 +10,8 @@ class Item(models.Model):
 		verbose_name = "Produto"
 		verbose_name_plural = "Produtos"
 
-	nmproduto = models.CharField(max_length=200,verbose_name='Nome',blank=True)
 	posarvore = models.CharField(max_length=40,verbose_name='Arvore')
+	nmproduto = models.CharField(max_length=200,verbose_name='Nome',blank=True)
 	unimedida = models.ForeignKey(Unimedida,verbose_name='Unidade de medida')
 	prodcmp = models.OneToOneField('self',related_name='Produto_prodcmp',verbose_name='Produto de compra')
 	prodest = models.OneToOneField('self',related_name='Produto_prodest',verbose_name='Produto de estoque')

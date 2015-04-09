@@ -5,4 +5,4 @@ from cadastro.produto.unimedida.models import Unimedida
 
 Crud = CrudView(Unimedida)
 
-urlpatterns = Crud.AsUrl()
+urlpatterns = Crud.AsUrl(GridFields  = ('nmmedida','sgmedida',))

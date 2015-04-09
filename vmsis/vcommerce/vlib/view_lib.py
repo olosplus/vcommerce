@@ -82,7 +82,7 @@ class StandardFormGrid(ModelForm):
     def split_child_models(self):        
         return self.child_models.split(GRID_SEPARATOR)
                      
-    def get_grids_erros(self):        
+    def get_grids_erros(self):
         erro = ""
         if self.child_models:
             grids = self.split_child_models()
@@ -149,7 +149,7 @@ class StandardFormGrid(ModelForm):
             initial=None, error_class=ErrorList, label_suffix=None,
             empty_permitted=False, instance=None):
         
-        if data:
+        if data:            
             copy_data = data.copy()
             if 'empresa' in data and UtilizaFuncionario: 
                 try:
@@ -180,7 +180,8 @@ class CreateForm(object):
     def create_form(self, class_form = StandardFormGrid, GridsData = "", user = None):
         class vmsisForm(class_form):                    
             class Meta:
-                model = self.model                                
+                model = self.model
+                #exclude = ('empresa',)
             child_models = GridsData
             current_user = user
         return vmsisForm
@@ -215,7 +216,7 @@ class ViewCreate(CreateView, AjaxableResponseMixin):
         grid_erros =  form.get_grids_erros()
         
         if grid_erros:
-            return HttpResponse(grid_erros) 
+            return HttpResponse(grid_erros)
 
         if form.is_valid():
             return self.form_valid(form)

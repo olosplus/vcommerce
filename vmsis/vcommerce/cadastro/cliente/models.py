@@ -13,8 +13,8 @@ class Cliente(Master):
     	verbose_name = "Cliente"
     	verbose_name_plural = "Clientes"
 
-    nmcliente = models.CharField(max_length=250,verbose_name="Nome",unique=True)
     nrinscjurd = models.CharField(max_length=20,verbose_name="Inscrição Jurídica")
+    nmcliente = models.CharField(max_length=250,verbose_name="Nome",unique=True)
     identificador = models.CharField(max_length=1,verbose_name="Tipo",choices=choice_tipo_jfo)
 
     def __str__(self):

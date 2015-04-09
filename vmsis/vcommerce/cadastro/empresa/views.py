@@ -5,7 +5,7 @@ from cadastro.unidade.models import Unidade
 from django.core.exceptions import ValidationError
 from django.forms import ModelForm
 
-class FormEmpresa(ModelForm):
+class FormEmpresa(view_lib.StandardFormGrid):
     class Meta:
         model = Empresa
     
