@@ -16,4 +16,4 @@ caso não exista, copie a pasta python3.3 (pasta que realizamos o get anteriorme
 Para iniciar o projeto vá até a pasta principal do projeto (onde contem o arquivo manage.py),
 lá você vai encontrar um arquivo chamado start.py
 execute:
-* python start.py
+# python start.py
