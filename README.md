@@ -1,4 +1,6 @@
-#vtestes
+#vteste
+
+###V-Commerce
 
 Primeiramente foi padronizado para um melhor conforto o caminho: 
 > /opt/workspace/
@@ -14,13 +16,13 @@ Apos realizado o get em toda a vtestes você terá uma estrutura parecida como e
 
 > /opt/workspace/vtestes/README.md (esse sou eu)
 
-depois disso verifique se já existe uma pasta python3.3 no seguinte caminho:
+depois disso verifique se já existe uma pasta _python3.3_ no seguinte caminho:
+
 > /opt/
 
 caso não exista, copie a pasta python3.3 (pasta que realizamos o get anteriormente) para esse diretório.
 
-Para iniciar o projeto vá até a pasta principal do projeto (onde contem o arquivo manage.py),
-lá você vai encontrar um arquivo chamado start.py
-execute:
+__Para iniciar o projeto vá até a pasta principal do projeto (onde contem o arquivo manage.py),
+lá você vai encontrar um arquivo chamado start.py e execute:__
 
 > python start.py
