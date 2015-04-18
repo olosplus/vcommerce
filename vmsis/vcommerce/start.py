@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/opt/workspace/vtestes/vmsis/bin/python3.3
 # -*- coding: utf8 -*- 
 
 import subprocess
