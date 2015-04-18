@@ -1,4 +1,4 @@
-#!/home/jeffersongouvea/workspace_172_332/vmsis/bin/python3.3
+#!/opt/workspace/vtestes/vmsis/bin/python3.3
 from django.core import management
 
 if __name__ == "__main__":

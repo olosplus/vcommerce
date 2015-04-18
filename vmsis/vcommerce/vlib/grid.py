@@ -54,6 +54,7 @@ class Grid:
            return self.model._meta.get_field(field_name).rel.to
         else:
             return None   
+
     def get_name_column_grid(self, field_name, field_type):
         if self.parse_type_field_to_text(field_type) == "ForeignKey":
             return field_name + '_id'
@@ -147,9 +148,9 @@ class Grid:
             url_delete = Urls.BaseUrlDelete()
             url_insert = Urls.BaseUrlInsert(CountPageBack = 1)
         link_to_form = ""
+
         #makes the loop on fields model's, creating the columns list's. if the field is "id", dont show
-        for field in fields_model:
-                              
+        for field in fields_model:                             
             grid_conf = self.get_grid_columns_config(field.name, read_only)
             
             if grid_conf["is_link_to_form"]:

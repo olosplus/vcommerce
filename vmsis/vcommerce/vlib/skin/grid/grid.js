@@ -23,7 +23,11 @@ function selectLine(element){
 }
 
 function JoinToJson(key, value){
-  return '"' + key.replace(" ", "") + '":"' + value + '",';
+  var val_alt = value;
+  val_alt = val_alt.replace(/'/g, " ");
+  val_alt = val_alt.replace(/"/g, " ");
+  val_alt = val_alt.replace("\\", "\\\\"); 
+  return '"' + key.replace(" ", "") + '":"' + val_alt + '",';
 };
 
 
