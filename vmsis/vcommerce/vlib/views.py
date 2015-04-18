@@ -129,6 +129,7 @@ def get_model_by_string(module, model_name):
     except LookupError:
         return HttpResponse("An error ocurred. The model or module don't exists")
     return model
+
 #@staticmethod
 def delete_grid(request):    
     str_model = request.GET.get('model')
@@ -148,3 +149,4 @@ def delete_grid(request):
             return HttpResponse(erro)
  
     return HttpResponse('Dados atualizados com sucesso!');
+
