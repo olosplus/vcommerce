@@ -4,8 +4,6 @@
 	<title>Fitro</title>
 </head>
 <body>
-    <form class="form-horizontal" action="" method="post" id="{{form_id}}">{% csrf_token %} 
-      {{ form.as_p }}                      
-    </form>
+   {% block corpo %}  {% endblock %}
 </body>
 </html>

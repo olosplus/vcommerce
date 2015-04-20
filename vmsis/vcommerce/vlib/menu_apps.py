@@ -25,7 +25,7 @@ class MenuApps:
     @staticmethod
     def IncludeUrls():
         patt = patterns('', url(r'^$', MAIN_APP['view_name']),)
-        patt = patterns('', url(r'', include(vlib_urls)  ),)        
+        patt += patterns('', url(r'', include(vlib_urls)  ),)        
         for app in apps_on_menu:
             if os.path.isfile(DIR + "/" + app['app'].replace(".", "/") + "/urls.py"):
                 patt += patterns('', url(r'', include(app['app'] + '.urls')),)

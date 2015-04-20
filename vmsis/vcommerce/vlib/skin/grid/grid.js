@@ -465,49 +465,7 @@ function doPostForm(send_to, form_id, url_redirect, is_delete, id_grid_delete) {
 };
 
 
-function Filter (module, model, columns) {
-  var modulo = module;
-  var modelo = model;
-  var colunas = columns;
-  $.ajax({
-    url: '/filtro',
-    type: 'get',    
-    data: {"module" : modulo, "model" : modelo},
-    success: function (data) {
-      $('#dialog').html(data);
-      $('#dialog').dialog({
-        dialogClass : "no-close",        
-        maxHeight: 500,
-        buttons : [
-          {
-            text : "Filtrar",
-            click : function(){
-              
-              form = $(this).children("form");
-              form_serialized = form.serializeArray();
-              GetGridData(modulo, modelo, form_serialized, colunas);
-
-              $(this).dialog("close");
-            }
-          },
-          {
-            text : "Cancelar",
-            click : function(){
-              $(this).dialog("close");
-            }
-          }
-
-        ]
-      });
-    },
-    failure: function (data) {
-      alert('Got an error dude');
-    }
-  });  
-};
-
-
-function GetGridData (module, model, filter, columns) {
+function GetGridData (module, model, filter, columns, partial_search) {
   var modulo = module;
   var modelo = model;
   var colunas = columns;
@@ -517,7 +475,8 @@ function GetGridData (module, model, filter, columns) {
     url: '/getgrid',
     type: 'get',
 
-    data: {"module" : modulo, "model" : modelo, "columns" : JSON.stringify(colunas), "form_serialized" : filtro},
+    data: {"module" : modulo, "model" : modelo, "columns" : JSON.stringify(colunas), "form_serialized" : filtro,
+           "partial_search" : partial_search },
     success: function (data) {
       dados = JSON.parse(data);
       Grid("div_" + modelo, dados)

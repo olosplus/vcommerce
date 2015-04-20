@@ -27,3 +27,7 @@ form ul.alert{
 .no-close .ui-dialog-titlebar-close {
   display: none;
 }
+
+.inline{
+  display : inline;
+}

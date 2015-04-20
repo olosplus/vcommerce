@@ -185,6 +185,7 @@ def GetGridCrud(request):
     str_model = request.GET.get('model')
     str_module = request.GET.get('module')    
     list_module = str_module.split('.')    
+    partial_search = request.GET.get('partial_search') 
     grid_filter = json.loads(request.GET.get('form_serialized'))
         
     fields = json.loads(request.GET.get('columns'), object_pairs_hook=OrderedDict)
@@ -205,7 +206,10 @@ def GetGridCrud(request):
     for field in grid_filter:        
         if field["name"] != "csrfmiddlewaretoken":       
             if field["value"] != "":        
-                dict_filter.update({field["name"] : field["value"]})
+                if partial_search == "S":
+                    dict_filter.update({field["name"] + "__iexact" : field["value"]})
+                else:    
+                    dict_filter.update({field["name"] + "__icontains": field["value"]})
     
     GridData = Grid(model)
         

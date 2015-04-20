@@ -11,5 +11,5 @@ $(document).ready(function() {
   $('select').addClass('form-control');
   $('textarea').addClass('form-control');
   $('.errorlist').css('color','#990000');
-  $('.errorlist').addClass('alert alert-danger');
+  $('.errorlist').addClass('alert alert-danger');  
 });
