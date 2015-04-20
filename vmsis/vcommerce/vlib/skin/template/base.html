@@ -33,8 +33,19 @@
 
     <link rel="stylesheet" type="text/css" href="{% static 'main.css' %}">
     <link rel="stylesheet" style="text/css" href="{% static 'grid/grid.css' %}"> 
+
     <!-- jQuery -->
     <script src="{% static 'components/jquery/dist/jquery.min.js' %}"></script>
+
+    <!-- jQuery UI-->
+    <script src="{% static 'components/jquery-ui-1.11.4.custom/jquery-ui.min.js' %}"></script>
+    <script src="{% static 'components/jquery-ui-1.11.4.custom/jquery-ui.min.js' %}"></script>
+   
+    <!-- jQuery CSS-->
+    <link rel="stylesheet" style="text/css" href="{% static 'components/jquery-ui-1.11.4.custom/jquery-ui.min.css' %}"> 
+    <link rel="stylesheet" style="text/css" href="{% static 'components/jquery-ui-1.11.4.custom/jquery-ui.structure.min.css' %}"> 
+    <link rel="stylesheet" style="text/css" href="{% static 'components/jquery-ui-1.11.4.custom/jquery-ui.theme.min.css' %}"> 
+
 
     <link rel="stylesheet" style="text/css" href="{% static 'css/base.css' %}"> 
     {% block css %}
@@ -48,6 +59,7 @@
     <![endif]-->
   </head>
 <body {% block tagbody %} {% endblock %}>
+  <div id="dialog" title="Filtro"></div>
   {% block corpo %}
     <div id="wrapper">
       <!-- Navigation -->

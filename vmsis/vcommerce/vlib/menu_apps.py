@@ -3,6 +3,7 @@ from django.conf.urls import patterns, include, url
 import os 
 from django.db import models
 from vcommerce import apps
+from vlib import urls as vlib_urls
 
 models.options.DEFAULT_NAMES += ('child_models',)
 
@@ -24,6 +25,7 @@ class MenuApps:
     @staticmethod
     def IncludeUrls():
         patt = patterns('', url(r'^$', MAIN_APP['view_name']),)
+        patt = patterns('', url(r'', include(vlib_urls)  ),)        
         for app in apps_on_menu:
             if os.path.isfile(DIR + "/" + app['app'].replace(".", "/") + "/urls.py"):
                 patt += patterns('', url(r'', include(app['app'] + '.urls')),)
@@ -34,6 +36,7 @@ class MenuApps:
         for app in apps_on_menu:
             if app['app'].upper() == app_name.upper():
            	    return app['verbose_name']
+
     @staticmethod
     def AppIsVisible(app_name):
         for app in apps_on_menu:            

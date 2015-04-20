@@ -6,6 +6,12 @@
   overflow: auto;
 }
 
+.grid a{
+  text-decoration: none;
+}
+
+
+
 /*.grid > table{
    border-collapse : collapse;      
 }*/
@@ -44,6 +50,11 @@ color: #337ab7;
 }
 
 .separador{
-   color : gray;
-   text-decoration : none;
+   display: inline;
+   color : blue;
+   padding-left: 0.5em;
+   padding-right: 0.3em;   
+   padding-bottom: 0.3em;   
+
+ 
 }

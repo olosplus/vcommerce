@@ -4,6 +4,10 @@ import json
 from django.db.models import get_model
 from django.apps import apps
 from django.core.exceptions import ValidationError
+from vlib.filtro import Filtro as FormFiltro
+from vlib.grid import Grid
+from collections import OrderedDict
+
 #from django.utils.decorators import classonlymethod
 LINE_SEPARATOR = "<<LINE_SEPARATOR>>"
 
@@ -32,6 +36,7 @@ def insert(data, model, commit = True, link_to_form = "", parent_instance = None
         for field in model._meta.fields:
             if field.name == 'id':
                 continue
+
             if field.name == link_to_form and commit:
                 setattr(mod, field.name, parent_instance)
                 continue
@@ -41,6 +46,7 @@ def insert(data, model, commit = True, link_to_form = "", parent_instance = None
             else:
                 if field.name + '_id' in row_json:
                     setattr(mod, field.name + '_id', row_json[field.name + '_id'])
+
         try:
             if link_to_form:
                 mod.full_clean(exclude = (link_to_form,))
@@ -51,10 +57,13 @@ def insert(data, model, commit = True, link_to_form = "", parent_instance = None
 
         if commit :
             mod.save()        
+
     return ""    
+
 #@staticmethod    
 def delete(data, model):
     lista = data.split(LINE_SEPARATOR)    
+
     for row in lista:        
         if not row:
             continue
@@ -80,6 +89,7 @@ def update(data, model, commit = True):
             continue
         row_json = dict(json.loads(row))        
         mod = model.objects.get(pk=row_json['id'])        
+
         for field in model._meta.fields:
             if field.name == 'id':
                 continue
@@ -92,8 +102,10 @@ def update(data, model, commit = True):
             mod.full_clean()
         except ValidationError as e:
             return "<input id='grid_erros' value='%s'>" % str(e).replace("'", "").replace('"', "")
+
         if commit :
             mod.save()
+
     return ""    
 
 #@classonlymethod
@@ -101,12 +113,14 @@ def save_grid(request):
     str_model = request.GET.get('model')
     str_module = request.GET.get('module')
     list_module = str_module.split('.')    
+
     try:
         model = apps.get_app_config(list_module[len(list_module)-2]).get_model(str_model)
     except LookupError:
         return HttpResponse("An error ocurred. The model or module don't exists")
     
     data = request.GET.get('rows_inserted')
+
     if data:
         erro = insert(data, model)
         if erro:
@@ -124,6 +138,7 @@ def save_grid(request):
 #@staticmethod
 def get_model_by_string(module, model_name):
     list_module = module.split('.')    
+
     try:
         model = apps.get_app_config(list_module[len(list_module)-2]).get_model(model_name)
     except LookupError:
@@ -135,11 +150,11 @@ def delete_grid(request):
     str_model = request.GET.get('model')
     str_module = request.GET.get('module')
     list_module = str_module.split('.')    
+
     try:
         model = apps.get_app_config(list_module[len(list_module)-2]).get_model(str_model)
     except LookupError:
         return HttpResponse("An error ocurred. The model or module don't exists")
-
 
     data = request.GET.get('rows_deleted')
 
@@ -149,4 +164,55 @@ def delete_grid(request):
             return HttpResponse(erro)
  
     return HttpResponse('Dados atualizados com sucesso!');
+
+def Filtro(request):
+   
+    str_model = request.GET.get('model')
+    str_module = request.GET.get('module')
+    
+    list_module = str_module.split('.')    
+
+    try:
+        model = apps.get_app_config(list_module[len(list_module)-2]).get_model(str_model)
+    except LookupError:
+        return HttpResponse("An error ocurred. The model or module don't exists")
+
+    Filtrar = FormFiltro(model = model, request = request)    
+    return Filtrar.Response() #HttpResponse(Filtrar.Form_as_p())
+
+def GetGridCrud(request):
+    
+    str_model = request.GET.get('model')
+    str_module = request.GET.get('module')    
+    list_module = str_module.split('.')    
+    grid_filter = json.loads(request.GET.get('form_serialized'))
+        
+    fields = json.loads(request.GET.get('columns'), object_pairs_hook=OrderedDict)
+    
+    fields_display = []
+    
+    for field in fields:    
+        if not field in ["col_update", "col_delete"]:
+            fields_display.append(field)
+    
+    try:
+        model = apps.get_app_config(list_module[len(list_module)-2]).get_model(str_model)
+    except LookupError:
+        return HttpResponse("An error ocurred. The model or module don't exists")
+
+    dict_filter = {}
+
+    for field in grid_filter:        
+        if field["name"] != "csrfmiddlewaretoken":       
+            if field["value"] != "":        
+                dict_filter.update({field["name"] : field["value"]})
+    
+    GridData = Grid(model)
+        
+    grid_js = GridData.get_js_grid(use_crud = True, dict_filter = dict_filter,
+        display_fields = tuple(fields_display))
+
+    return HttpResponse(grid_js)    
+
+
 
