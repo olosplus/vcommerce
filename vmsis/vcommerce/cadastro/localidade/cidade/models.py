@@ -13,6 +13,8 @@ class Cidade(models.Model):
 	nmcidade = models.CharField(max_length=250,verbose_name="Nome")
 	estado = models.ForeignKey(Estado,verbose_name="Estado",null=True,blank=True)
 
+	class Meta:
+		ordering = ['nmcidade']
+
 	def __str__(self):
 		return self.nmcidade
-

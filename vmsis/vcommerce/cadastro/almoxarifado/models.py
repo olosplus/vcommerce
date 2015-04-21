@@ -9,7 +9,7 @@ class Almoxarifado(Master):
     	verbose_name = "Almoxarifado"
     	verbose_name_plural = "Almoxarifados"
 
-    nmalmoxa = models.CharField(max_length=250,verbose_name="Nome",unique=True)
+    nmalmoxa = models.CharField(max_length=250,verbose_name="Nome")
     dtcadastro = models.DateField(auto_now_add=True, verbose_name='Data de cadastro')
 
     def __str__(self):

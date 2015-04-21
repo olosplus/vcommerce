@@ -13,7 +13,7 @@ class Empresa(models.Model):
 	dtcadastro = models.DateField(auto_now_add=True, verbose_name='Data de cadastro')
 
 	class Meta:
-		ordering = ['-id']
+		ordering = ['nmempresa']
 
 	def __str__(self):
 		return self.nmempresa

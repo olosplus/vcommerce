@@ -1,7 +1,11 @@
 # -*- coding: utf-8 -*-
 from django.db import models
-#from cadastro.unidade.models import Unidade
 from cadastro.empresa.models import Empresa
+#from cadastro.unidade.models import Unidade
+
+# Create your models here.
+#class Master_unidade(models.Model):
+#    unidade = models.ForeignKey(Unidade,verbose_name="Unidade",null=True)
 
 # Create your models here.
 class Master(models.Model):
@@ -11,9 +15,6 @@ class Master(models.Model):
 
 	id = models.AutoField(primary_key=True,verbose_name="Código", editable=False)
 	empresa = models.ForeignKey(Empresa,verbose_name="Empresa")
-
-#class Master_unidade(models.Model):
-#    unidade = models.ForeignKey(Unidade,verbose_name="Unidade")
 
 #class Movimentacao(models.Model):
 #	"""docstring for ClassName"""
