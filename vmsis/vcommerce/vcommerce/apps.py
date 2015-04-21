@@ -25,6 +25,20 @@ apps_on_menu = (
     {'app': 'parametro', 'verbose_name' : 'Parâmetro', 'imgmenu':'fa fa-gear'},
     {'app': 'parametro.paramgeral', 'verbose_name' : 'Geral'},
     {'app': 'parametro.paramunidade', 'verbose_name' : 'Unidade'},
-    {'app': 'parametro.personaliza', 'verbose_name' : 'Personalização'},
     {'app': 'vatualiza', 'verbose_name' : 'Atualização', 'visible': False},
+    {'app': 'cadastro.centro_custo', 'verbose_name' : 'Centro de Custos'},    
+    
+    # TELAS DA CONTABILIDADE
+    {'app': 'contabilidade', 'verbose_name' : 'Contabilidade', 'imgmenu' : 'glyphicon glyphicon-book'},
+    {'app': 'contabilidade.cadastro_contabil', 'verbose_name' : 'Cadastros Contábeis'},
+    {'app': 'contabilidade.cadastro_contabil.grupo_conta_contabil', 'verbose_name' : 'Contas contábeis - grupos',
+        'visible' : True}, 
+    {'app': 'contabilidade.cadastro_contabil.tipo_escrituracao', 'verbose_name' : 'Tipos de escrituração', 'visible' : True},    
+    {'app': 'contabilidade.cadastro_contabil.historico_padrao', 'verbose_name' : 'Históricos padrões'},     
+    {'app': 'contabilidade.cadastro_contabil.plano_conta', 'verbose_name' : 'Plano de contas'},  
+    {'app': 'contabilidade.movimentacao_contabil', 'verbose_name' : 'Movimentações Contábeis'},
+    {'app': 'contabilidade.movimentacao_contabil.lancamento_contabil', 'verbose_name' : 'Lançamentos contábeis'},
+    {'app': 'contabilidade.movimentacao_contabil.lancamento_contabil_detalhe', 'verbose_name' : 'Partidas dos lançamentos', 
+        'visible' : False},        
+
 )

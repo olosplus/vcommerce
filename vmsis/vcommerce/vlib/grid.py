@@ -259,12 +259,25 @@ class Grid:
                 child_models = self.model._meta.child_models
                 mod = None
                 script_grid = str()
+                app_label = ""
+                child_model_name = ""
                 for child_model in child_models:                    
-                    mod = get_model(app_label = self.model._meta.app_label, model_name = child_model)
+                    
+                    if child_model.count(".") > 0:
+                        app_label = child_model.split(".")[-3]
+                        child_model_name = child_model.split(".")[-1]
+                    else:
+                        app_label = self.model._meta.app_label
+                        child_model_name = child_model
+                    
+                    mod = get_model(app_label = app_label, model_name = child_model_name)
+                    
                     GridDetalhe = Grid(mod, self.model, self.parent_pk_value)
+                    
                     script_grid += self.grid_script(data = GridDetalhe.get_js_grid(use_crud = use_crud,
                         read_only = read_only, display_fields = display_fields, dict_filter = dict_filter),
                         model = mod)
+
                 return script_grid
             else:
                 return ""

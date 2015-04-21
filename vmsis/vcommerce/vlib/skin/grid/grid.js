@@ -260,7 +260,7 @@ function Grid(DivGridId, Data) {
       };
     };
 
-    html += "<a class = 'glyphicon glyphicon-filter' href='JavaScript:void()' "+
+    html += "<a class = 'glyphicon glyphicon-search' href='JavaScript:void()' "+
       "onclick='Filter(\"" + module + "\", \"" + model + "\", " + JSON.stringify(columns)  +
       "  )' title='Filtrar' ></a>";
   } else {
