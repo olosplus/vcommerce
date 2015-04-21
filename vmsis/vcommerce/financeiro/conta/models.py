@@ -1,6 +1,7 @@
 # coding=UTF-8
 from django.db import models
-from cadastro.banco.models import Banco
+from financeiro.banco.models import Banco
+from cadastro.unidade.models import Unidade
 
 # Create your models here.
 class Conta(models.Model):
@@ -13,6 +14,7 @@ class Conta(models.Model):
 	nragencia = models.CharField(max_length=30,verbose_name="Agencia")
 	nrconta = models.CharField(max_length=30,verbose_name="Numero")
 	vlsaldo = models.FloatField(verbose_name="Saldo")
+	unidade = models.ForeignKey(Unidade,verbose_name="Unidade", null=True, blank=True)
 
 	def __str__(self):
 		return self.nrconta
