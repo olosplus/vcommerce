@@ -7,7 +7,7 @@ try:
     print("\nIniciando limpeza...")
     return_code = subprocess.call('find -iname "__pycache__" -exec rm -rfv {} \\;', shell=True)
     print("\nApagando banco de dados...")
-    if (os.path.exists('db.sqlite3')):
+    if (os.path.exists('vmsis/vcommerce/db.sqlite3')):
         return_code = subprocess.call('rm vmsis/vcommerce/db.sqlite3', shell=True)    
     print("\nPronto!")
 
