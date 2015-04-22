@@ -6,6 +6,19 @@
   overflow: auto;
 }
 
+.grid .pagination{
+  margin : 0px auto !important;
+
+}
+
+.grid .selected-page > a{
+  color : red !important;
+}
+
+.grid .glyphicon.glyphicon-triangle-bottom{
+  margin-left : 5px;
+}
+
 .grid a{
   text-decoration: none;
 }

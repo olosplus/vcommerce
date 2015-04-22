@@ -49,7 +49,7 @@ function Filter (module, model, columns) {
 
               var palavras_inteiras = $("#palavras_inteiras").val();
 
-              GetGridData(modulo, modelo, form_serialized, colunas, palavras_inteiras);
+              GetGridData(modulo, modelo, form_serialized, colunas, palavras_inteiras, 1, 'id');
               $(this).dialog("close");
             }
           },

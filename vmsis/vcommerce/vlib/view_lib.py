@@ -257,8 +257,8 @@ class ViewUpdate(UpdateView, AjaxableResponseMixin):
         context['form_pk'] = objeto.pk
         context['JsFiles'] = StaticFiles.GetJs(self.MediaFiles)
         context['CssFiles'] = StaticFiles.GetCss(self.MediaFiles)    
-        context['url_list'] =  Urls.BaseUrlList(CountPageBack = 1)    
-        context['url_update'] = Urls.BaseUrlUpdate(CountPageBack = 1)        
+        context['url_list'] =  Urls.BaseUrlList(CountPageBack = 2)    
+        context['url_update'] = Urls.BaseUrlUpdate(CountPageBack = 2)        
         return context
 
     @method_decorator(login_required)
