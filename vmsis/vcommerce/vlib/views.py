@@ -217,17 +217,32 @@ def GetGridCrud(request):
         return HttpResponse("An error ocurred. The model or module don't exists")
 
     dict_filter = {}
+    field_name = str()
+    
     if grid_filter:
         for field in grid_filter:        
             if field["name"] != "csrfmiddlewaretoken":       
-                if field["value"] != "":        
-                    if partial_search == "S":
-                        dict_filter.update({field["name"] + "__iexact" : field["value"]})
-                    else:    
-                        dict_filter.update({field["name"] + "__icontains": field["value"]})
 
+                if field["value"] != "":  
+                    
+                    try:
+                        fk = model._meta.get_field(field["name"]).rel.to
+                    except:
+                        fk = None
+                        
+                    if fk :
+                        field_name = model._meta.get_field(field["name"]).get_attname_column()[0]                         
+                        dict_filter.update({field_name : field["value"]})                        
+                    else:
+                        field_name = field["name"]
+                    
+                        if partial_search == "S":
+                            dict_filter.update({field_name + "__iexact" : field["value"]})
+                        else:    
+                            dict_filter.update({field_name + "__icontains": field["value"]})
+    
     GridData = Grid(model)            
-    print(order_by)
+
     grid_js = GridData.get_js_grid(use_crud = True, dict_filter = dict_filter,
         display_fields = tuple(fields_display), page = page, order_by = order_by)
 

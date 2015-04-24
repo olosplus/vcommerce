@@ -4,6 +4,7 @@ import json
 from django.utils.translation import ugettext as _
 from django.db.models.loading import get_model
 from django.apps import apps
+import math
 
 class Grid:
     def __init__(self, model, parent_model = None, parent_pk_value = -1):
@@ -116,10 +117,10 @@ class Grid:
             return self.model.objects.filter(**dict_filter).values_list(*fields_to_display)
 
 
-    def get_pagination_data(self, fields_to_display, dict_filter, page, limit_data, order_by = 'id'):        
+    def get_pagination_data(self, fields_to_display, dict_filter, page, limit_data, order_by = 'id'):                
         data = self.get_data(fields_to_display = fields_to_display, dict_filter = dict_filter)        
         initial = (int(page)-1) * limit_data                              
-        pages = round(data.count() / limit_data)                
+        pages = math.ceil(data.count() / limit_data)                
         return {"data" : data.order_by(order_by)[initial : initial + limit_data], 
             "pages" : pages, "selected_page" : page }
 
@@ -128,7 +129,7 @@ class Grid:
         dict_filter = {}, page = 1, limit_data = 15, order_by = 'id'): 
         ''' transform the values of a model to javascript object ''' 
 
-        # string to save columns and rows 
+        # strings to save columns and rows 
         columns = str()
         rows = str()
 
