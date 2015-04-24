@@ -578,7 +578,7 @@ function ControlPagination(total_pages, columns, selected_page, module, model, c
   };
  
   if( (command === "prior" && section_paginate === "1") || 
-      (command === "next" && parseInt(section_paginate) >= (total_pages / pages_in_section)  )){
+      (command === "next" && parseInt(section_paginate) >= (total_pages)  )){
     return;
   };
 
@@ -598,6 +598,9 @@ function ControlPagination(total_pages, columns, selected_page, module, model, c
   
   initial_page = ( (next_section - 1) * pages_in_section);
   end_page = initial_page + pages_in_section;
+
+  if (initial_page > total_pages)
+    initial_page = 0;
 
   if (end_page > total_pages)
     end_page = total_pages;
