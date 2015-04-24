@@ -10,6 +10,13 @@ function RemoveSelectedRows(idGrid) {
   grid.find('tr[sel="true"]').remove();
 }
 
+function ClearOperations(idGrid){
+  grid = $('#' + idGrid);
+  grid.find('tr[sel="true"]').attr('sel', 'false');
+  grid.find('tr[operation="inserted"]').attr('operation', '');
+  grid.find('tr[operation="updated"]').attr('operation', '');
+}
+
 function selectLine(element) {
   parent = $(element).parent().parent().parent();
 
@@ -243,8 +250,9 @@ function Grid(DivGridId, Data) {
   var url_delete = Data.url_delete;
   var parent = Data.parent;
   var link_to_form = Data.link_to_form;
-
-
+  var pages = parseInt(Data.number_of_pages);
+  var selected_page = parseInt(Data.selected_page);
+  
   var html = "<div class='grid'><table id='" + grid_id + "' parent='" + 
     parent + "'" + "link_to_form='" + link_to_form + "'" +
     " class='tablegrid table table-bordered table-hover table-striped' module='" +
@@ -272,13 +280,21 @@ function Grid(DivGridId, Data) {
       if ((columns[column].type === 'link') && (readonly === "False")) {
         continue;
       };
+
       if ((columns[column].name === "id") || (columns[column].name === link_to_form)) {
-        html += "<th class='notvis'>" + columns[column].label + "</th>";
+        html += "<th class='notvis'>" + columns[column].label + " </th>";
       } else {
-        html += "<th>" + columns[column].label + "</th>";
+        if (columns[column].type != "link" && readonly === "True"){
+          html += "<th>" + columns[column].label + 
+            " <a class='glyphicon glyphicon-triangle-bottom' onclick='get_grid_orderly(\"" + module + "\", \"" + model + "\", " + JSON.stringify(columns)  +
+            ", \"" + columns[column].name + "\")' href='javascript:void()'></a></th>";
+        }else{
+          html += "<th>" + columns[column].label + "</th>";
+        }  
       }
     };
   };
+
   html += "</tr></thead>";
   html += "<tbody>"
   for (row in rows) {
@@ -303,7 +319,20 @@ function Grid(DivGridId, Data) {
 
     html += "  <a href='#' onclick='doPostGrid(\"" + grid_id + "\")' class='glyphicon glyphicon-floppy-disk' " + 
       " title='Salvar'></a>";
-  };
+  }else{
+    html += "<ul class='pagination'>";
+    for(var i = 1; i <= pages + 1; i++){
+      if (selected_page === i)
+        class_selected_page = "active disabled selected-page"
+      else
+        class_selected_page = "no-selected-page"
+
+      html += "<li class='"+ class_selected_page +"' ><a href='javascript:void()' onclick='get_grid_page(\"" + module + "\", \"" + model + "\", " +
+        JSON.stringify(columns)  + "," + i.toString() + ")' >" +
+        i.toString() +"</a></li>";
+    };
+    html += "</nav>";
+  }
 
   html += "</div>"
   $("#" + DivGridId).html(html);
@@ -342,6 +371,7 @@ function doPostGrid(idGrid) {
         if (erros != null) {
           alert(erros.value);
         } else {
+          ClearOperations(idGrid);
           alert('Dados salvos com sucesso!');
         }
       },
@@ -440,7 +470,10 @@ function doPostForm(send_to, form_id, url_redirect, is_delete, id_grid_delete) {
         } else {
           if (url_redirect != "") {
             window.location.href = url_redirect;
-          } else {
+          } else {            
+            $('table[parent="' + form_id + '"]').each(function () {
+              ClearOperations($(this).attr('id'));
+            })
             alert('Dados atualizados com sucesso!');
           };
         };
@@ -450,6 +483,7 @@ function doPostForm(send_to, form_id, url_redirect, is_delete, id_grid_delete) {
           if (url_redirect != "") {
             window.location.href = url_redirect;
           } else {
+            ClearOperations(idGrid);
             alert('Dados atualizados com sucesso!');
           }
         } else {
@@ -464,19 +498,50 @@ function doPostForm(send_to, form_id, url_redirect, is_delete, id_grid_delete) {
   return false;
 };
 
+function get_grid_orderly (module, model, columns, column) {
+  $("#grid_order_by").remove();
+  $('body').append('<input type="hidden" id="grid_order_by" value = "'+  column +'">');
+  get_grid_page(module, model, columns, 1);
+}
 
-function GetGridData (module, model, filter, columns, partial_search) {
+function get_grid_page (module, model, columns, page) {
+  var filter = $("#filter_cache").val();
+  var palavras_inteiras = $("#palavras_inteiras").val();
+  
+  ordenacao = $("#grid_order_by").val();
+
+  if(filter === undefined){
+    filter = "";
+  }else{
+    filter = JSON.parse(filter)
+  };
+
+  if(palavras_inteiras === undefined){
+    palavras_inteiras = "";
+  };
+
+  GetGridData(module, model, filter, columns, palavras_inteiras, page, ordenacao);
+
+}
+
+function GetGridData (module, model, filter, columns, partial_search, page, order_by) {
   var modulo = module;
   var modelo = model;
-  var colunas = columns;
-  var filtro = JSON.stringify(filter);
+  var colunas = columns;    
+  var filtro = "";
+  var ordernar = order_by;
+
+  if (filter != ""){
+    filtro = JSON.stringify(filter);    
+  };
+
+  var pagina = page;
   
   $.ajax({
     url: '/getgrid',
     type: 'get',
-
     data: {"module" : modulo, "model" : modelo, "columns" : JSON.stringify(colunas), "form_serialized" : filtro,
-           "partial_search" : partial_search },
+      "partial_search" : partial_search, "page" : pagina, "order_by" : ordernar},
     success: function (data) {
       dados = JSON.parse(data);
       Grid("div_" + modelo, dados)

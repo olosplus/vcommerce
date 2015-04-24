@@ -184,9 +184,24 @@ def GetGridCrud(request):
     
     str_model = request.GET.get('model')
     str_module = request.GET.get('module')    
+    
+    page = request.GET.get('page')    
+    order_by = request.GET.get('order_by')
+
+    if not order_by:
+        order_by = "id"
+
+    if not page:
+        page = 1
+
     list_module = str_module.split('.')    
+
     partial_search = request.GET.get('partial_search') 
-    grid_filter = json.loads(request.GET.get('form_serialized'))
+
+    if request.GET.get('form_serialized'):
+        grid_filter = json.loads(request.GET.get('form_serialized'))
+    else:
+        grid_filter = str()    
         
     fields = json.loads(request.GET.get('columns'), object_pairs_hook=OrderedDict)
     
@@ -202,19 +217,19 @@ def GetGridCrud(request):
         return HttpResponse("An error ocurred. The model or module don't exists")
 
     dict_filter = {}
+    if grid_filter:
+        for field in grid_filter:        
+            if field["name"] != "csrfmiddlewaretoken":       
+                if field["value"] != "":        
+                    if partial_search == "S":
+                        dict_filter.update({field["name"] + "__iexact" : field["value"]})
+                    else:    
+                        dict_filter.update({field["name"] + "__icontains": field["value"]})
 
-    for field in grid_filter:        
-        if field["name"] != "csrfmiddlewaretoken":       
-            if field["value"] != "":        
-                if partial_search == "S":
-                    dict_filter.update({field["name"] + "__iexact" : field["value"]})
-                else:    
-                    dict_filter.update({field["name"] + "__icontains": field["value"]})
-    
-    GridData = Grid(model)
-        
+    GridData = Grid(model)            
+    print(order_by)
     grid_js = GridData.get_js_grid(use_crud = True, dict_filter = dict_filter,
-        display_fields = tuple(fields_display))
+        display_fields = tuple(fields_display), page = page, order_by = order_by)
 
     return HttpResponse(grid_js)    
 

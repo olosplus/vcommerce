@@ -116,16 +116,29 @@ class Grid:
             return self.model.objects.filter(**dict_filter).values_list(*fields_to_display)
 
 
+    def get_pagination_data(self, fields_to_display, dict_filter, page, limit_data, order_by = 'id'):        
+        data = self.get_data(fields_to_display = fields_to_display, dict_filter = dict_filter)        
+        initial = (int(page)-1) * limit_data                              
+        pages = round(data.count() / limit_data)                
+        return {"data" : data.order_by(order_by)[initial : initial + limit_data], 
+            "pages" : pages, "selected_page" : page }
+
+
     def get_js_grid(self, read_only = True, use_crud = False, display_fields = (),
-        dict_filter = {}):        
+        dict_filter = {}, page = 1, limit_data = 15, order_by = 'id'): 
         ''' transform the values of a model to javascript object ''' 
+
         # string to save columns and rows 
         columns = str()
         rows = str()
+
         bottom_bar = str()
+
         # get the fields declared on model
         fields_model = self.model._meta.fields
+
         fields_to_display = list(display_fields)
+
         if self.parent_model:
             parent_model_str = self.parent_model.__name__
         else:
@@ -141,12 +154,13 @@ class Grid:
         #used to save the register id's. Will be used on the links to delete and update
         id_registro = -1
 
-        # this part is responsable to get the urls base of insert, delete and insert
+        # this part is responsable to get the urls base of insert, delete and update
         if use_crud:
             Urls = urlsCrud(self.model);
             url_update = Urls.BaseUrlUpdate(CountPageBack = 1)
             url_delete = Urls.BaseUrlDelete()
             url_insert = Urls.BaseUrlInsert(CountPageBack = 1)
+
         link_to_form = ""
 
         #makes the loop on fields model's, creating the columns list's. if the field is "id", dont show
@@ -201,11 +215,15 @@ class Grid:
             fields_to_display.append('id')
 
         # get the data
-        registers = self.get_data(fields_to_display = fields_to_display, dict_filter = dict_filter)
+        pagination = self.get_pagination_data(fields_to_display = fields_to_display, dict_filter = dict_filter, 
+            page = page, limit_data = limit_data, order_by = order_by)
+
+        registers = pagination['data']
 
         #reset the integer variables
         columns_count = 0
         loop_count = 0 
+
         #variable to count the loops made in the values of the registers
         loop_count_values = 0
 
@@ -232,13 +250,15 @@ class Grid:
             list_value = '[%s]' % (list_value)              
             rows += '"%s":{"v":%s},' % ('r' + str(loop_count), list_value)              
             loop_count += 1
+
         rows = rows[0 : len(rows) - 1] 
         
         return '{"columns":{%s}, "rows":{%s}, "bar":{%s}, "grid_key":"%s", "grid_mod" : "%s", '\
             '"use_crud":"%s", "read_only":"%s", "url_insert":"%s", "url_update":"%s", "url_delete":"%s", \
-            "parent":"%s", "link_to_form":"%s" }' % \
+            "parent":"%s", "link_to_form":"%s", "number_of_pages" : "%s", "selected_page" : "%s" }' % \
             (columns, rows, bottom_bar, self.model.__module__, self.model.__name__, str(use_crud), 
-            str(read_only), url_insert, url_update, url_delete, parent_model_str, link_to_form)
+            str(read_only), url_insert, url_update, url_delete, parent_model_str, link_to_form, 
+            pagination['pages'], pagination['selected_page'])
 
     @staticmethod
     def grid_script(data, model):
