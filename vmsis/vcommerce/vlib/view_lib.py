@@ -111,12 +111,14 @@ class StandardFormGrid(ModelForm):
 
     def custom_grid_validations(self, grid_model, grid_data, parent_instance):
         '''override this method to make custom validations'''
-        return ""
+        return str()
 
     def save_grids(self, parent_instance_pk):        
-        erro = ""
+        erro = str()
         if self.child_models:            
+
             grids = self.split_child_models()
+
             for grid in grids:
                 if not grid:
                     continue                    
@@ -207,8 +209,10 @@ class ViewCreate(CreateView, AjaxableResponseMixin):
         
         if self.form_class == None:
             self.form_class = StandardFormGrid
+
         self.form_class = CreateForm(self.model).create_form(GridsData = grids_data, class_form = self.form_class, \
             user = request.user)
+
         form_class = self.get_form_class()
         form = self.get_form(form_class)
         self.object = self.model
@@ -222,7 +226,6 @@ class ViewCreate(CreateView, AjaxableResponseMixin):
             return self.form_valid(form)
         else:
             return self.form_invalid(form)
-
 
     def get_context_data(self, **kwargs):   
         Urls = urlsCrud(self.model);

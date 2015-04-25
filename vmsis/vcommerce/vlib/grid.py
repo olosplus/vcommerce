@@ -177,26 +177,29 @@ class Grid:
                     continue
 
                 if not grid_conf["objects"]:                
-                    columns += '"%s":{"name":"%s", "label":"%s", "type":"%s"},' % (field.name, 
-                        self.get_name_column_grid(field.name, type(field)), field.verbose_name, grid_conf["type"])
+                    columns += '"%s":{"name":"%s", "label":"%s", "type":"%s", "name_field_display":"%s"},' % \
+                    (field.name, self.get_name_column_grid(field.name, type(field)), 
+                      field.verbose_name, grid_conf["type"], field.name)
                 else:
-                    columns += '"%s":{"name":"%s", "label":"%s", "type":"%s", "options":%s, "values":%s},' \
+                    columns += '"%s":{"name":"%s", "label":"%s", "type":"%s", "options":"%s", "values":"%s", \
+                    "name_field_display":"%s"},'\
                     % (field.name, self.get_name_column_grid(field.name, type(field)), field.verbose_name, 
                         grid_conf["type"], grid_conf["objects"], grid_conf["values"] )  
 
                 fields_to_display.append(field.name)
             else :
-                temp_display = []
+                temp_display = {}
                 for f in display_fields:
-                    if f.count('__') > 0:
-                        temp_display.append(f[0:f.index('__')].upper())
+                    if f.count('__') > 0 :
+                        temp_display.update({f[0:f.index('__')].upper():{"name":f[0:f.index('__')].upper(), \
+                         "display_name" : f}})
                     else:
-                        temp_display.append(f.upper())
-                    
+                        temp_display.update({f.upper():{"name":f.upper(), "display_name" : f}})
+                
                 if field.name.upper() in temp_display:
-                    columns += '"%s":{"name":"%s", "label":"%s", "type":"%s"},' % (field.name, 
-                        self.get_name_column_grid(field.name, type(field)), field.verbose_name,
-                        grid_conf["type"])                
+                    columns += '"%s":{"name":"%s", "label":"%s", "type":"%s", "name_field_display":"%s"},' % \
+                    (field.name, self.get_name_column_grid(field.name, type(field)), field.verbose_name,
+                        grid_conf["type"], temp_display[field.name.upper()]["display_name"] )
                         
         if use_crud:
             columns += '"col_update":{"name":"update", "label":"%s", "type":"link"},' % ''#(_('Update'))            

@@ -9,7 +9,7 @@ models.options.DEFAULT_NAMES += ('child_models',)
 
 DIR = os.path.dirname(os.path.dirname(__file__))
 
-MAIN_APP = {'app': 'home', 'verbose_name': 'Home', 'view_name': 'home.views.index' }
+MAIN_APP = {'app': 'vlib', 'verbose_name': 'Home', 'view_name': 'vlib.views.index' }
 
 apps_on_menu = apps.apps_on_menu
 

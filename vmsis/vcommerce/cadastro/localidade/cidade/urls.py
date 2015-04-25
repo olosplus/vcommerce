@@ -5,4 +5,4 @@ from cadastro.localidade.cidade.models import Cidade
 
 Crud = CrudView(Cidade)
 
-urlpatterns = Crud.AsUrl()
+urlpatterns = Crud.AsUrl(GridFields  = ('cdcidade','nmcidade','estado__sgestado',))

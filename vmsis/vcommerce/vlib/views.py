@@ -6,19 +6,37 @@ from django.apps import apps
 from django.core.exceptions import ValidationError
 from vlib.filtro import Filtro as FormFiltro
 from vlib.grid import Grid
+#from vlib.
 from collections import OrderedDict
 
-#from django.utils.decorators import classonlymethod
+from django.shortcuts import render
+from django.shortcuts import render_to_response
+from django.contrib.auth.decorators import login_required
+
+
+from importlib import import_module
+from django.conf import settings
+
+SessionStore = import_module(settings.SESSION_ENGINE).SessionStore
+
+
 LINE_SEPARATOR = "<<LINE_SEPARATOR>>"
 
 
-#class GridPersistence(object):
+# Create your views here.
 
-#@staticmethod
+@login_required
+def index(request):
+    Session = SessionStore()
+#    Session['Menu']
+    return render_to_response('base.html')
+
+
 def insert(data, model, commit = True, link_to_form = "", parent_instance = None):
 
     if not data:
-        return ""
+        return str()
+
     if link_to_form[-3:].upper() == "_ID":
         link_to_form = link_to_form[:-3]
 
@@ -30,6 +48,7 @@ def insert(data, model, commit = True, link_to_form = "", parent_instance = None
     for row in lista:     
         if not row:
             continue    
+
         row_json = dict(json.loads(row))
         mod = model()
 
@@ -58,7 +77,7 @@ def insert(data, model, commit = True, link_to_form = "", parent_instance = None
         if commit :
             mod.save()        
 
-    return ""    
+    return str()
 
 #@staticmethod    
 def delete(data, model):
@@ -203,13 +222,18 @@ def GetGridCrud(request):
     else:
         grid_filter = str()    
         
-    fields = json.loads(request.GET.get('columns'), object_pairs_hook=OrderedDict)
+    OrderedDict_Cols = json.loads(request.GET.get('columns'), object_pairs_hook=OrderedDict)
     
     fields_display = []
-    
-    for field in fields:    
-        if not field in ["col_update", "col_delete"]:
-            fields_display.append(field)
+
+    for fields in list(OrderedDict_Cols.items()):
+
+        properties_field = list(fields[1].items())
+        if len(properties_field) >= 4: #equal or more than a four properties
+            field_to_display = properties_field[3][1]
+            fields_display.append(field_to_display)
+#        if not fields in ["col_update", "col_delete"]:
+#            fields_display.append(field)
     
     try:
         model = apps.get_app_config(list_module[len(list_module)-2]).get_model(str_model)
