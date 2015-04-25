@@ -1,5 +1,3 @@
-
-
 apps_on_menu = (
     {'app': 'cadastro', 'verbose_name' : 'Cadastro', 'imgmenu':'fa fa-cubes'},
     {'app': 'cadastro.almoxarifado', 'verbose_name' : 'Almoxarifado'},
@@ -39,5 +37,16 @@ apps_on_menu = (
     {'app': 'contabilidade.movimentacao_contabil.lancamento_contabil', 'verbose_name' : 'Lançamentos contábeis'},
     {'app': 'contabilidade.movimentacao_contabil.lancamento_contabil_detalhe', 'verbose_name' : 'Partidas dos lançamentos', 
         'visible' : False},        
+
+    # TELAS DO ESTOQUE
+    {'app': 'estoque', 'verbose_name' : 'Estoque', 'imgmenu' : 'fa fa-th'},
+    {'app': 'estoque.itemproduto', 'verbose_name' : 'Item', 'visible' : False},
+    {'app': 'estoque.cadastro_estoque', 'verbose_name' : 'Cadastros Estoque'},
+    {'app': 'estoque.cadastro_estoque.finalidade', 'verbose_name' : 'Finalidade'},      
+    {'app': 'estoque.entrada', 'verbose_name' : 'Entrada'},
+    {'app': 'estoque.saida', 'verbose_name' : 'Saída'},      
+    {'app': 'estoque.posestoque', 'verbose_name' : 'Posição de Estoque', 'visible' : False},
+    {'app': 'estoque.lote', 'verbose_name' : 'Lote', 'visible' : False},
+    {'app': 'estoque.inventario', 'verbose_name' : 'Inventário'},
 
 )
