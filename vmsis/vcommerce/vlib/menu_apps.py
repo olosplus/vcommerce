@@ -4,6 +4,7 @@ import os
 from django.db import models
 from vcommerce import apps
 from vlib import urls as vlib_urls
+import json
 
 models.options.DEFAULT_NAMES += ('child_models',)
 
@@ -13,7 +14,6 @@ MAIN_APP = {'app': 'vlib', 'verbose_name': 'Home', 'view_name': 'vlib.views.inde
 
 apps_on_menu = apps.apps_on_menu
 
-
 class MenuApps:       
     @staticmethod
     def GetAppsOnMenu():
@@ -21,6 +21,19 @@ class MenuApps:
         for app in apps_on_menu:
             apps += (app['app'], )
         return apps
+
+    @staticmethod
+    def GetAppsVerboseName():
+
+        apps_str = '{'
+
+        for app in apps_on_menu:
+            apps_str +=  '"%s":"%s",' % (app['app'], app['verbose_name'] )
+
+        apps_str += ' "end-of-dict":""}'
+
+        return json.loads(apps_str)
+
 
     @staticmethod
     def IncludeUrls():

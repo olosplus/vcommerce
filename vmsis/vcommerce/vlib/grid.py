@@ -181,10 +181,12 @@ class Grid:
                     (field.name, self.get_name_column_grid(field.name, type(field)), 
                       field.verbose_name, grid_conf["type"], field.name)
                 else:
-                    columns += '"%s":{"name":"%s", "label":"%s", "type":"%s", "options":"%s", "values":"%s", \
+                    print(grid_conf["objects"])
+                    columns += '"%s":{"name":"%s", "label":"%s", "type":"%s", "options":%s, "values":%s, \
                     "name_field_display":"%s"},'\
                     % (field.name, self.get_name_column_grid(field.name, type(field)), field.verbose_name, 
-                        grid_conf["type"], grid_conf["objects"], grid_conf["values"] )  
+                        grid_conf["type"], grid_conf["objects"], grid_conf["values"], 
+                        field.name )  
 
                 fields_to_display.append(field.name)
             else :

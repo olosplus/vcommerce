@@ -578,7 +578,7 @@ function ControlPagination(total_pages, columns, selected_page, module, model, c
   };
  
   if( (command === "prior" && section_paginate === "1") || 
-      (command === "next" && parseInt(section_paginate) >= (total_pages)  )){
+      (command === "next" && parseInt(section_paginate) >= (total_pages/pages_in_section)  )){
     return;
   };
 

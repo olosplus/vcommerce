@@ -6,7 +6,7 @@ from django.apps import apps
 from django.core.exceptions import ValidationError
 from vlib.filtro import Filtro as FormFiltro
 from vlib.grid import Grid
-#from vlib.
+from vlib.menu_apps import MenuApps
 from collections import OrderedDict
 
 from django.shortcuts import render
@@ -14,10 +14,10 @@ from django.shortcuts import render_to_response
 from django.contrib.auth.decorators import login_required
 
 
-from importlib import import_module
-from django.conf import settings
+#from importlib import import_module
+#from django.conf import settings
 
-SessionStore = import_module(settings.SESSION_ENGINE).SessionStore
+#SessionStore = import_module(settings.SESSION_ENGINE).SessionStore
 
 
 LINE_SEPARATOR = "<<LINE_SEPARATOR>>"
@@ -27,8 +27,11 @@ LINE_SEPARATOR = "<<LINE_SEPARATOR>>"
 
 @login_required
 def index(request):
-    Session = SessionStore()
-#    Session['Menu']
+     
+    #Session = SessionStore()
+    
+    request.session['apps_label'] = MenuApps.GetAppsVerboseName()
+#    Session.save()
     return render_to_response('base.html')
 
 

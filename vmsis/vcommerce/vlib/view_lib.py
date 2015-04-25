@@ -21,6 +21,12 @@ from django.forms import ModelForm, Form
 from vlib import views as vlib_views
 from django.forms.utils import ErrorList
 
+from importlib import import_module
+from django.conf import settings
+
+SessionStore = import_module(settings.SESSION_ENGINE).SessionStore
+
+
 try:
     from cadastro.funcionario.models import Funcionario
     UtilizaFuncionario = True
@@ -75,6 +81,16 @@ class AjaxableResponseMixin(object):
             return JsonResponse(data)
         else:
             return response
+
+#    def get_context_data(self, **kwargs):   
+#        print('iva')
+#        context = super(AjaxableResponseMixin, self).get_context_data(**kwargs)   
+#        apps = dict(self.request.session['apps_label'])
+#        module = self.model.__module__
+#        module = module.replace(".models", "")
+#        page_caption = apps[module]
+#        context['titulo'] = page_caption        
+#        return context
 
 class StandardFormGrid(ModelForm):
     child_models = str()
@@ -228,6 +244,11 @@ class ViewCreate(CreateView, AjaxableResponseMixin):
             return self.form_invalid(form)
 
     def get_context_data(self, **kwargs):   
+        apps = dict(self.request.session['apps_label'])
+        module = self.model.__module__
+        module = module.replace(".models", "")
+        page_caption = apps[module]
+
         Urls = urlsCrud(self.model);
         grid = Grid(self.model)
         context = super(ViewCreate, self).get_context_data(**kwargs)   
@@ -237,6 +258,7 @@ class ViewCreate(CreateView, AjaxableResponseMixin):
         context['url_insert'] = Urls.BaseUrlInsert(1)
         context['form_id'] = self.model.__name__
         context['grid'] = grid.grid_as_text(use_crud = False, read_only = False, dict_filter = {'id':-1});        
+        context['titulo'] = page_caption        
         return context
  
 class ViewUpdate(UpdateView, AjaxableResponseMixin):
@@ -251,6 +273,11 @@ class ViewUpdate(UpdateView, AjaxableResponseMixin):
         return self.success_url
 
     def get_context_data(self, **kwargs):   
+        apps = dict(self.request.session['apps_label'])
+        module = self.model.__module__
+        module = module.replace(".models", "")
+        page_caption = apps[module]
+
         Urls = urlsCrud(self.model);            
         context = super(UpdateView, self).get_context_data(**kwargs)   
         context['form_id'] = self.model.__name__        
@@ -262,6 +289,7 @@ class ViewUpdate(UpdateView, AjaxableResponseMixin):
         context['CssFiles'] = StaticFiles.GetCss(self.MediaFiles)    
         context['url_list'] =  Urls.BaseUrlList(CountPageBack = 2)    
         context['url_update'] = Urls.BaseUrlUpdate(CountPageBack = 2)        
+        context['titulo'] = page_caption                        
         return context
 
     @method_decorator(login_required)
@@ -318,6 +346,10 @@ class ViewList(ListView):
 
     
     def get_context_data(self, **kwargs):   
+        apps = dict(self.request.session['apps_label'])
+        module = self.model.__module__
+        module = module.replace(".models", "")
+        page_caption = apps[module]
 
         context = super(ViewList, self).get_context_data(**kwargs)   
         
@@ -326,7 +358,7 @@ class ViewList(ListView):
         context['JsFiles'] = StaticFiles.GetJs(self.MediaFiles)
         context['CssFiles'] = StaticFiles.GetCss(self.MediaFiles)  
         context['grid'] = grid.grid_as_text(display_fields = self.Grid_Fields, use_crud = True, read_only = True);
-
+        context['titulo'] = page_caption         
         return context
 
     @method_decorator(login_required)
