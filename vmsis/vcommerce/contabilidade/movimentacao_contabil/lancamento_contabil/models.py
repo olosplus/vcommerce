@@ -1,17 +1,16 @@
 from django.db import models
-from cadastro.empresa.models import Empresa
+from vlib.control.models import Master_empresa
 
 from contabilidade.cadastro_contabil.plano_conta.models import PlanoConta
 from cadastro.centro_custo.models import CentroCusto
 from contabilidade.cadastro_contabil.historico_padrao.models import HistoricoPadrao
 
 # Create your models here.
-class LancamentoContabil(models.Model):
+class LancamentoContabil(Master_empresa):
     class Meta:
         child_models = ['contabilidade.movimentacao_contabil.lancamento_contabil_detalhe.'+
             'models.LancamentoContabilPartidas']
 
-    empresa = models.ForeignKey(Empresa)
     numero_lancamento = models.IntegerField(verbose_name = "Número do lançamento")
     data_lancamento = models.DateField(verbose_name = "Data do lançamento")
     valor = models.FloatField(verbose_name = "Valor")

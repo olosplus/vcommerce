@@ -1,9 +1,10 @@
 # coding=UTF-8
 from django.db import models
 from cadastro.banco.models import Banco
+from vlib.control.models import Master_empresa
 
 # Create your models here.
-class Conta(models.Model):
+class Conta(Master_empresa):
 	class Meta:
 		db_table = "conta"
 		verbose_name = "Conta"

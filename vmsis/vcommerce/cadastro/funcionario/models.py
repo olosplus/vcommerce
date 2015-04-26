@@ -2,13 +2,13 @@
 from django.db import models
 from django.contrib.auth.models import User
 from cadastro.unidade.models import Unidade
-from cadastro.empresa.models import Empresa
+from vlib.control.models import Master_empresa
 
 TIPO_C = (('PF',u'Pessoa Física'),('PJ',u'Pessoa Jurídica'),)
 SEXO_C = (('F','Feminino'),('M','Masculino'),)
 
 # Create your models here.
-class Funcionario(models.Model):
+class Funcionario(Master_empresa):
 	user = models.ForeignKey(User, blank=True, null=True, editable=False)
 
 	nome = models.CharField(max_length=255, verbose_name='Nome')
@@ -29,7 +29,6 @@ class Funcionario(models.Model):
 	dtdemissao = models.DateField(verbose_name='Data de demissão',null=True,blank=True)
 	pessoa = models.CharField(max_length=2,verbose_name='Tipo',choices=TIPO_C, blank=True, null=True)
 	unidade = models.ForeignKey(Unidade,verbose_name="Unidade", null=True, blank=True)
-	empresa = models.ForeignKey(Empresa,verbose_name="Empresa", null=True)
 
 	class Meta:
 		ordering = ['-id']

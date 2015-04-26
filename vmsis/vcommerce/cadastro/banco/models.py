@@ -1,7 +1,8 @@
 from django.db import models
+from vlib.control.models import Master_empresa
 
 # Create your models here.
-class Banco(models.Model):
+class Banco(Master_empresa):
 	class Meta:
 		db_table = "banco"
 		verbose_name = "Banco"

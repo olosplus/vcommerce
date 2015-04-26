@@ -3,9 +3,10 @@ from django.db import models
 from estoque.control.models import Movimentacaoest
 from cadastro.produto.item.models import Item
 from cadastro.almoxarifado.models import Almoxarifado
+from vlib.control.models import Master_empresa
 
 # Create your models here.
-class Itemproduto(models.Model):
+class Itemproduto(Master_empresa):
 	class Meta:
 		db_table = "itemproduto"
 		verbose_name = "Item"
@@ -14,4 +15,4 @@ class Itemproduto(models.Model):
 	produto = models.ForeignKey(Item,verbose_name='Produto')
 	almoxarifado = models.ForeignKey(Almoxarifado,verbose_name='Almoxarifado')	
 	qtdeprod = models.FloatField(verbose_name="Quantidade")
-	master = models.ForeignKey(Movimentacaoest)
+	movimentacaoest = models.ForeignKey(Movimentacaoest,null=True)

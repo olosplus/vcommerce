@@ -26,6 +26,8 @@ try:
     return_code = subprocess.call('python manage.py loaddata cadastro/fix/estado.json', shell=True)
     print("\nCidade...")
     return_code = subprocess.call('python manage.py loaddata cadastro/fix/cidade.json', shell=True)
+    print("\nBanco...")
+    return_code = subprocess.call('python manage.py loaddata cadastro/fix/banco.json', shell=True)
     #print("\nEmpresa...")
     #return_code = subprocess.call('python manage.py loaddata cadastro/fix/empresa.json', shell=True)
     #print("\nUnidade...")

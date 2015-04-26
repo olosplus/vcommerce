@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
 from django.db import models
 from vlib.control.models import Master
+from vlib.control.models import Master_empresa
 
 # Create your models here.
-class Contato(models.Model):
+class Contato(Master_empresa):
 	class Meta:
 		db_table = "contato"
 		verbose_name = "Contato"

@@ -14,5 +14,5 @@ class Posestoque(Master_unidade):
 
 	produto = models.ForeignKey(Item,verbose_name='Produto')
 	almoxarifado = models.ForeignKey(Almoxarifado,verbose_name='Almoxarifado')
-	lote = models.ForeignKey(Lote,verbose_name='Lote')
+	#lote = models.ForeignKey(Lote,verbose_name='Lote')
 	qtdeproduto = models.FloatField(verbose_name='Quantidade')

@@ -104,6 +104,7 @@ class Grid:
         return getattr(self.model._meta.get_field(field_name), field_config)            
     
     def get_data(self, fields_to_display, dict_filter):        
+
         if dict_filter == {}:
             if self.parent_model != None:
                 for field in self.model._meta.fields:                  
@@ -180,8 +181,7 @@ class Grid:
                     columns += '"%s":{"name":"%s", "label":"%s", "type":"%s", "name_field_display":"%s"},' % \
                     (field.name, self.get_name_column_grid(field.name, type(field)), 
                       field.verbose_name, grid_conf["type"], field.name)
-                else:
-                    print(grid_conf["objects"])
+                else:                    
                     columns += '"%s":{"name":"%s", "label":"%s", "type":"%s", "options":%s, "values":%s, \
                     "name_field_display":"%s"},'\
                     % (field.name, self.get_name_column_grid(field.name, type(field)), field.verbose_name, 

@@ -3,12 +3,13 @@ from django.db import models
 from contabilidade.cadastro_contabil.grupo_conta_contabil.models import GrupoContaContabil
 import datetime
 from django.core.exceptions import ValidationError
+from vlib.control.models import Master_empresa
 
 tipos_contas = (('A', 'Analítica'), ('S', 'Sintética') )
 naturezas = (('D', 'Devedora'), ('C', 'Credora'))
 
 # Create your models here.
-class PlanoConta(models.Model):
+class PlanoConta(Master_empresa):
     codigo = models.CharField(verbose_name = "Código", max_length = 20, unique = True)
     Nome = models.CharField(verbose_name = "Descrição", max_length = 300)
     tipo_conta = models.CharField(verbose_name = "Tipo", choices = tipos_contas, max_length = 1)

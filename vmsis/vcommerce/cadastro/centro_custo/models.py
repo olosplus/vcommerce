@@ -1,11 +1,11 @@
 # coding : utf-8
 from django.db import models
-from vlib.control.models import Master
+from vlib.control.models import Master_empresa
 from cadastro.unidade.models import Unidade
 
 # Create your models here.
 
-class CentroCusto(Master):
+class CentroCusto(Master_empresa):
     class Meta:
     	db_table = "centro_custo"
     	verbose_name = "Centro de custo"
