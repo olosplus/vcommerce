@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 from django.db import models
-from estoque.control.models import Movimentacaoest
+from estoque.control.models import Master_moviest
 
 # Create your models here.
-class Inventario(Movimentacaoest):
+class Inventario(Master_moviest):
     class Meta:
         db_table = "inventario"
         verbose_name = "Inventário"

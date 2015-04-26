@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from django.db import models
-from estoque.control.models import Movimentacaoest
+from estoque.control.models import Master_moviest
 from cadastro.cliente.models import Cliente
 from estoque.cadastro_estoque.finalidade.models import Finalidade
 
@@ -8,7 +8,7 @@ choice_tipo = (('R','Retirada'),
 	('P','Perda'))
 
 # Create your models here.
-class Saida(Movimentacaoest):
+class Saida(Master_moviest):
     class Meta:
         db_table = "saida"
         verbose_name = "Saída"

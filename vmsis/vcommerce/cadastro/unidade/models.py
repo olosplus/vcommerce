@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from django.db import models 
-from vlib.control.models import Master
+from vlib.control.models import Master_endereco
 from cadastro.almoxarifado.models import Almoxarifado
 
 choice_tipo = (('M','Matriz'),
@@ -11,7 +11,7 @@ choice_tipo_jfo = (('J','Jurídica'),
 	('O','Outros'))
 
 # Create your models here.
-class Unidade(Master):
+class Unidade(Master_endereco):
     class Meta:
     	db_table = "unidade"
     	verbose_name = "Unidade"
