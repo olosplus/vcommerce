@@ -15,4 +15,4 @@ class Itemproduto(Master_empresa):
 	produto = models.ForeignKey(Item,verbose_name='Produto')
 	almoxarifado = models.ForeignKey(Almoxarifado,verbose_name='Almoxarifado')	
 	qtdeprod = models.FloatField(verbose_name="Quantidade")
-	movimentacaoest = models.ForeignKey(Master_moviest,null=True)
+	master_moviest = models.ForeignKey(Master_moviest,null=True)

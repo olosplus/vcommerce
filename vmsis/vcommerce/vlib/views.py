@@ -60,7 +60,11 @@ def insert(data, model, commit = True, link_to_form = "", parent_instance = None
             if field.name == 'id':
                 continue
 
-            if field.name == link_to_form and commit:
+            if field.name.lower() == parent_instance.__class__.__name__.lower() or \
+               field.name.lower() == parent_instance.__class__.__base__.__name__.lower():
+                setattr(mod, field.name, parent_instance)  
+                continue 
+            elif field.name == link_to_form and commit:
                 setattr(mod, field.name, parent_instance)
                 continue
 
@@ -74,7 +78,8 @@ def insert(data, model, commit = True, link_to_form = "", parent_instance = None
             if link_to_form:
                 mod.full_clean(exclude = (link_to_form,))
             else:
-                mod.full_clean()                    
+                mod.full_clean(exclude = (parent_instance.__class__.__base__.__name__.lower(), \
+                    parent_instance.__class__.__base__.__name__.lower()))                    
         except ValidationError as e:            
             return "<input id='grid_erros' value='%s'>" % str(e).replace("'", "").replace('"', "")
 

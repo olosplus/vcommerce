@@ -21,4 +21,6 @@ from cadastro.empresa.models import Empresa
 
 # Create your models here.
 class Master_empresa(models.Model):
+    class Meta:
+        abstract = True
     empresa = models.ForeignKey(Empresa,verbose_name="Empresa",null=True, blank=True)

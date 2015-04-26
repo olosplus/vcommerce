@@ -64,12 +64,12 @@ class AjaxableResponseMixin(object):
     Mixin to add AJAX support to a form.
     Must be used with an object-based FormView (e.g. CreateView)
     """
-    def form_invalid(self, form):
-        response = super(AjaxableResponseMixin, self).form_invalid(form)
-        if self.request.is_ajax():
-            return JsonResponse(form.errors, status=400)
-        else:
-            return response
+#    def form_invalid(self, form):
+#        response = super(AjaxableResponseMixin, self).form_invalid(form)
+#        if self.request.is_ajax():
+#            return JsonResponse(form.errors, status=400)
+#        else:
+#            return response
 
     def form_valid(self, form):
         response = super(AjaxableResponseMixin, self).form_valid(form)
@@ -85,10 +85,12 @@ class AjaxableResponseMixin(object):
 class StandardFormGrid(ModelForm):
     child_models = str()
     current_user = None
+    grid_erros = str();
+
     def split_child_models(self):        
         return self.child_models.split(GRID_SEPARATOR)
                      
-    def get_grids_erros(self):
+    def get_grids_erros(self, parent_instance):
         erro = ""
         if self.child_models:
             grids = self.split_child_models()
@@ -105,7 +107,7 @@ class StandardFormGrid(ModelForm):
      
                 if data_dict['rows_inserted']:
                     erro = vlib_views.insert(data = data_dict['rows_inserted'], model = model, commit = False,
-                        link_to_form = data_dict['link_to_form'])                                 
+                        link_to_form = data_dict['link_to_form'], parent_instance = parent_instance)                                 
                 if erro:
                     return erro
                 else:
@@ -178,6 +180,7 @@ class StandardFormGrid(ModelForm):
         
         if data:            
             copy_data = data.copy()
+            
             if 'empresa' in data and UtilizaFuncionario: 
                 try:
                     func = Funcionario.objects.get(user = self.current_user)            
@@ -192,11 +195,17 @@ class StandardFormGrid(ModelForm):
             initial= initial, error_class=error_class, label_suffix=label_suffix,
             empty_permitted=empty_permitted, instance=instance)
 
-    def save(self, commit = False):
-        instance = super(StandardFormGrid, self).save(commit=True)                
-        erro = self.save_grids(parent_instance_pk = instance)                        
-        if erro:
-            return HttpResponse(erro)
+    def get_instace(self):
+        return super(StandardFormGrid, self).save(commit=False)
+
+    def save(self, commit = True):
+
+        instance = super(StandardFormGrid, self).save(commit = commit)
+
+        if commit:  
+            self.grid_erros = self.save_grids(parent_instance_pk = instance)                        
+            if self.grid_erros:
+                return None
 
         return instance    
 
@@ -213,7 +222,7 @@ class CreateForm(object):
             current_user = user
         return vmsisForm
    
-class ViewCreate(CreateView, AjaxableResponseMixin):  
+class ViewCreate(CreateView):  
     template_name = TEMPLATE_INSERT
     MediaFiles = []   
     
@@ -242,13 +251,16 @@ class ViewCreate(CreateView, AjaxableResponseMixin):
         form = self.get_form(form_class)
         self.object = self.model
 
-        grid_erros =  form.get_grids_erros()
-        
-        if grid_erros:
-            return HttpResponse(grid_erros)
-
         if form.is_valid():
-            return self.form_valid(form)
+           
+            instance = form.get_instace()            
+            
+            error = form.get_grids_erros(instance)
+            
+            if error:
+                return HttpResponse(error)
+            else:
+                return self.form_valid(form)
         else:
             return self.form_invalid(form)
 
@@ -270,7 +282,7 @@ class ViewCreate(CreateView, AjaxableResponseMixin):
         context['titulo'] = page_caption        
         return context
  
-class ViewUpdate(UpdateView, AjaxableResponseMixin):
+class ViewUpdate(UpdateView):
     template_name = TEMPLATE_UPDATE
     MediaFiles = []
 
@@ -278,6 +290,7 @@ class ViewUpdate(UpdateView, AjaxableResponseMixin):
         if 'MediaFiles' in kwargs :
             self.MediaFiles = kwargs.get('MediaFiles')
         super(ViewUpdate, self).__init__(**kwargs)
+
     def get_success_url(self):
         return self.success_url
 
@@ -291,8 +304,10 @@ class ViewUpdate(UpdateView, AjaxableResponseMixin):
         context = super(UpdateView, self).get_context_data(**kwargs)   
         context['form_id'] = self.model.__name__        
         objeto =  context['object']
+
         grid = Grid(model = self.model, parent_pk_value = objeto.pk)
         context['grid'] = grid.grid_as_text(use_crud = False, read_only = False);
+
         context['form_pk'] = objeto.pk
         context['JsFiles'] = StaticFiles.GetJs(self.MediaFiles)
         context['CssFiles'] = StaticFiles.GetCss(self.MediaFiles)    
@@ -314,12 +329,16 @@ class ViewUpdate(UpdateView, AjaxableResponseMixin):
         form_class = self.get_form_class()
         form = self.get_form(form_class)
         self.object = self.model        
-        grid_erros =  form.get_grids_erros()
+
+        instance = form.get_instace()
+
+        grid_erros = form.get_grids_erros(instance)
 
         if grid_erros:
             return HttpResponse(grid_erros)
 
-        return  super(ViewUpdate, self).post(request, *args, **kwargs)        
+        return super(ViewUpdate, self).post(request, *args, **kwargs)         
+        
         
 class ViewDelete(DeleteView):
     template_name = TEMPLATE_DELETE

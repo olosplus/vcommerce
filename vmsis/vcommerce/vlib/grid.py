@@ -106,11 +106,16 @@ class Grid:
     def get_data(self, fields_to_display, dict_filter):        
 
         if dict_filter == {}:
-            if self.parent_model != None:
-                for field in self.model._meta.fields:                  
-                    if self.get_grid_column_model(field.name) == self.parent_model:
+            column_model = None
+
+            if self.parent_model != None:                                
+                
+                for field in self.model._meta.fields: 
+                    column_model = self.get_grid_column_model(field.name)                    
+                    if (column_model == self.parent_model) or (self.parent_model.__base__ == column_model):
                         dic = {self.get_name_column_grid(field.name, type(field)) : 
                             self.parent_pk_value }
+                        
                         return self.model.objects.filter(**dic).values_list(*fields_to_display)     
             else:
                 return self.model.objects.values_list(*fields_to_display)
