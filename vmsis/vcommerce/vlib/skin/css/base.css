@@ -31,3 +31,11 @@ form ul.alert{
 .inline{
   display : inline;
 }
+
+.page-header.title{
+  color : #23527c !important;
+  padding-bottom: 0px;
+}
+.navbar{
+  margin-bottom: 0px !important;
+}

@@ -1,34 +1,37 @@
 # from vlib import view_lib, url_lib
 # from django.shortcuts import render
-# from vlib.view_lib import ViewCreate, StandardFormGrid
+from vlib.view_lib import ViewCreate, StandardFormGrid
 # from django.core.exceptions import ValidationError
 # from django.forms import ModelForm, Form
 
 
-# from contabilidade.movimentacao_contabil.lancamento_contabil.models import LancamentoContabil, LancamentoContabilPartidas
-# # Create your views here.
-
-# class FormLancamentoContabil(StandardFormGrid):    
-
-#     class Meta:
-#         model = LancamentoContabil        
-        
+from contabilidade.movimentacao_contabil.lancamento_contabil.models import LancamentoContabil 
+from contabilidade.movimentacao_contabil.lancamento_contabil_detalhe.models import LancamentoContabilPartidas 
     
-#     def save(self, commit = False):
-#         instance = super(FormLancamentoContabil, self).save(commit=True)
+ # Create your views here.
 
-#         lanc = LancamentoContabilPartidas()
-#         setattr(lanc, 'numero_lancamento' , instance)
-#         setattr(lanc, 'valor_partida' , instance.valor)        
+class FormLancamentoContabil(StandardFormGrid):    
+
+    class Meta:
+        model = LancamentoContabil        
+    
+    def after_insert_grid_row(self, instance):
+        #usar este método para rodar alguma rotina após a inserção de cada linha do grid
+        #o parâmetro instance é o objeto com os dados inseridos no banco de dados pelo grid
         
-#         try:
-#             lanc.full_clean()
-#         except ValidationError as e:
-#             raise
-#         else:
-#             lanc.save() 
+        #existem os metodos after_update_grid_row e before_delete_grid_row, ambos com o mesmo funcionamento
+        #para que funcione tanto no form de inserção quanto no de edição deve-se passar os parametros 
+        #ClassCreate e ClassUpdate na urls
 
-# class ViewLancamentoContabil(view_lib.ViewCreate):  
-
-# #    FormLancamentoContabil.Meta.model = model
-#     form_class = FormLancamentoContabil
+        #a cada linha inserida no grid será inserida outra linha identica        
+        novo_lancamento = LancamentoContabilPartidas()
+        novo_lancamento.numero_lancamento = instance.numero_lancamento
+        novo_lancamento.conta_contabil = instance.conta_contabil         
+        novo_lancamento.centro_custo = instance.centro_custo
+        novo_lancamento.valor_partida = instance.valor_partida
+        novo_lancamento.historico_padrao = instance.historico_padrao
+        novo_lancamento.historico_complementar = 'inserido automaticamente'
+        novo_lancamento.save()
+    
+class ViewLancamentoContabil(ViewCreate):  
+    form_class = FormLancamentoContabil

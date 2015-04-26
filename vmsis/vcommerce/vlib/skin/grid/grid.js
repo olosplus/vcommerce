@@ -253,11 +253,8 @@ function Grid(DivGridId, Data) {
   var pages = parseInt(Data.number_of_pages);
   var selected_page = parseInt(Data.selected_page);
   
-  var html = "<div class='grid'><table id='" + grid_id + "' parent='" + 
-    parent + "'" + "link_to_form='" + link_to_form + "'" +
-    " class='tablegrid table table-bordered table-hover table-striped' module='" +
-     module + "' " + "mod='" + model + "'><thead class = 'header'> <tr>";
-
+  var html = "<div class='grid'>";
+  
   if (readonly === "True") {
     for (item_bar in bar) {
       if (bar.hasOwnProperty(item_bar)) {
@@ -271,7 +268,14 @@ function Grid(DivGridId, Data) {
     html += "<a class = 'glyphicon glyphicon-search' href='JavaScript:void()' "+
       "onclick='Filter(\"" + module + "\", \"" + model + "\", " + JSON.stringify(columns)  +
       "  )' title='Filtrar' ></a>";
-  } else {
+  };
+
+  html += "<table id='" + grid_id + "' parent='" + 
+    parent + "'" + "link_to_form='" + link_to_form + "'" +
+    " class='tablegrid table table-bordered table-hover table-striped' module='" +
+     module + "' " + "mod='" + model + "'><thead class = 'header'> <tr>";
+
+  if(readonly === "False") {
     html += "<th><center>*</center></th>";  
   };
 
@@ -286,7 +290,8 @@ function Grid(DivGridId, Data) {
       } else {
         if (columns[column].type != "link" && readonly === "True"){
           html += "<th>" + columns[column].label + 
-            " <a class='glyphicon glyphicon-triangle-bottom' onclick='get_grid_orderly(\"" + module + "\", \"" + model + "\", " + JSON.stringify(columns)  +
+            " <a class='glyphicon glyphicon-triangle-bottom' onclick='get_grid_orderly(\"" + module + "\", \"" +
+              model + "\", " + JSON.stringify(columns)  +
             ", \"" + columns[column].name + "\")' href='javascript:void()'></a></th>";
         }else{
           html += "<th>" + columns[column].label + "</th>";
@@ -320,23 +325,31 @@ function Grid(DivGridId, Data) {
     html += "  <a href='#' onclick='doPostGrid(\"" + grid_id + "\")' class='glyphicon glyphicon-floppy-disk' " + 
       " title='Salvar'></a>";
   }else{
+    html += "<div class='navigation' >";
+    html += "<div class='navigation-centralize'>"
+    html += "<div class='inline' id='div_prior'>"
+    html += "<ul class='pagination'> <li>"
+    html += "<a href='javascript:void()' aria-label='Previous' onclick='ControlPagination(" + pages + "," + 
+      JSON.stringify(columns) + "," + 
+      selected_page.toString() + ",\"" + module + "\",\"" + model + "\"," + " \"prior\")'> "+         
+      "<span aria-hidden='true'>&laquo;</span></a> </li></ul></div>";    
+    html += "<nav>";
     html += "<ul class='pagination'>";
-    for(var i = 1; i <= pages + 1; i++){
-      if (selected_page === i)
-        class_selected_page = "active disabled selected-page"
-      else
-        class_selected_page = "no-selected-page"
-
-      html += "<li class='"+ class_selected_page +"' ><a href='javascript:void()' onclick='get_grid_page(\"" + module + "\", \"" + model + "\", " +
-        JSON.stringify(columns)  + "," + i.toString() + ")' >" +
-        i.toString() +"</a></li>";
-    };
-    html += "</nav>";
-  }
+    html += "</ul>"
+    html += "</nav>"; 
+    html += "<div class='inline' id='div_next'>"
+    html += "<ul class='pagination'> <li>"
+    html += "<a href='javascript:void()' aria-label='Next' onclick='ControlPagination(" + pages + "," + 
+      JSON.stringify(columns) + "," + 
+      selected_page.toString() + ",\"" + module + "\",\"" + model + "\"," + " \"next\")'> "+         
+      "<span aria-hidden='true'>&raquo;</span></a> </li></ul></div>";    
+    html += "</div>";
+    html += "</div>"    
+  };
 
   html += "</div>"
   $("#" + DivGridId).html(html);
-
+  ControlPagination(pages, columns, selected_page, module, model, "");
 };
 
 function doPostGrid(idGrid) {
@@ -521,7 +534,7 @@ function get_grid_page (module, model, columns, page) {
   };
 
   GetGridData(module, model, filter, columns, palavras_inteiras, page, ordenacao);
-
+  
 }
 
 function GetGridData (module, model, filter, columns, partial_search, page, order_by) {
@@ -549,6 +562,86 @@ function GetGridData (module, model, filter, columns, partial_search, page, orde
     failure: function (data) {
       alert('Got an error dude');
     }
-  });     
+  });       
+}
+
+function ControlPagination(total_pages, columns, selected_page, module, model, command){  
+  var section_paginate = $("#section_paginate").val();
   
+  var pages_in_section = 15;
+  var next_section = 0;
+  var initial_page = 0;
+  var end_page = 0;
+
+  if(command === "" && section_paginate != undefined){
+    next_section = section_paginate;
+  };
+ 
+  if( (command === "prior" && section_paginate === "1") || 
+      (command === "next" && parseInt(section_paginate) >= (total_pages/pages_in_section)  )){
+    return;
+  };
+
+  if (section_paginate === undefined) {
+    if(command === "next"){
+      next_section = 2;
+    }else if(command === "prior" || command === ""){
+      next_section = 1;
+    };
+  }else{
+    if(command === "next"){
+      next_section = parseInt(section_paginate) + 1;
+    }else if(command === "prior"){
+      next_section = parseInt(section_paginate) - 1;
+    };
+  };
+  
+  initial_page = ( (next_section - 1) * pages_in_section);
+  end_page = initial_page + pages_in_section;
+
+  if (initial_page > total_pages)
+    initial_page = 0;
+
+  if (end_page > total_pages)
+    end_page = total_pages;
+
+  var class_selected_page = "";
+  var html = "";
+
+  for(var i = initial_page + 1; i <= end_page; i++){
+    if (selected_page === i){
+      class_selected_page = "active disabled selected-page";
+    }else{
+      class_selected_page = "no-selected-page";
+    };
+
+    html += "<li class='"+ class_selected_page +"' ><a href='javascript:void()' onclick='get_grid_page(\"" + 
+      module + "\", \"" + model + "\", " +
+      JSON.stringify(columns)  + "," + i.toString() + ")' >" +
+      i.toString() +"</a></li>";
+  };
+
+  if (section_paginate === undefined) {
+     $("body").append("<input id='section_paginate' type='hidden' value='"+ next_section + "'>");
+  }else{
+    $("#section_paginate").val(next_section);
+  };
+
+  $("nav > .pagination").html(html);
+  PaginagionCentralize();
+}
+
+function PaginagionCentralize(){
+  main_width = $(".navigation").width();
+  child_width = 0
+
+  $(".pagination").each(function(){
+    child_width += $(this).width()
+  });
+    
+  width_wrap = (main_width - child_width) / 2;
+  $("#navigation-wrapper").remove();
+  $(".navigation").prepend("<div id='navigation-wrapper' class='inline'></div>");
+  $("#navigation-wrapper").width(width_wrap);
+  $("#navigation-wrapper").height(35);
 }

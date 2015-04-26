@@ -21,6 +21,12 @@ from django.forms import ModelForm, Form
 from vlib import views as vlib_views
 from django.forms.utils import ErrorList
 
+from importlib import import_module
+from django.conf import settings
+
+SessionStore = import_module(settings.SESSION_ENGINE).SessionStore
+
+
 try:
     from cadastro.funcionario.models import Funcionario
     UtilizaFuncionario = True
@@ -111,12 +117,30 @@ class StandardFormGrid(ModelForm):
 
     def custom_grid_validations(self, grid_model, grid_data, parent_instance):
         '''override this method to make custom validations'''
-        return ""
+        return str()
+
+    def after_insert_grid_row(self, instance):
+        '''override this method to make custom procedures for each grid row inserted.
+           This method have a object's instance inserted on the database as parameter(instance)
+        '''
+
+    def after_update_grid_row(self, instance):
+        '''override this method to make custom procedures for each grid row updated.
+           This method have a object's instance updated on the database as parameter(instance)
+        '''
+
+    def before_delete_grid_row(self, instance):
+        '''override this method to make custom procedures for each grid row that will be delete.
+           This method have a object's instance that will be deleted on the database as parameter(instance)
+        '''
 
     def save_grids(self, parent_instance_pk):        
-        erro = ""
+        erro = str()
+
         if self.child_models:            
+
             grids = self.split_child_models()
+
             for grid in grids:
                 if not grid:
                     continue                    
@@ -132,16 +156,19 @@ class StandardFormGrid(ModelForm):
 
                 if 'rows_deleted' in data_dict:                    
                     if data_dict['rows_deleted']:
-                        return vlib_views.delete(data = data_dict['rows_deleted'], model = model)                                  
+                        return vlib_views.delete(data = data_dict['rows_deleted'], model = model,
+                            execute_on_before_delete = self.before_delete_grid_row)                                  
                 else:
                     if data_dict['rows_inserted']:                    
                         erro = vlib_views.insert(data = data_dict['rows_inserted'], model = model, commit = True,
-                            link_to_form = data_dict['link_to_form'], parent_instance = parent_instance_pk) 
+                            link_to_form = data_dict['link_to_form'], parent_instance = parent_instance_pk,
+                            execute_on_after_insert = self.after_insert_grid_row) 
                     if erro:
                         return erro
     
                     if data_dict['rows_updated']:                        
-                        erro = vlib_views.update(data = data_dict['rows_updated'], model = model, commit = True)
+                        erro = vlib_views.update(data = data_dict['rows_updated'], model = model, commit = True,
+                            execute_on_after_update = self.after_update_grid_row)
                         return erro
         return str()        
 
@@ -207,8 +234,10 @@ class ViewCreate(CreateView, AjaxableResponseMixin):
         
         if self.form_class == None:
             self.form_class = StandardFormGrid
+
         self.form_class = CreateForm(self.model).create_form(GridsData = grids_data, class_form = self.form_class, \
             user = request.user)
+
         form_class = self.get_form_class()
         form = self.get_form(form_class)
         self.object = self.model
@@ -223,8 +252,12 @@ class ViewCreate(CreateView, AjaxableResponseMixin):
         else:
             return self.form_invalid(form)
 
-
     def get_context_data(self, **kwargs):   
+        apps = dict(self.request.session['apps_label'])
+        module = self.model.__module__
+        module = module.replace(".models", "")
+        page_caption = apps[module]
+
         Urls = urlsCrud(self.model);
         grid = Grid(self.model)
         context = super(ViewCreate, self).get_context_data(**kwargs)   
@@ -234,6 +267,7 @@ class ViewCreate(CreateView, AjaxableResponseMixin):
         context['url_insert'] = Urls.BaseUrlInsert(1)
         context['form_id'] = self.model.__name__
         context['grid'] = grid.grid_as_text(use_crud = False, read_only = False, dict_filter = {'id':-1});        
+        context['titulo'] = page_caption        
         return context
  
 class ViewUpdate(UpdateView, AjaxableResponseMixin):
@@ -248,6 +282,11 @@ class ViewUpdate(UpdateView, AjaxableResponseMixin):
         return self.success_url
 
     def get_context_data(self, **kwargs):   
+        apps = dict(self.request.session['apps_label'])
+        module = self.model.__module__
+        module = module.replace(".models", "")
+        page_caption = apps[module]
+
         Urls = urlsCrud(self.model);            
         context = super(UpdateView, self).get_context_data(**kwargs)   
         context['form_id'] = self.model.__name__        
@@ -259,6 +298,7 @@ class ViewUpdate(UpdateView, AjaxableResponseMixin):
         context['CssFiles'] = StaticFiles.GetCss(self.MediaFiles)    
         context['url_list'] =  Urls.BaseUrlList(CountPageBack = 2)    
         context['url_update'] = Urls.BaseUrlUpdate(CountPageBack = 2)        
+        context['titulo'] = page_caption                        
         return context
 
     @method_decorator(login_required)
@@ -315,6 +355,10 @@ class ViewList(ListView):
 
     
     def get_context_data(self, **kwargs):   
+        apps = dict(self.request.session['apps_label'])
+        module = self.model.__module__
+        module = module.replace(".models", "")
+        page_caption = apps[module]
 
         context = super(ViewList, self).get_context_data(**kwargs)   
         
@@ -323,7 +367,7 @@ class ViewList(ListView):
         context['JsFiles'] = StaticFiles.GetJs(self.MediaFiles)
         context['CssFiles'] = StaticFiles.GetCss(self.MediaFiles)  
         context['grid'] = grid.grid_as_text(display_fields = self.Grid_Fields, use_crud = True, read_only = True);
-
+        context['titulo'] = page_caption         
         return context
 
     @method_decorator(login_required)

@@ -6,19 +6,41 @@ from django.apps import apps
 from django.core.exceptions import ValidationError
 from vlib.filtro import Filtro as FormFiltro
 from vlib.grid import Grid
+from vlib.menu_apps import MenuApps
 from collections import OrderedDict
 
-#from django.utils.decorators import classonlymethod
+from django.shortcuts import render
+from django.shortcuts import render_to_response
+from django.contrib.auth.decorators import login_required
+
+
+#from importlib import import_module
+#from django.conf import settings
+
+#SessionStore = import_module(settings.SESSION_ENGINE).SessionStore
+
+
 LINE_SEPARATOR = "<<LINE_SEPARATOR>>"
 
 
-#class GridPersistence(object):
+# Create your views here.
 
-#@staticmethod
-def insert(data, model, commit = True, link_to_form = "", parent_instance = None):
+@login_required
+def index(request):
+     
+    #Session = SessionStore()
+
+    request.session['apps_label'] = MenuApps.GetAppsVerboseName()
+#    Session.save()
+    return render_to_response('base.html')
+
+
+def insert(data, model, commit = True, link_to_form = "", parent_instance = None, 
+    execute_on_after_insert = None):
 
     if not data:
-        return ""
+        return str()
+
     if link_to_form[-3:].upper() == "_ID":
         link_to_form = link_to_form[:-3]
 
@@ -30,6 +52,7 @@ def insert(data, model, commit = True, link_to_form = "", parent_instance = None
     for row in lista:     
         if not row:
             continue    
+
         row_json = dict(json.loads(row))
         mod = model()
 
@@ -56,12 +79,14 @@ def insert(data, model, commit = True, link_to_form = "", parent_instance = None
             return "<input id='grid_erros' value='%s'>" % str(e).replace("'", "").replace('"', "")
 
         if commit :
-            mod.save()        
+            mod.save()
+            if execute_on_after_insert :             
+                execute_on_after_insert(instance = mod)
 
-    return ""    
+    return str()
 
 #@staticmethod    
-def delete(data, model):
+def delete(data, model, execute_on_before_delete = None):
     lista = data.split(LINE_SEPARATOR)    
 
     for row in lista:        
@@ -70,6 +95,8 @@ def delete(data, model):
         row_json = dict(json.loads(row))
         mod = model.objects.get(pk=row_json['id'])
         try:
+            if execute_on_before_delete:
+                execute_on_before_delete(instance = mod)
             mod.delete()
         except Error as e:
             return e
@@ -77,7 +104,7 @@ def delete(data, model):
     return ""    
 
 #@staticmethod
-def update(data, model, commit = True):
+def update(data, model, commit = True, execute_on_after_update = None):
 
     if data.count(LINE_SEPARATOR) > 0:
         lista = data.split(LINE_SEPARATOR)    
@@ -87,6 +114,7 @@ def update(data, model, commit = True):
     for row in lista:                
         if not row:
             continue
+
         row_json = dict(json.loads(row))        
         mod = model.objects.get(pk=row_json['id'])        
 
@@ -98,6 +126,7 @@ def update(data, model, commit = True):
             else:
                 if field.name + '_id' in row_json:
                     setattr(mod, field.name + '_id', row_json[field.name + '_id'])
+
         try:
             mod.full_clean()
         except ValidationError as e:
@@ -105,8 +134,10 @@ def update(data, model, commit = True):
 
         if commit :
             mod.save()
+            if execute_on_after_update:
+                execute_on_after_update(instance = mod)
 
-    return ""    
+    return str()    
 
 #@classonlymethod
 def save_grid(request):    
@@ -203,13 +234,18 @@ def GetGridCrud(request):
     else:
         grid_filter = str()    
         
-    fields = json.loads(request.GET.get('columns'), object_pairs_hook=OrderedDict)
+    OrderedDict_Cols = json.loads(request.GET.get('columns'), object_pairs_hook=OrderedDict)
     
     fields_display = []
-    
-    for field in fields:    
-        if not field in ["col_update", "col_delete"]:
-            fields_display.append(field)
+
+    for fields in list(OrderedDict_Cols.items()):
+
+        properties_field = list(fields[1].items())
+        if len(properties_field) >= 4: #equal or more than a four properties
+            field_to_display = properties_field[3][1]
+            fields_display.append(field_to_display)
+#        if not fields in ["col_update", "col_delete"]:
+#            fields_display.append(field)
     
     try:
         model = apps.get_app_config(list_module[len(list_module)-2]).get_model(str_model)
@@ -217,17 +253,32 @@ def GetGridCrud(request):
         return HttpResponse("An error ocurred. The model or module don't exists")
 
     dict_filter = {}
+    field_name = str()
+    
     if grid_filter:
         for field in grid_filter:        
             if field["name"] != "csrfmiddlewaretoken":       
-                if field["value"] != "":        
-                    if partial_search == "S":
-                        dict_filter.update({field["name"] + "__iexact" : field["value"]})
-                    else:    
-                        dict_filter.update({field["name"] + "__icontains": field["value"]})
 
+                if field["value"] != "":  
+                    
+                    try:
+                        fk = model._meta.get_field(field["name"]).rel.to
+                    except:
+                        fk = None
+                        
+                    if fk :
+                        field_name = model._meta.get_field(field["name"]).get_attname_column()[0]                         
+                        dict_filter.update({field_name : field["value"]})                        
+                    else:
+                        field_name = field["name"]
+                    
+                        if partial_search == "S":
+                            dict_filter.update({field_name + "__iexact" : field["value"]})
+                        else:    
+                            dict_filter.update({field_name + "__icontains": field["value"]})
+    
     GridData = Grid(model)            
-    print(order_by)
+
     grid_js = GridData.get_js_grid(use_crud = True, dict_filter = dict_filter,
         display_fields = tuple(fields_display), page = page, order_by = order_by)
 

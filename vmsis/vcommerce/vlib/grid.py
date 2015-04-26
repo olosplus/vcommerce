@@ -4,6 +4,7 @@ import json
 from django.utils.translation import ugettext as _
 from django.db.models.loading import get_model
 from django.apps import apps
+import math
 
 class Grid:
     def __init__(self, model, parent_model = None, parent_pk_value = -1):
@@ -116,10 +117,10 @@ class Grid:
             return self.model.objects.filter(**dict_filter).values_list(*fields_to_display)
 
 
-    def get_pagination_data(self, fields_to_display, dict_filter, page, limit_data, order_by = 'id'):        
+    def get_pagination_data(self, fields_to_display, dict_filter, page, limit_data, order_by = 'id'):                
         data = self.get_data(fields_to_display = fields_to_display, dict_filter = dict_filter)        
         initial = (int(page)-1) * limit_data                              
-        pages = round(data.count() / limit_data)                
+        pages = math.ceil(data.count() / limit_data)                
         return {"data" : data.order_by(order_by)[initial : initial + limit_data], 
             "pages" : pages, "selected_page" : page }
 
@@ -128,7 +129,7 @@ class Grid:
         dict_filter = {}, page = 1, limit_data = 15, order_by = 'id'): 
         ''' transform the values of a model to javascript object ''' 
 
-        # string to save columns and rows 
+        # strings to save columns and rows 
         columns = str()
         rows = str()
 
@@ -176,26 +177,31 @@ class Grid:
                     continue
 
                 if not grid_conf["objects"]:                
-                    columns += '"%s":{"name":"%s", "label":"%s", "type":"%s"},' % (field.name, 
-                        self.get_name_column_grid(field.name, type(field)), field.verbose_name, grid_conf["type"])
+                    columns += '"%s":{"name":"%s", "label":"%s", "type":"%s", "name_field_display":"%s"},' % \
+                    (field.name, self.get_name_column_grid(field.name, type(field)), 
+                      field.verbose_name, grid_conf["type"], field.name)
                 else:
-                    columns += '"%s":{"name":"%s", "label":"%s", "type":"%s", "options":%s, "values":%s},' \
+                    print(grid_conf["objects"])
+                    columns += '"%s":{"name":"%s", "label":"%s", "type":"%s", "options":%s, "values":%s, \
+                    "name_field_display":"%s"},'\
                     % (field.name, self.get_name_column_grid(field.name, type(field)), field.verbose_name, 
-                        grid_conf["type"], grid_conf["objects"], grid_conf["values"] )  
+                        grid_conf["type"], grid_conf["objects"], grid_conf["values"], 
+                        field.name )  
 
                 fields_to_display.append(field.name)
             else :
-                temp_display = []
+                temp_display = {}
                 for f in display_fields:
-                    if f.count('__') > 0:
-                        temp_display.append(f[0:f.index('__')].upper())
+                    if f.count('__') > 0 :
+                        temp_display.update({f[0:f.index('__')].upper():{"name":f[0:f.index('__')].upper(), \
+                         "display_name" : f}})
                     else:
-                        temp_display.append(f.upper())
-                    
+                        temp_display.update({f.upper():{"name":f.upper(), "display_name" : f}})
+                
                 if field.name.upper() in temp_display:
-                    columns += '"%s":{"name":"%s", "label":"%s", "type":"%s"},' % (field.name, 
-                        self.get_name_column_grid(field.name, type(field)), field.verbose_name,
-                        grid_conf["type"])                
+                    columns += '"%s":{"name":"%s", "label":"%s", "type":"%s", "name_field_display":"%s"},' % \
+                    (field.name, self.get_name_column_grid(field.name, type(field)), field.verbose_name,
+                        grid_conf["type"], temp_display[field.name.upper()]["display_name"] )
                         
         if use_crud:
             columns += '"col_update":{"name":"update", "label":"%s", "type":"link"},' % ''#(_('Update'))            
