@@ -13,9 +13,11 @@ choice_tipo_jfo = (('J','Jurídica'),
 # Create your models here.
 class Unidade(Master_endereco):
     class Meta:
-    	db_table = "unidade"
-    	verbose_name = "Unidade"
-    	verbose_name_plural = "Unidades"
+        db_table = "unidade"
+        verbose_name = "Unidade"
+        verbose_name_plural = "Unidades"
+        child_models = ['cadastro.localidade.endereco.models.Endereco',
+                        'cadastro.contato.models.Contato']        
 
     nrinscjurd = models.CharField(max_length=20,verbose_name="Inscrição Jurídica")
     nmrazao = models.CharField(max_length=255,verbose_name="Razão Social")
@@ -26,4 +28,4 @@ class Unidade(Master_endereco):
     almoxarifado = models.ManyToManyField(Almoxarifado,verbose_name="Almoxarifado", null=True)
 
     def __str__(self):
-    	return self.nmfantasia
+        return self.nmfantasia

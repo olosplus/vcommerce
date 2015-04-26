@@ -1,1 +1,1 @@
-[{"pk": 1, "model": "almoxarifado.Almoxarifado", "fields": {"nmalmoxa": "Padrão"}}]
+[{"pk": 1, "model": "almoxarifado.Almoxarifado", "fields": {"nmalmoxa": "Almoxarifado Padrão", "dtcadastro": "2015-05-03"}}]
