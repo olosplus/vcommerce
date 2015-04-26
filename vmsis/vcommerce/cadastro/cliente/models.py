@@ -9,9 +9,11 @@ choice_tipo_jfo = (('J','Jurídica'),
 # Create your models here.
 class Cliente(Master_endereco):
     class Meta:
-    	db_table = "cliente"
-    	verbose_name = "Cliente"
-    	verbose_name_plural = "Clientes"
+        db_table = "cliente"
+        verbose_name = "Cliente"
+        verbose_name_plural = "Clientes"
+        child_models = ['cadastro.localidade.endereco.models.Endereco',
+                        'cadastro.contato.models.Contato']
 
     nrinscjurd = models.CharField(max_length=20,verbose_name="Inscrição Jurídica")
     nmcliente = models.CharField(max_length=250,verbose_name="Nome",unique=True)
