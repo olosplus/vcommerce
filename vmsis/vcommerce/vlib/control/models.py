@@ -3,7 +3,7 @@ from django.db import models
 from cadastro.empresa.models import Empresa
 
 # Create your models here.
-class Master(models.Model):
+class Master_endereco(models.Model):
 	"""docstring for ClassName"""
 	class Meta:
 		db_table = "master"

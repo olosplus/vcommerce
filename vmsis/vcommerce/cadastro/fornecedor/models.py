@@ -1,13 +1,13 @@
 # -*- coding: utf-8 -*-
 from django.db import models
-from vlib.control.models import Master
+from vlib.control.models import Master_endereco
 
 choice_tipo_jfo = (('J','Jurídica'),
 	('F','Física'),
 	('O','Outros'))
 
 # Create your models here.
-class Fornecedor(Master):
+class Fornecedor(Master_endereco):
     class Meta:
     	db_table = "fornecedor"
     	verbose_name = "Fornecedor"

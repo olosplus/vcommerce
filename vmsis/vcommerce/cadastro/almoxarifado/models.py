@@ -1,9 +1,9 @@
-# -*- coding: utf-8 -*- 
+# -*- coding: utf-8 -*-
 from django.db import models
-from vlib.control.models import Master
+from vlib.control.models import Master_endereco
 
 # Create your models here.
-class Almoxarifado(Master):
+class Almoxarifado(Master_endereco):
     class Meta:
     	db_table = "almoxarifado"
     	verbose_name = "Almoxarifado"
