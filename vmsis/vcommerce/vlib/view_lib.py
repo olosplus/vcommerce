@@ -82,16 +82,6 @@ class AjaxableResponseMixin(object):
         else:
             return response
 
-#    def get_context_data(self, **kwargs):   
-#        print('iva')
-#        context = super(AjaxableResponseMixin, self).get_context_data(**kwargs)   
-#        apps = dict(self.request.session['apps_label'])
-#        module = self.model.__module__
-#        module = module.replace(".models", "")
-#        page_caption = apps[module]
-#        context['titulo'] = page_caption        
-#        return context
-
 class StandardFormGrid(ModelForm):
     child_models = str()
     current_user = None
@@ -129,8 +119,24 @@ class StandardFormGrid(ModelForm):
         '''override this method to make custom validations'''
         return str()
 
+    def after_insert_grid_row(self, instance):
+        '''override this method to make custom procedures for each grid row inserted.
+           This method have a object's instance inserted on the database as parameter(instance)
+        '''
+
+    def after_update_grid_row(self, instance):
+        '''override this method to make custom procedures for each grid row updated.
+           This method have a object's instance updated on the database as parameter(instance)
+        '''
+
+    def before_delete_grid_row(self, instance):
+        '''override this method to make custom procedures for each grid row that will be delete.
+           This method have a object's instance that will be deleted on the database as parameter(instance)
+        '''
+
     def save_grids(self, parent_instance_pk):        
         erro = str()
+
         if self.child_models:            
 
             grids = self.split_child_models()
@@ -150,16 +156,19 @@ class StandardFormGrid(ModelForm):
 
                 if 'rows_deleted' in data_dict:                    
                     if data_dict['rows_deleted']:
-                        return vlib_views.delete(data = data_dict['rows_deleted'], model = model)                                  
+                        return vlib_views.delete(data = data_dict['rows_deleted'], model = model,
+                            execute_on_before_delete = self.before_delete_grid_row)                                  
                 else:
                     if data_dict['rows_inserted']:                    
                         erro = vlib_views.insert(data = data_dict['rows_inserted'], model = model, commit = True,
-                            link_to_form = data_dict['link_to_form'], parent_instance = parent_instance_pk) 
+                            link_to_form = data_dict['link_to_form'], parent_instance = parent_instance_pk,
+                            execute_on_after_insert = self.after_insert_grid_row) 
                     if erro:
                         return erro
     
                     if data_dict['rows_updated']:                        
-                        erro = vlib_views.update(data = data_dict['rows_updated'], model = model, commit = True)
+                        erro = vlib_views.update(data = data_dict['rows_updated'], model = model, commit = True,
+                            execute_on_after_update = self.after_update_grid_row)
                         return erro
         return str()        
 

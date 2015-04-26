@@ -29,13 +29,14 @@ LINE_SEPARATOR = "<<LINE_SEPARATOR>>"
 def index(request):
      
     #Session = SessionStore()
-    
+
     request.session['apps_label'] = MenuApps.GetAppsVerboseName()
 #    Session.save()
     return render_to_response('base.html')
 
 
-def insert(data, model, commit = True, link_to_form = "", parent_instance = None):
+def insert(data, model, commit = True, link_to_form = "", parent_instance = None, 
+    execute_on_after_insert = None):
 
     if not data:
         return str()
@@ -78,12 +79,14 @@ def insert(data, model, commit = True, link_to_form = "", parent_instance = None
             return "<input id='grid_erros' value='%s'>" % str(e).replace("'", "").replace('"', "")
 
         if commit :
-            mod.save()        
+            mod.save()
+            if execute_on_after_insert :             
+                execute_on_after_insert(instance = mod)
 
     return str()
 
 #@staticmethod    
-def delete(data, model):
+def delete(data, model, execute_on_before_delete = None):
     lista = data.split(LINE_SEPARATOR)    
 
     for row in lista:        
@@ -92,6 +95,8 @@ def delete(data, model):
         row_json = dict(json.loads(row))
         mod = model.objects.get(pk=row_json['id'])
         try:
+            if execute_on_before_delete:
+                execute_on_before_delete(instance = mod)
             mod.delete()
         except Error as e:
             return e
@@ -99,7 +104,7 @@ def delete(data, model):
     return ""    
 
 #@staticmethod
-def update(data, model, commit = True):
+def update(data, model, commit = True, execute_on_after_update = None):
 
     if data.count(LINE_SEPARATOR) > 0:
         lista = data.split(LINE_SEPARATOR)    
@@ -109,6 +114,7 @@ def update(data, model, commit = True):
     for row in lista:                
         if not row:
             continue
+
         row_json = dict(json.loads(row))        
         mod = model.objects.get(pk=row_json['id'])        
 
@@ -120,6 +126,7 @@ def update(data, model, commit = True):
             else:
                 if field.name + '_id' in row_json:
                     setattr(mod, field.name + '_id', row_json[field.name + '_id'])
+
         try:
             mod.full_clean()
         except ValidationError as e:
@@ -127,8 +134,10 @@ def update(data, model, commit = True):
 
         if commit :
             mod.save()
+            if execute_on_after_update:
+                execute_on_after_update(instance = mod)
 
-    return ""    
+    return str()    
 
 #@classonlymethod
 def save_grid(request):    

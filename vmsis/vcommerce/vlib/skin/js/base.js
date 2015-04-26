@@ -4,6 +4,10 @@ $(document).ajaxComplete(function() {
   $('textarea').addClass('form-control');
   $('.errorlist').css('color','#990000');
   $('.errorlist').addClass('alert alert-danger');
+
+  $('.gridtag').removeClass('form-control');
+  
+
 });
 
 $(document).ready(function() {
@@ -12,4 +16,5 @@ $(document).ready(function() {
   $('textarea').addClass('form-control');
   $('.errorlist').css('color','#990000');
   $('.errorlist').addClass('alert alert-danger');  
+  $('.gridtag').removeClass('form-control');
 });
