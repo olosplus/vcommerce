@@ -76,10 +76,11 @@ def insert(data, model, commit = True, link_to_form = "", parent_instance = None
 
         try:
             if link_to_form:
-                mod.full_clean(exclude = (link_to_form,))
+                mod.full_clean(exclude = (link_to_form, parent_instance.__class__.__base__.__name__, \
+                parent_instance.__class__.__base__.__name__))
             else:
-                mod.full_clean(exclude = (parent_instance.__class__.__base__.__name__.lower(), \
-                    parent_instance.__class__.__base__.__name__.lower()))                    
+                mod.full_clean(exclude = (parent_instance.__class__.__base__.__name__, \
+                    parent_instance.__class__.__base__.__name__))                    
         except ValidationError as e:            
             return "<input id='grid_erros' value='%s'>" % str(e).replace("'", "").replace('"', "")
 
