@@ -25,6 +25,11 @@ apps_on_menu = (
     {'app': 'vatualiza', 'verbose_name' : 'Atualização', 'visible': False},
     {'app': 'cadastro.centro_custo', 'verbose_name' : 'Centro de Custos'},    
     
+    # TELAS DO FLUXO DE CAIXA
+    {'app': 'fluxocaixa', 'verbose_name' : 'Fluxo de Caixa', 'imgmenu':'fa fa-money'},
+    {'app': 'fluxocaixa.contapagar', 'verbose_name' : 'Conta a Pagar'},
+    {'app': 'fluxocaixa.contareceber', 'verbose_name' : 'Conta a Receber'},
+
     # TELAS DA CONTABILIDADE
     {'app': 'contabilidade', 'verbose_name' : 'Contabilidade', 'imgmenu' : 'glyphicon glyphicon-book'},
     {'app': 'contabilidade.cadastro_contabil', 'verbose_name' : 'Cadastros Contábeis'},
