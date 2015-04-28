@@ -85,9 +85,9 @@ class Grid:
         column_type = attr[field_name]['grid-type']
         column_model = attr[field_name]['model']
 
-        if self.parent_model and column_model == self.parent_model:
+        if self.parent_model and (column_model == self.parent_model) or (self.parent_model.__base__ == column_model):
             return {"type":"", "objects":"", "values":"", "is_link_to_form" : True }
-        
+         
         if column_model != None:
             query = column_model.objects.all()
             str_objects, id_values = [], []
@@ -108,8 +108,7 @@ class Grid:
         if dict_filter == {}:
             column_model = None
 
-            if self.parent_model != None:                                
-                
+            if self.parent_model != None:                                                
                 for field in self.model._meta.fields: 
                     column_model = self.get_grid_column_model(field.name)                    
                     if (column_model == self.parent_model) or (self.parent_model.__base__ == column_model):
@@ -266,10 +265,10 @@ class Grid:
         
         return '{"columns":{%s}, "rows":{%s}, "bar":{%s}, "grid_key":"%s", "grid_mod" : "%s", '\
             '"use_crud":"%s", "read_only":"%s", "url_insert":"%s", "url_update":"%s", "url_delete":"%s", \
-            "parent":"%s", "link_to_form":"%s", "number_of_pages" : "%s", "selected_page" : "%s" }' % \
+            "parent":"%s", "link_to_form":"%s", "number_of_pages" : "%s", "selected_page" : "%s", title:"%s" }' % \
             (columns, rows, bottom_bar, self.model.__module__, self.model.__name__, str(use_crud), 
             str(read_only), url_insert, url_update, url_delete, parent_model_str, link_to_form, 
-            pagination['pages'], pagination['selected_page'])
+            pagination['pages'], pagination['selected_page'], self.model._meta.verbose_name)
 
     @staticmethod
     def grid_script(data, model):

@@ -64,12 +64,12 @@ class AjaxableResponseMixin(object):
     Mixin to add AJAX support to a form.
     Must be used with an object-based FormView (e.g. CreateView)
     """
-#    def form_invalid(self, form):
-#        response = super(AjaxableResponseMixin, self).form_invalid(form)
-#        if self.request.is_ajax():
-#            return JsonResponse(form.errors, status=400)
-#        else:
-#            return response
+    def form_invalid(self, form):
+        response = super(AjaxableResponseMixin, self).form_invalid(form)
+        if self.request.is_ajax():
+            return JsonResponse(form.errors, status=400)
+        else:
+            return response
 
     def form_valid(self, form):
         response = super(AjaxableResponseMixin, self).form_valid(form)
@@ -142,16 +142,17 @@ class StandardFormGrid(ModelForm):
         if self.child_models:            
 
             grids = self.split_child_models()
-
+            
             for grid in grids:
+            
                 if not grid:
                     continue                    
- 
+          
                 data_dict = json.loads(grid)        
                 model = vlib_views.get_model_by_string(data_dict['module'], data_dict['model'])
 
                 erro = self.custom_grid_validations(grid_model = model, grid_data = data_dict, \
-                 parent_instance = parent_instance_pk)
+                    parent_instance = parent_instance_pk)
 
                 if erro:
                     return erro
@@ -171,7 +172,8 @@ class StandardFormGrid(ModelForm):
                     if data_dict['rows_updated']:                        
                         erro = vlib_views.update(data = data_dict['rows_updated'], model = model, commit = True,
                             execute_on_after_update = self.after_update_grid_row)
-                        return erro
+                        if erro:
+                            return erro
         return str()        
 
     def __init__(self, data=None, files=None, auto_id='id_%s', prefix=None,
@@ -222,7 +224,7 @@ class CreateForm(object):
             current_user = user
         return vmsisForm
    
-class ViewCreate(CreateView):  
+class ViewCreate(CreateView, AjaxableResponseMixin):  
     template_name = TEMPLATE_INSERT
     MediaFiles = []   
     
@@ -282,7 +284,7 @@ class ViewCreate(CreateView):
         context['titulo'] = page_caption        
         return context
  
-class ViewUpdate(UpdateView):
+class ViewUpdate(UpdateView, AjaxableResponseMixin):
     template_name = TEMPLATE_UPDATE
     MediaFiles = []
 
@@ -329,10 +331,8 @@ class ViewUpdate(UpdateView):
         form_class = self.get_form_class()
         form = self.get_form(form_class)
         self.object = self.model        
-
-        instance = form.get_instace()
-
-        grid_erros = form.get_grids_erros(instance)
+        
+        grid_erros = form.get_grids_erros(None)
 
         if grid_erros:
             return HttpResponse(grid_erros)

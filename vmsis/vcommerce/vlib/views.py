@@ -2,6 +2,7 @@
 from django.http import HttpResponse
 import json
 from django.db.models import get_model
+from django.db import models
 from django.apps import apps
 from django.core.exceptions import ValidationError
 from vlib.filtro import Filtro as FormFiltro
@@ -49,23 +50,35 @@ def insert(data, model, commit = True, link_to_form = "", parent_instance = None
     else:
         lista = [data]
     
+
+
     for row in lista:     
         if not row:
             continue    
-
+        
+        is_fk_to_parent = False
+        model_field_rel_to = None
+        exclude_validations = []
+        
         row_json = dict(json.loads(row))
         mod = model()
-
+         
         for field in model._meta.fields:
             if field.name == 'id':
                 continue
+           
+            if field.__class__ == models.ForeignKey:
+                model_field_rel_to = mod._meta.get_field(field.name).rel.to
+                is_fk_to_parent = (model_field_rel_to == parent_instance.__class__ or \
+                    model_field_rel_to == parent_instance.__class__.__base__)
 
-            if field.name.lower() == parent_instance.__class__.__name__.lower() or \
-               field.name.lower() == parent_instance.__class__.__base__.__name__.lower():
+            if is_fk_to_parent:
                 setattr(mod, field.name, parent_instance)  
+                exclude_validations.append(field.name)
                 continue 
             elif field.name == link_to_form and commit:
                 setattr(mod, field.name, parent_instance)
+                exclude_validations.append(field.name)
                 continue
 
             if field.name in row_json:
@@ -75,12 +88,7 @@ def insert(data, model, commit = True, link_to_form = "", parent_instance = None
                     setattr(mod, field.name + '_id', row_json[field.name + '_id'])
 
         try:
-            if link_to_form:
-                mod.full_clean(exclude = (link_to_form, parent_instance.__class__.__base__.__name__, \
-                parent_instance.__class__.__base__.__name__))
-            else:
-                mod.full_clean(exclude = (parent_instance.__class__.__base__.__name__, \
-                    parent_instance.__class__.__base__.__name__))                    
+            mod.full_clean(exclude = tuple(exclude_validations))
         except ValidationError as e:            
             return "<input id='grid_erros' value='%s'>" % str(e).replace("'", "").replace('"', "")
 

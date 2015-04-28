@@ -252,7 +252,8 @@ function Grid(DivGridId, Data) {
   var link_to_form = Data.link_to_form;
   var pages = parseInt(Data.number_of_pages);
   var selected_page = parseInt(Data.selected_page);
-  
+  var title = Data.title;
+
   var html = "<div class='grid'>";
   
   if (readonly === "True") {
@@ -268,7 +269,10 @@ function Grid(DivGridId, Data) {
     html += "<a class = 'glyphicon glyphicon-search' href='JavaScript:void()' "+
       "onclick='Filter(\"" + module + "\", \"" + model + "\", " + JSON.stringify(columns)  +
       "  )' title='Filtrar' ></a>";
-  };
+  }
+  else{
+    html += "<h4 class='page-header title'>" + title +"</h4>";
+  }
 
   html += "<table id='" + grid_id + "' parent='" + 
     parent + "'" + "link_to_form='" + link_to_form + "'" +
