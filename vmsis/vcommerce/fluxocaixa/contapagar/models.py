@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
 from django.db import models
-#from vlib.control.models import Master
-from cadastro.empresa.models import Empresa
-from cadastro.unidade.models import Unidade
+from vlib.control.models import Master_unidade
 from cadastro.fornecedor.models import Fornecedor
 
 choice_forma_pagamento = (
@@ -25,14 +23,12 @@ choice_status = (
     ('2', 'Paga'))
 
 # Create your models here.
-class ContaPagar(models.Model):
+class ContaPagar(Master_unidade):
     class Meta:
     	db_table = "contapagar"
     	verbose_name = "Conta a Pagar"
     	verbose_name_plural = "Conta a Pagar"
 
-    cdempresa = models.ForeignKey(Empresa, verbose_name="Empresa")
-    nrinscjurdUnid = models.ForeignKey(Unidade, verbose_name="Unidade")
     idformapagamento = models.CharField(max_length=1,verbose_name="Forma de Pagamento",choices=choice_forma_pagamento)
     dscontapagar = models.CharField(max_length=2000,verbose_name="Descriçao")
     nrinscjurdForn = models.ForeignKey(Fornecedor, verbose_name="Forncedor")

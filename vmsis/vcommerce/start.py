@@ -32,11 +32,9 @@ try:
     return_code = subprocess.call('python manage.py loaddata cadastro/fix/banco.json', shell=True)
     print("\nCentro de Custo...")
     return_code = subprocess.call('python manage.py loaddata cadastro/fix/centrodecusto.json', shell=True)
-    print("\nAlmoxarifado...")
-    return_code = subprocess.call('python manage.py loaddata cadastro/fix/almoxarifado.json', shell=True)
 
-    print("\nCadastros Samanta...")
-    return_code = subprocess.call('python manage.py loaddata cadastro/fix/samanta.json', shell=True)
+    #print("\nCadastros Samanta...")
+    #return_code = subprocess.call('python manage.py loaddata cadastro/fix/samanta.json', shell=True)
 
     print("\nIniciando serviço...")
     return_code = subprocess.call('python manage.py runserver', shell=True)

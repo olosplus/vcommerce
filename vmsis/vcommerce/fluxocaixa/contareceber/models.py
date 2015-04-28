@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 from django.db import models
-from cadastro.empresa.models import Empresa
-from cadastro.unidade.models import Unidade
+from vlib.control.models import Master_unidade
 from cadastro.cliente.models import Cliente
 
 choice_forma_recebimento = (
@@ -24,14 +23,12 @@ choice_status = (
     ('2', 'Recebido'))
 
 # Create your models here.
-class ContaReceber(models.Model):
+class ContaReceber(Master_unidade):
     class Meta:
     	db_table = "contareceber"
     	verbose_name = "Conta a Receber"
     	verbose_name_plural = "Conta a Receber"
 
-    cdempresa = models.ForeignKey(Empresa, verbose_name="Empresa")
-    nrinscjurdUnid = models.ForeignKey(Unidade, verbose_name="Unidade")
     idformapagamento = models.CharField(max_length=1,verbose_name="Forma de Recebimento",choices=choice_forma_recebimento)
     dscontareceber = models.CharField(max_length=2000,verbose_name="Descriçao")
     nrinscjurdClie = models.ForeignKey(Cliente, verbose_name="Cliente")
