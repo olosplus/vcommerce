@@ -76,8 +76,9 @@ def insert(data, model, commit = True, link_to_form = "", parent_instance = None
                 setattr(mod, field.name, parent_instance)  
                 exclude_validations.append(field.name)
                 continue 
-            elif field.name == link_to_form and commit:
-                setattr(mod, field.name, parent_instance)
+            elif field.name == link_to_form:
+                if commit:
+                    setattr(mod, field.name, parent_instance)
                 exclude_validations.append(field.name)
                 continue
 
