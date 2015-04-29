@@ -318,6 +318,7 @@ function Grid(DivGridId, Data) {
   html += "</table>";
 
   if (readonly === "False") {
+    html += "<div class='panel-footer'>";
     html += "  <a href='#' class='fa fa-file-o' title='Adicionar'" + 
       "onclick='InsertEmptyRow(" + JSON.stringify(columns) + ",\"" + grid_id + "\", \"" + link_to_form + "\" )'>" +
        "</a> | ";
@@ -330,6 +331,7 @@ function Grid(DivGridId, Data) {
 
     html += "  <a href='#' onclick='doPostGrid(\"" + grid_id + "\")' class='glyphicon glyphicon-floppy-disk' " + 
       " title='Salvar'></a>";
+    html += "</div>";
   }else{
     html += "<div class='navigation' >";
     html += "<div class='navigation-centralize'>"
