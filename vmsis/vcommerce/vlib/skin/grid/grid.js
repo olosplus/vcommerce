@@ -254,9 +254,10 @@ function Grid(DivGridId, Data) {
   var selected_page = parseInt(Data.selected_page);
   var title = Data.title;
 
-  var html = "<div class='grid'>";
+  var html = "";
   
   if (readonly === "True") {
+    html = "<div class='grid'>";
     for (item_bar in bar) {
       if (bar.hasOwnProperty(item_bar)) {
         if ((bar[item_bar].type === 'link') && (readonly === "True")) {
@@ -271,7 +272,8 @@ function Grid(DivGridId, Data) {
       "  )' title='Filtrar' ></a>";
   }
   else{
-    html += "<h4 class='page-header title'>" + title +"</h4>";
+    html += "<div class='grid panel panel-default' >";
+    html += "<div class='panel-heading'>" + title + "</div>";
   }
 
   html += "<table id='" + grid_id + "' parent='" + 
