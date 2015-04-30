@@ -9,6 +9,8 @@ class Item(models.Model):
 		db_table = "produto"
 		verbose_name = "Produto"
 		verbose_name_plural = "Produtos"
+		child_models = ['pedido.cadastro_pedido.composicaoproduto.models.ComposicaoProd']
+
 
 	posarvore = models.CharField(max_length=40,verbose_name='Arvore')
 	nmproduto = models.CharField(max_length=200,verbose_name='Nome',blank=True)
@@ -17,6 +19,8 @@ class Item(models.Model):
 	#prodest = models.OneToOneField('self',related_name='Produto_prodest',verbose_name='Produto de estoque')
 	fatorconv = models.FloatField(verbose_name='Fator de conversão')
 	cdbarra = models.CharField(max_length=100,verbose_name='Código de barras',blank=True)
+	idprodvenda = models.BooleanField(verbose_name='Produto de venda',default=False,blank=True) 
+	idadicional = models.BooleanField(verbose_name='Adicional',default=False,blank=True)
 	empresa = models.ForeignKey(Empresa,verbose_name="Empresa",null=True)
 
 	def __str__(self):

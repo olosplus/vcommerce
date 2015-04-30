@@ -54,4 +54,14 @@ apps_on_menu = (
     {'app': 'estoque.lote', 'verbose_name' : 'Lote', 'visible' : False},
     {'app': 'estoque.inventario', 'verbose_name' : 'Inventário'},
 
+   # TELAS DO PEDIDO
+    {'app': 'pedido', 'verbose_name' : 'Pedido', 'imgmenu' : 'fa fa-building-o'},
+    {'app': 'pedido.frentecaixa', 'verbose_name' : 'Pedido'},
+    {'app': 'pedido.cadastro_pedido', 'verbose_name' : 'Cadastros Pedido'},
+    {'app': 'pedido.cadastro_pedido.mesa', 'verbose_name' : 'Mesa'},
+    {'app': 'pedido.cadastro_pedido.categoria', 'verbose_name' : 'Categoria'},
+    {'app': 'pedido.cadastro_pedido.agrupadicional', 'verbose_name' : 'Agrupamento de Adicionais'},
+    {'app': 'pedido.cadastro_pedido.cardapio', 'verbose_name' : 'Cardápio'},
+    {'app': 'pedido.cadastro_pedido.composicaoproduto', 'verbose_name' : 'Composição do Produto', 'visible' : False},
+
 )
