@@ -265,7 +265,7 @@ class Grid:
         
         return '{"columns":{%s}, "rows":{%s}, "bar":{%s}, "grid_key":"%s", "grid_mod" : "%s", '\
             '"use_crud":"%s", "read_only":"%s", "url_insert":"%s", "url_update":"%s", "url_delete":"%s", \
-            "parent":"%s", "link_to_form":"%s", "number_of_pages" : "%s", "selected_page" : "%s", title:"%s" }' % \
+            "parent":"%s", "link_to_form":"%s", "number_of_pages" : "%s", "selected_page" : "%s", "title":"%s" }' % \
             (columns, rows, bottom_bar, self.model.__module__, self.model.__name__, str(use_crud), 
             str(read_only), url_insert, url_update, url_delete, parent_model_str, link_to_form, 
             pagination['pages'], pagination['selected_page'], self.model._meta.verbose_name)

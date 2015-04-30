@@ -14,11 +14,15 @@ from django.shortcuts import render
 from django.shortcuts import render_to_response
 from django.contrib.auth.decorators import login_required
 
+from importlib import import_module
+from django.conf import settings
+from django.core import serializers
 
-#from importlib import import_module
-#from django.conf import settings
-
-#SessionStore = import_module(settings.SESSION_ENGINE).SessionStore
+try:
+    from cadastro.funcionario.models import Funcionario
+    UtilizaFuncionario = True
+except ImportError:
+    UtilizaFuncionario = False
 
 
 LINE_SEPARATOR = "<<LINE_SEPARATOR>>"
@@ -29,10 +33,19 @@ LINE_SEPARATOR = "<<LINE_SEPARATOR>>"
 @login_required
 def index(request):
      
-    #Session = SessionStore()
-
     request.session['apps_label'] = MenuApps.GetAppsVerboseName()
-#    Session.save()
+    
+    if UtilizaFuncionario:
+        try:
+            func = Funcionario.objects.get(user = request.user)
+            request.session['funcionario'] = {"id" : func.id, "nome" : func.nome, "usuario" : func.user.id,
+                "empresa" : func.empresa.id, "unidade" : func.unidade.id}
+        except :
+            request.session['funcionario'] = None
+         
+    else:
+        request.session['funcionario'] = None
+    
     return render_to_response('base.html')
 
 
