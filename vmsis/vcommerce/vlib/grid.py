@@ -78,16 +78,19 @@ class Grid:
         attr = self.get_model_attribute(field_name)
         return attr[field_name]['grid-type']
 
-    def get_grid_columns_config(self, field_name, read_only = True):
+    def get_grid_columns_config(self, field_name, read_only = True, check_link_to_form = True):
+        
         if read_only:
             return {"type":"", "objects":"", "values":"", "is_link_to_form" : False } 
+
         attr = self.get_model_attributes(field_name)
         column_type = attr[field_name]['grid-type']
         column_model = attr[field_name]['model']
+        
+        if check_link_to_form:
+            if self.parent_model and (column_model == self.parent_model) or (self.parent_model.__base__ == column_model):
+                return {"type":"", "objects":"", "values":"", "is_link_to_form" : True }
 
-        if self.parent_model and (column_model == self.parent_model) or (self.parent_model.__base__ == column_model):
-            return {"type":"", "objects":"", "values":"", "is_link_to_form" : True }
-         
         if column_model != None:
             query = column_model.objects.all()
             str_objects, id_values = [], []
@@ -122,7 +125,7 @@ class Grid:
             return self.model.objects.filter(**dict_filter).values_list(*fields_to_display)
 
 
-    def get_pagination_data(self, fields_to_display, dict_filter, page, limit_data, order_by = 'id'):                
+    def get_pagination_data(self, fields_to_display, dict_filter, page, limit_data, order_by = 'id'):                        
         data = self.get_data(fields_to_display = fields_to_display, dict_filter = dict_filter)        
         initial = (int(page)-1) * limit_data                              
         pages = math.ceil(data.count() / limit_data)                
@@ -142,7 +145,7 @@ class Grid:
 
         # get the fields declared on model
         fields_model = self.model._meta.fields
-
+        
         fields_to_display = list(display_fields)
 
         if self.parent_model:
@@ -171,10 +174,14 @@ class Grid:
 
         #makes the loop on fields model's, creating the columns list's. if the field is "id", dont show
         for field in fields_model:                             
-            grid_conf = self.get_grid_columns_config(field.name, read_only)
+            if link_to_form:
+                grid_conf = self.get_grid_columns_config(field.name, read_only, check_link_to_form = False)
+            else:
+                grid_conf = self.get_grid_columns_config(field.name, read_only, check_link_to_form = True)
             
             if grid_conf["is_link_to_form"]:
-                link_to_form = self.get_name_column_grid(field.name, type(field))
+                if not link_to_form:
+                    link_to_form = self.get_name_column_grid(field.name, type(field))
 
             if not display_fields :
 

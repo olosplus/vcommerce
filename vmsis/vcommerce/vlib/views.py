@@ -64,36 +64,40 @@ def insert(data, model, commit = True, link_to_form = "", parent_instance = None
         lista = [data]
     
 
-
     for row in lista:     
         if not row:
             continue    
         
         is_fk_to_parent = False
         model_field_rel_to = None
+        link_to_form_alreay_found = False
         exclude_validations = []
         
         row_json = dict(json.loads(row))
         mod = model()
-         
         for field in model._meta.fields:
+            is_fk_to_parent = False
+
             if field.name == 'id':
                 continue
-           
-            if field.__class__ == models.ForeignKey:
-                model_field_rel_to = mod._meta.get_field(field.name).rel.to
-                is_fk_to_parent = (model_field_rel_to == parent_instance.__class__ or \
-                    model_field_rel_to == parent_instance.__class__.__base__)
 
-            if is_fk_to_parent:
-                setattr(mod, field.name, parent_instance)  
-                exclude_validations.append(field.name)
-                continue 
-            elif field.name == link_to_form:
-                if commit:
+            if field.name == link_to_form and not link_to_form_alreay_found:
+                if commit:                    
                     setattr(mod, field.name, parent_instance)
                 exclude_validations.append(field.name)
+                link_to_form_alreay_found = True
                 continue
+            elif not link_to_form_alreay_found: 
+                if field.__class__ == models.ForeignKey:
+                    model_field_rel_to = mod._meta.get_field(field.name).rel.to
+                    is_fk_to_parent = (model_field_rel_to == parent_instance.__class__ or \
+                        model_field_rel_to == parent_instance.__class__.__base__)
+    
+                if is_fk_to_parent:
+                    setattr(mod, field.name, parent_instance)  
+                    link_to_form_alreay_found = True
+                    exclude_validations.append(field.name)
+                    continue 
 
             if field.name in row_json:
                 setattr(mod, field.name, row_json[field.name])
@@ -106,8 +110,8 @@ def insert(data, model, commit = True, link_to_form = "", parent_instance = None
         except ValidationError as e:            
             return "<input id='grid_erros' value='%s'>" % str(e).replace("'", "").replace('"', "")
 
-        if commit :
-            mod.save()
+        if commit :            
+            mod.save()            
             if execute_on_after_insert :             
                 execute_on_after_insert(instance = mod)
 

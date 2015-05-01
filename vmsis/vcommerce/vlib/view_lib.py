@@ -430,7 +430,7 @@ class ConvertView:
         nome_campo_unidade = str()):
 
         return ClassView.as_view(model = self.model, success_url = self.Urls.BaseUrlList(CountPageBack=2), 
-            template_name = TEMPLATE_UPDATE, MediaFiles = MediaFiles, fields = Fields, 
+            template_name = TEMPLATE_UPDATE, MediaFiles = MediaFiles, #fields = Fields, 
             nome_campo_unidade = nome_campo_unidade, nome_campo_empresa = nome_campo_empresa)
 
 
@@ -438,7 +438,7 @@ class ConvertView:
         nome_campo_unidade = str()):    
 
         return ClassView.as_view(model = self.model, success_url = self.Urls.BaseUrlList(CountPageBack=2), 
-            template_name = TEMPLATE_INSERT, MediaFiles = MediaFiles, fields = Fields, 
+            template_name = TEMPLATE_INSERT, MediaFiles = MediaFiles, #fields = Fields, 
             nome_campo_unidade = nome_campo_unidade, nome_campo_empresa = nome_campo_empresa)    
 
 
@@ -469,12 +469,14 @@ class CrudView:
 
         if not fields_list: 
             for field in self.model._meta.fields:
-                if field.name.lower() == 'empresa':
-                    campo_empresa = field.name
-                elif field.name.lower() == 'unidade':
-                    campo_unidade = field.name
-                elif field.editable:
-                    fields_crud.append(field.name)
+        #        if field.name.lower() == 'empresa':
+        #            campo_empresa = field.name
+        #            continue
+        #        elif field.name.lower() == 'unidade':
+        #            campo_unidade = field.name
+        #            continue
+        #        elif field.editable:
+                fields_crud.append(field.name)
         else:
             fields_crud = fields_list   
 
