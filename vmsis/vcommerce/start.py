@@ -32,6 +32,8 @@ try:
     return_code = subprocess.call('python manage.py loaddata cadastro/fix/banco.json', shell=True)
     print("\nCentro de Custo...")
     return_code = subprocess.call('python manage.py loaddata cadastro/fix/centrodecusto.json', shell=True)
+    print("\nUnidade de Medida...")
+    return_code = subprocess.call('python manage.py loaddata cadastro/fix/unimedida.json', shell=True)
 
     #print("\nCadastros Samanta...")
     #return_code = subprocess.call('python manage.py loaddata cadastro/fix/samanta.json', shell=True)
