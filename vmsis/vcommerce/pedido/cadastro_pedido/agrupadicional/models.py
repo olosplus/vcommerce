@@ -1,10 +1,9 @@
 # -*- coding: utf-8 -*-
 from django.db import models
-from cadastro.produto.item.models import Item
+from cadastro.produto.models import Produto
 
 choice_tipo_ativ = (('A','Ativa'),
 	('D','Inativa'))
-
 
 # Create your models here.
 class AgrupAdicional(models.Model):
@@ -21,7 +20,7 @@ class AgrupAdicional(models.Model):
 		return self.nmagrupadic
 
 class Adicionais(models.Model):
-	item = models.ForeignKey(Item, verbose_name="Adicional")
+	produto = models.ForeignKey(Produto, verbose_name="Adicional")
 	
 
 

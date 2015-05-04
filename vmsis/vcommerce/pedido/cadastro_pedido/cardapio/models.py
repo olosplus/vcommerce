@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from django.db import models
 #from pedido.cadastro_pedido.categoria.models import Categoria, ItemCategoria
-from cadastro.produto.item.models import Item
+from cadastro.produto.models import Produto
 from pedido.cadastro_pedido.agrupadicional.models import AgrupAdicional
 
 choice_tipo_ativ = (('A','Ativa'),
@@ -21,7 +21,7 @@ class Cardapio(models.Model):
 	#nmcategoria = models.CharField(max_length=250,verbose_name="Nome",unique=True)
 	#idcardapiotiv = models.CharField(max_length=1,verbose_name="Situação",choices=choice_tipo_ativ,default='A')
 	#categoria = models.ForeignKey(Categoria, verbose_name="Categoria")
-	item = models.ForeignKey(Item, verbose_name="Produto")
+	produto = models.ForeignKey(Produto, verbose_name="Produto")
 	vrvenda = models.FloatField(verbose_name="Preço")
 	idadicional = models.CharField(max_length=1,verbose_name="Permite Adicionais?",choices=choice_SN,default='N')
 	
@@ -35,4 +35,3 @@ class ItAgrupAdicional(models.Model):
 		verbose_name_plural = "Agrupamentos de Adicionais Permitidos"
 	
 	agrupadicional = models.ForeignKey(AgrupAdicional, verbose_name="Agrupamentos de Adicionais")
-	

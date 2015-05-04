@@ -3,7 +3,7 @@ from django.db import models
 from cadastro.cliente.models import Cliente
 from cadastro.mesa.models import Mesa
 from cadastro.categoria.models import Categoria, ItemCategoria
-from cadastro.produto.item.models import Item
+from cadastro.produto.models import Produto
 from cadastro.agrupadicional.models import AgrupAdicional, Adicionais
 
 choice_tipo_pedido = (('B','Balcao'),('D','Delivery'),('M','Mesa'))
@@ -33,7 +33,7 @@ class ItemPedido(models.Model):
 	#	child_models = ['ItAdicional']
 	
 	categoria = models.ForeignKey(Categoria, verbose_name="Categoria")
-	item = models.ForeignKey(Item, verbose_name="Produto")
+	produto = models.ForeignKey(Produto, verbose_name="Produto")
 	qtitem = models.FloatField(verbose_name="Quantidade")
 	vrunitario = models.FloatField(verbose_name="Valor Item")
 	vrtotal = models.FloatField(verbose_name="Valor Total")

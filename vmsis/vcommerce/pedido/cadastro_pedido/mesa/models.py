@@ -17,6 +17,3 @@ class Mesa(models.Model):
 	dsobsmesa = models.CharField(max_length=250,verbose_name="Observação", blank=True,null=True)
 	idmesaativ = models.CharField(max_length=1,verbose_name="Situação",choices=choice_tipo_idmesa,default='A')
 	unidade = models.ForeignKey(Unidade,verbose_name="Unidade", null=True, blank=True)
-
-
-    

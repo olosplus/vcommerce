@@ -3,7 +3,7 @@ from django.db import models
 from cadastro.cliente.models import Cliente
 from pedido.cadastro_pedido.mesa.models import Mesa
 from pedido.cadastro_pedido.categoria.models import Categoria, ItemCategoria
-from cadastro.produto.item.models import Item
+from cadastro.produto.models import Produto
 from pedido.cadastro_pedido.agrupadicional.models import AgrupAdicional, Adicionais
 from pedido.cadastro_pedido.cardapio.models import Cardapio
 

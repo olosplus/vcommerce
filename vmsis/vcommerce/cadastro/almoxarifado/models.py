@@ -9,7 +9,7 @@ class Almoxarifado(Master_endereco):
     	verbose_name = "Almoxarifado"
     	verbose_name_plural = "Almoxarifados"
     	child_models = ['cadastro.localidade.endereco.models.Endereco',
-    	                'cadastro.contato.models.Contato']
+    	                'cadastro.contato.models.Contato',]
 
     nmalmoxa = models.CharField(max_length=250,verbose_name="Nome")
     dtcadastro = models.DateField(auto_now_add=True, verbose_name='Data de cadastro')
