@@ -36,6 +36,13 @@ form ul.alert{
   color : #23527c !important;
   padding-bottom: 0px;
 }
+
 .navbar{
   margin-bottom: 0px !important;
+}
+
+.ui-widget-header{
+  background-color: #23527c !important;
+  background-image: none !important;
+  border: #23527c !important;
 }
