@@ -88,7 +88,7 @@ class StandardFormGrid(ModelForm):
     funcionario = None
     nome_campo_empresa = str()
     nome_campo_unidade = str()
-
+    
     def split_child_models(self):        
         return self.child_models.split(GRID_SEPARATOR)
                      
@@ -184,16 +184,18 @@ class StandardFormGrid(ModelForm):
 
         if data:            
             copy_data = data.copy()
-            
+
             if self.funcionario:        
                 try:
-                    copy_data[self.nome_campo_empresa] = self.funcionario['empresa']
-                except Error:
+                    if self.nome_campo_empresa:
+                        copy_data[self.nome_campo_empresa] = self.funcionario['empresa']
+                except :
                     pass
 
-                try: 
-                    copy_data[self.nome_campo_unidade] = self.funcionario['unidade']
-                except Error:
+                try:
+                    if self.nome_campo_unidade:
+                        copy_data[self.nome_campo_unidade] = self.funcionario['unidade']
+                except :
                     pass
         else:
             copy_data = None    
@@ -224,7 +226,7 @@ class CreateForm(object):
         campo_empresa = str(), campo_unidade = str()):
         class vmsisForm(class_form):                    
             class Meta:
-                model = self.model
+                model = self.model                
 
             child_models = GridsData
             current_user = user
@@ -239,6 +241,23 @@ class ViewCreate(CreateView, AjaxableResponseMixin):
     MediaFiles = []   
     nome_campo_empresa = str()
     nome_campo_unidade = str()    
+
+    def set_fields_list(self, request):        
+        if not self.fields: 
+#            self.fields = []
+            for field in self.model._meta.fields:
+                if field.name.lower() == 'empresa':
+                    self.nome_campo_empresa = field.name
+#                   if request.user.is_superuser:
+#                    self.fields.append(field.name)
+#                    continue
+                elif field.name.lower() == 'unidade':
+                    self.nome_campo_unidade = field.name
+#                    if request.user.is_superuser:
+#                    self.fields.append(field.name)
+#                    continue
+#                elif field.editable:
+#                    self.fields.append(field.name)
     
     def get_success_url(self):
         return self.success_url
@@ -256,8 +275,13 @@ class ViewCreate(CreateView, AjaxableResponseMixin):
             self.nome_campo_unidade = kwargs.get('nome_campo_unidade')
 
         super(ViewCreate, self).__init__(**kwargs)        
-    
+
+    def get(self, request, *args, **kwargs):
+        self.set_fields_list(request)
+        return super(ViewCreate, self).get(request, *args, **kwargs)
+
     def post(self, request, *args, **kwargs):        
+        self.set_fields_list(request)
         grids_data = request.POST['child_models']
         
         if self.form_class == None:
@@ -300,6 +324,7 @@ class ViewCreate(CreateView, AjaxableResponseMixin):
         context['form_id'] = self.model.__name__
         context['grid'] = grid.grid_as_text(use_crud = False, read_only = False, dict_filter = {'id':-1});        
         context['titulo'] = page_caption        
+        context['funcionario'] = self.request.session['funcionario']
         return context
  
 class ViewUpdate(UpdateView, AjaxableResponseMixin):
@@ -307,6 +332,23 @@ class ViewUpdate(UpdateView, AjaxableResponseMixin):
     MediaFiles = []
     nome_campo_empresa = str()
     nome_campo_unidade = str()
+
+    def set_fields_list(self, request):
+        if not self.fields: 
+#            self.fields = []
+            for field in self.model._meta.fields:
+                if field.name.lower() == 'empresa':
+                    self.nome_campo_empresa = field.name
+#                   if request.user.is_superuser:
+#                    self.fields.append(field.name)
+#                    continue
+                elif field.name.lower() == 'unidade':
+                    self.nome_campo_unidade = field.name
+#                    if request.user.is_superuser:
+#                    self.fields.append(field.name)
+#                    continue
+#                elif field.editable:
+#                    self.fields.append(field.name)
     
     def __init__(self, **kwargs):
         if 'MediaFiles' in kwargs :
@@ -341,13 +383,19 @@ class ViewUpdate(UpdateView, AjaxableResponseMixin):
         context['url_list'] =  Urls.BaseUrlList(CountPageBack = 2)    
         context['url_update'] = Urls.BaseUrlUpdate(CountPageBack = 2)        
         context['titulo'] = page_caption                        
+        context['funcionario'] = self.request.session['funcionario']        
         return context
 
     @method_decorator(login_required)
     def dispatch(self, *args, **kwargs):
         return super(ViewUpdate, self).dispatch(*args, **kwargs)
 
+    def get(self, request, *args, **kwargs):
+        self.set_fields_list(request)
+        return super(ViewUpdate, self).get(request, *args, **kwargs)
+
     def post(self, request, *args, **kwargs):
+        self.set_fields_list(request)
         grids_data = request.POST['child_models']
         if self.form_class == None:
             self.form_class = StandardFormGrid
@@ -387,6 +435,7 @@ class ViewDelete(DeleteView):
         context['JsFiles'] = StaticFiles.GetJs(self.MediaFiles)
         context['CssFiles'] = StaticFiles.GetCss(self.MediaFiles)    
         context['url_list'] = Urls.BaseUrlList(CountPageBack = 1)        
+        context['funcionario'] = self.request.session['funcionario']        
         return context
 
 class ViewList(ListView):
@@ -415,6 +464,7 @@ class ViewList(ListView):
         context['CssFiles'] = StaticFiles.GetCss(self.MediaFiles)  
         context['grid'] = grid.grid_as_text(display_fields = self.Grid_Fields, use_crud = True, read_only = True);
         context['titulo'] = page_caption         
+        context['funcionario'] = self.request.session['funcionario']        
         return context
 
     @method_decorator(login_required)
@@ -426,27 +476,22 @@ class ConvertView:
         self.model = model
         self.Urls = urlsCrud(model);  
 
-    def Update(self, MediaFiles = [],  ClassView = ViewUpdate, Fields = [], nome_campo_empresa = str(),
-        nome_campo_unidade = str()):
+    def Update(self, MediaFiles = [],  ClassView = ViewUpdate):
 
         return ClassView.as_view(model = self.model, success_url = self.Urls.BaseUrlList(CountPageBack=2), 
-            template_name = TEMPLATE_UPDATE, MediaFiles = MediaFiles, #fields = Fields, 
-            nome_campo_unidade = nome_campo_unidade, nome_campo_empresa = nome_campo_empresa)
+            template_name = TEMPLATE_UPDATE, MediaFiles = MediaFiles)
 
 
-    def Create(self, MediaFiles = [], ClassView = ViewCreate, Fields = [], nome_campo_empresa = str(), 
-        nome_campo_unidade = str()):    
+    def Create(self, MediaFiles = [], ClassView = ViewCreate):    
 
         return ClassView.as_view(model = self.model, success_url = self.Urls.BaseUrlList(CountPageBack=2), 
-            template_name = TEMPLATE_INSERT, MediaFiles = MediaFiles, #fields = Fields, 
-            nome_campo_unidade = nome_campo_unidade, nome_campo_empresa = nome_campo_empresa)    
+            template_name = TEMPLATE_INSERT, MediaFiles = MediaFiles)    
 
 
     def Delete(self, MediaFiles = [], ClassView = ViewDelete):
 
         return ClassView.as_view(model = self.model, success_url = self.Urls.BaseUrlList(CountPageBack=2), 
             template_name = TEMPLATE_DELETE, MediaFiles = MediaFiles)        
-
 
     def List(self, MediaFiles = [], Grid_Fields = [], ClassView = ViewList):
 
@@ -461,34 +506,34 @@ class CrudView:
 
     def AsUrl(self, MediaFilesInsert = [], MediaFilesUpdate = [], MediaFilesDelete = [], MediaFilesList = [], 
         GridFields = (), ClassCreate = ViewCreate, ClassUpdate = ViewUpdate, ClassDelete = ViewDelete, 
-        ClassList = ViewList, fields_list = []):
+        ClassList = ViewList):
 
-        fields_crud = []
-        campo_empresa = str()
-        campo_unidade = str()
+#        fields_crud = []
+#        campo_empresa = str()
+#        campo_unidade = str()
 
-        if not fields_list: 
-            for field in self.model._meta.fields:
-        #        if field.name.lower() == 'empresa':
-        #            campo_empresa = field.name
-        #            continue
-        #        elif field.name.lower() == 'unidade':
-        #            campo_unidade = field.name
-        #            continue
-        #        elif field.editable:
-                fields_crud.append(field.name)
-        else:
-            fields_crud = fields_list   
+#        if not fields_list: 
+#            for field in self.model._meta.fields:
+#                if field.name.lower() == 'empresa':
+#                    campo_empresa = field.name
+#                    fields_crud.append(field.name)
+#                    continue
+#                elif field.name.lower() == 'unidade':
+#                    campo_unidade = field.name
+#                    fields_crud.append(field.name)
+#                    continue
+#                elif field.editable:
+#                    fields_crud.append(field.name)
+#        else:
+#            fields_crud = fields_list   
 
         urls = patterns('', 
             url(self.UrlCrud.UrlList(), self.view.List(MediaFiles = MediaFilesList, Grid_Fields = GridFields,
                 ClassView = ClassList)),
 
-            url(self.UrlCrud.UrlInsert(), self.view.Create(MediaFiles = MediaFilesInsert, ClassView = ClassCreate,
-                Fields = fields_crud, nome_campo_empresa = campo_empresa, nome_campo_unidade = campo_unidade)), 
+            url(self.UrlCrud.UrlInsert(), self.view.Create(MediaFiles = MediaFilesInsert, ClassView = ClassCreate)), 
 
-            url(self.UrlCrud.UrlUpdate(), self.view.Update(MediaFiles = MediaFilesUpdate, ClassView = ClassUpdate,
-                Fields = fields_crud, nome_campo_empresa = campo_empresa, nome_campo_unidade = campo_unidade)),
+            url(self.UrlCrud.UrlUpdate(), self.view.Update(MediaFiles = MediaFilesUpdate, ClassView = ClassUpdate)),
 
             url(self.UrlCrud.UrlDelete(), self.view.Delete(MediaFiles = MediaFilesDelete, ClassView = ClassDelete)))
 

@@ -12,10 +12,16 @@
     </button>
   </div>
   <!-- /.navbar-header -->
+  <input type="hidden" value='{{funcionario.unidade}}' id="UnidadeEscolhida">
   <ul class="nav navbar-top-links navbar-right">
     <li>
-      <select class="form-control">
-        <option>Matriz</option>
+      <select class="form-control" id="UnidadeSelecionada">
+
+        {% for unidade in funcionario.unidades %}
+          {% if unidade %}                
+            <option value='{{unidade.id}}' selected>{{unidade.nome}}</option>
+          {%endif%}
+        {%endfor%}
       </select>
     </li>
     {% include 'menu_alert.html' %}
@@ -25,7 +31,7 @@
         <i class="fa fa-user fa-fw"></i>  <i class="fa fa-caret-down"></i>
       </a>
       <ul class="dropdown-menu dropdown-user">
-        <li><a href="/Funcionario/update/{{ funcionario.id }}/"><i class="fa fa-user fa-fw"></i> Usuário</a>
+        <li><a href="/Funcionario/update/{{ funcionario.id }}/"><i class="fa fa-user fa-fw"></i> {{funcionario.nome}}</a>
         </li>
         <li class="divider"></li>
         <li><a href="/logout/"><i class="fa fa-sign-out fa-fw"></i> Sair</a>

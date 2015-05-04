@@ -4,4 +4,4 @@ from contabilidade.movimentacao_contabil.lancamento_contabil.models import Lanca
 from contabilidade.movimentacao_contabil.lancamento_contabil.views import ViewLancamentoContabil
 
 Crud = CrudView(LancamentoContabil)
-urlpatterns = Crud.AsUrl(ClassCreate = ViewLancamentoContabil)
+urlpatterns = Crud.AsUrl()

@@ -35,19 +35,39 @@ def index(request):
      
     request.session['apps_label'] = MenuApps.GetAppsVerboseName()
     
-    if UtilizaFuncionario:
-        try:
-            func = Funcionario.objects.get(user = request.user)
-            request.session['funcionario'] = {"id" : func.id, "nome" : func.nome, "usuario" : func.user.id,
-                "empresa" : func.empresa.id, "unidade" : func.unidade.id}
-        except :
-            request.session['funcionario'] = None
-         
-    else:
-        request.session['funcionario'] = None
-    
-    return render_to_response('base.html')
+#    if UtilizaFuncionario:
+    try:                
+        func = Funcionario.objects.get(user = request.user)
+        unidades = func.unidade.all()
+        list_unidades = []
 
+        for f in unidades:
+            list_unidades.append({"id":f.id, "nome":f.nmrazao})    
+            
+        request.session['funcionario'] = {"id" : func.id, "nome" : func.nome, "usuario" : func.user.id,
+            "empresa" : func.empresa.id, "unidades" : list_unidades, "unidade":list_unidades[0]["id"]}
+                
+    except :
+        request.session['funcionario'] = {"id" : request.user.id, "nome" : request.user.username, 
+            "usuario" : request.user.id,
+            "empresa" : None, "unidades" : None, "unidade":None}
+
+    return render_to_response('base.html', {"funcionario":request.session['funcionario']})
+
+def SetUnidade(request):
+    try:
+        unidade = request.GET.get('unidade')     
+        func = {}
+        func.update(request.session['funcionario'])
+        if unidade:
+            del request.session['funcionario']
+            func['unidade'] = unidade
+            request.session['funcionario'] = func
+        
+        return HttpResponse(request.session['funcionario']['unidade'])
+
+    except:
+        return HttpResponse('error')
 
 def insert(data, model, commit = True, link_to_form = "", parent_instance = None, 
     execute_on_after_insert = None):
@@ -274,10 +294,8 @@ def GetGridCrud(request):
 
         properties_field = list(fields[1].items())
         if len(properties_field) >= 4: #equal or more than a four properties
-            field_to_display = properties_field[3][1]
+            field_to_display = properties_field[len(properties_field)-1][1]
             fields_display.append(field_to_display)
-#        if not fields in ["col_update", "col_delete"]:
-#            fields_display.append(field)
     
     try:
         model = apps.get_app_config(list_module[len(list_module)-2]).get_model(str_model)
@@ -297,7 +315,7 @@ def GetGridCrud(request):
                         fk = model._meta.get_field(field["name"]).rel.to
                     except:
                         fk = None
-                        
+                    
                     if fk :
                         field_name = model._meta.get_field(field["name"]).get_attname_column()[0]                         
                         dict_filter.update({field_name : field["value"]})                        
@@ -310,10 +328,10 @@ def GetGridCrud(request):
                             dict_filter.update({field_name + "__icontains": field["value"]})
     
     GridData = Grid(model)            
-
+    
     grid_js = GridData.get_js_grid(use_crud = True, dict_filter = dict_filter,
         display_fields = tuple(fields_display), page = page, order_by = order_by)
-
+    
     return HttpResponse(grid_js)    
 
 

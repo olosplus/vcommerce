@@ -122,7 +122,8 @@ function InsertEmptyRow(columns, idGrid, link_to_form) {
         html += "<td>";
       }
       //for inputs
-      if ((columns[column].type != 'select') && (columns[column].type != 'link') && (columns[column].type != 'textarea')) {
+      if ((columns[column].type != 'select') && (columns[column].type != 'link') 
+         /*&& (columns[column].type != 'textarea')*/) {
         html += html_input.replace('{{TYPE}}', columns[column].type);
         html = html.replace('{{VALOR}}', "");
         html = html.replace('{{DISABLE}}', '');
@@ -133,9 +134,9 @@ function InsertEmptyRow(columns, idGrid, link_to_form) {
           html = html.replace("{{STEP}}", "");
         };
       };
-      if (columns[column].type === 'textarea') {
+/*      if (columns[column].type === 'textarea') {
         html += "<textarea class = 'gridtag' name='" + columns[column].name + "' onchange='SetChangesLine(this)'>" + "</textarea>";
-      };
+      };*/
       if (columns[column].type == 'select') {
         if (columns[column].options != 'undefined') {
           var options = columns[column].options;
@@ -164,6 +165,8 @@ function InsertLineWithValue(row, columns, readonly, link_to_form) {
   var class_links = "";
   var events = "";
   var index = 0;
+  var options = undefined
+  var values = undefined
 
   html = "<tr>";
   if (readonly === "False") {
@@ -180,7 +183,9 @@ function InsertLineWithValue(row, columns, readonly, link_to_form) {
         html += "<td>"
       }
       //for inputs
-      if ((columns[column].type != 'select') && (columns[column].type != 'link') && (columns[column].type != 'textarea') && (columns[column].type != "")) {
+      if ((columns[column].type != 'select') && (columns[column].type != 'link') && 
+          /*(columns[column].type != 'textarea')*/  (columns[column].type != "") && 
+          (columns[column].type != "select-readonly") ) {
         html += html_input.replace('{{TYPE}}', columns[column].type);
         html = html.replace('{{VALOR}}', row.v[index]);
         html = html.replace('{{NAME}}', columns[column].name);
@@ -190,9 +195,9 @@ function InsertLineWithValue(row, columns, readonly, link_to_form) {
           html = html.replace("{{STEP}}", "");
         };
       };
-      if (columns[column].type === 'textarea') {
+/*      if (columns[column].type === 'textarea') {
         html += "<textarea class = 'gridtag' name='" + columns[column].name + "' onchange='SetChangesLine(this)'>" + row.v[index] + "</textarea>"
-      };
+      };*/
       if ((columns[column].type === 'link') && (readonly === "True")) {
         if (columns[column].name === "update") {
           class_links = "fa fa-pencil";
@@ -204,11 +209,29 @@ function InsertLineWithValue(row, columns, readonly, link_to_form) {
         };
         html += "<center><a  href = '" + row.v[index] + "' class='" + class_links + "' title= '" + columns[column].label + "' onclick='" + events + "'>" + "</a></center>";
       };
+      
+      if(columns[column].type == 'select-readonly'){
+        if (columns[column].options != 'undefined') {
+          options = columns[column].options;
+          values = columns[column].values;
+
+          for (option in options) {
+            if (options.hasOwnProperty(option)) {        
+              if (row.v[index] === values[option]) {
+                html += options[option];
+              };
+            };
+          };
+        }  
+      };
+
       if (columns[column].type == 'select') {
         if (columns[column].options != 'undefined') {
-          var options = columns[column].options;
-          var values = columns[column].values;
-          html += "<select class = 'gridtag' name=' " + columns[column].name + "' " + " onclick='SetChangesLine(this)' onkeydown='SetChangesLine(this)'>";
+          options = columns[column].options;
+          values = columns[column].values;
+          
+          html += "<select  class='gridtag' name='" + columns[column].name + "' " + 
+            " onclick='SetChangesLine(this)' onkeydown='SetChangesLine(this)'>";
           for (option in options) {
             if (options.hasOwnProperty(option)) {
               html += "<option value='" + values[option] + "'";
@@ -319,17 +342,17 @@ function Grid(DivGridId, Data) {
 
   if (readonly === "False") {
     html += "<div class='panel-footer'>";
-    html += "  <a href='#' class='fa fa-file-o' title='Adicionar'" + 
+    html += "  <a href='javascript:void(0)' class='fa fa-file-o' title='Adicionar'" + 
       "onclick='InsertEmptyRow(" + JSON.stringify(columns) + ",\"" + grid_id + "\", \"" + link_to_form + "\" )'>" +
        "</a> | ";
 
-    html += "  <a href='#' id='linkcancel' class='glyphicon glyphicon-floppy-remove' " +
+    html += "  <a href='javascript:void(0)' id='linkcancel' class='glyphicon glyphicon-floppy-remove' " +
       "onclick='RemoveSelectedRows(\"" + grid_id + "\" )' title='Cancelar'>" + "</a> | ";
 
-    html += "  <a href='#' onclick='doDeleteGrid(\"" + grid_id + "\")' class = 'fa fa-trash-o' " + 
+    html += "  <a href='javascript:void(0)' onclick='doDeleteGrid(\"" + grid_id + "\")' class = 'fa fa-trash-o' " + 
       "title='Deletar selecionados'></a> | ";
 
-    html += "  <a href='#' onclick='doPostGrid(\"" + grid_id + "\")' class='glyphicon glyphicon-floppy-disk' " + 
+    html += "  <a href='javascript:void(0)' onclick='doPostGrid(\"" + grid_id + "\")' class='glyphicon glyphicon-floppy-disk' " + 
       " title='Salvar'></a>";
     html += "</div>";
   }else{
