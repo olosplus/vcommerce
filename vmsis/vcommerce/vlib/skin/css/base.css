@@ -46,3 +46,15 @@ form ul.alert{
   background-image: none !important;
   border: #23527c !important;
 }
+
+.panel-default>.panel-heading {
+  background-color: #337ab7;
+  border-color: #204d74;
+  color: #fff;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+}
+
+.login-panel {
+  border-radius: 10px;
+}
