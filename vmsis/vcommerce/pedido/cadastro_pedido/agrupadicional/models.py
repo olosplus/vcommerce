@@ -5,6 +5,7 @@ from cadastro.produto.models import Produto
 choice_tipo_ativ = (('A','Ativa'),
 	('D','Inativa'))
 
+
 # Create your models here.
 class AgrupAdicional(models.Model):
 	class Meta:
@@ -20,7 +21,8 @@ class AgrupAdicional(models.Model):
 		return self.nmagrupadic
 
 class Adicionais(models.Model):
-	produto = models.ForeignKey(Produto, verbose_name="Adicional")
+	agrupadicional = models.ForeignKey(AgrupAdicional)
+	item = models.ForeignKey(Produto, verbose_name="Adicional")
 	
 
 
