@@ -8,10 +8,11 @@ import math
 
 
 class Grid:
-    def __init__(self, model, parent_model = None, parent_pk_value = -1):
+    def __init__(self, model, parent_model = None, parent_pk_value = -1, title = str()):
         self.model = model
         self.parent_model = parent_model
         self.parent_pk_value = parent_pk_value
+        self.title = title
 
     def convert_model_type_field_to_grid_type(self, model_type_field):
         if model_type_field in ("CharField", "FilePathField", "IPAddressField", "GenericIPAddressField"):
@@ -41,6 +42,13 @@ class Grid:
             return "time"
         if model_type_field == "URLField" :
             return "url"
+
+    def get_title(self):
+        if self.title:
+            return self.title
+        else:
+            return self.model._meta.verbose_name
+
 
     def parse_type_field_to_text(self, field_type):        
         list_str = str(field_type).split(".")
@@ -301,7 +309,7 @@ class Grid:
             "parent":"%s", "link_to_form":"%s", "number_of_pages" : "%s", "selected_page" : "%s", "title":"%s" }' % \
             (columns, rows, bottom_bar, self.model.__module__, self.model.__name__, str(use_crud), 
             str(read_only), url_insert, url_update, url_delete, parent_model_str, link_to_form, 
-            pagination['pages'], pagination['selected_page'], self.model._meta.verbose_name)
+            pagination['pages'], pagination['selected_page'], self.get_title())
 
     @staticmethod
     def grid_script(data, model):

@@ -43,11 +43,18 @@ def index(request):
 
         for f in unidades:
             list_unidades.append({"id":f.id, "nome":f.nmrazao})    
-            
+        
+        empresa_id = ""
+        
+        if func.empresa:
+            empresa_id = func.empresa.id
+
         request.session['funcionario'] = {"id" : func.id, "nome" : func.nome, "usuario" : func.user.id,
-            "empresa" : func.empresa.id, "unidades" : list_unidades, "unidade":list_unidades[0]["id"]}
+            "empresa" : empresa_id, "unidades" : list_unidades, "unidade":list_unidades[0]["id"]}
                 
     except :
+        print(request.user)
+#        raise
         request.session['funcionario'] = {"id" : request.user.id, "nome" : request.user.username, 
             "usuario" : request.user.id,
             "empresa" : None, "unidades" : None, "unidade":None}
@@ -261,7 +268,7 @@ def Filtro(request):
         return HttpResponse("An error ocurred. The model or module don't exists")
 
     Filtrar = FormFiltro(model = model, request = request)    
-    return Filtrar.Response() #HttpResponse(Filtrar.Form_as_p())
+    return Filtrar.Response()
 
 def GetGridCrud(request):
     

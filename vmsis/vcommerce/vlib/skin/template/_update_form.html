@@ -9,31 +9,38 @@
 {% endblock %}
 
 {% block conteudo %}
-<div class="span9" id="content">
-  <div class="row-fluid">
+<div class="span9" id="content"> 
+  <div class="row-fluid"> 
     <!-- block -->
-    <div class="block">
-      <div class="navbar navbar-inner block-header">
-        <div class="page-header title"><h4>{{ titulo }} >> Edição</h4></div>
-      </div>
-      <div class="block-content collapse in">
-        <div class="span12">
-          <form class="form-horizontal" action="" method="post" id="{{form_id}}" sequence="{{form_pk}}">{% csrf_token %} 
-            {{ form.as_p }}
-          </form>
-          <p> {{grid | safe}} </p>
-          <p><button type="buttom"  onclick="doPostForm('{{url_update}}{{object.pk}}/', '{{form_id}}',
-            '{{url_list}}', false, '')" 
-            class="btn btn-outline btn-primary btn-lg">Confirmar</button>
-          <button type="reset" class="btn btn-outline btn-danger btn-lg" onClick="history.go(-1)">Cancelar</button> </p>
-          <input type="hidden" value="{{url_update}}{{object.pk}}/" id="ownurl">
-          <input type="hidden" value="{{url_list}}" id="listurl">
+    <div class="block"> 
+      <div class="panel panel-default panel-customizado">
+        <div class="panel-heading">
+          <h3 class="panel-title">{{ titulo }} <i class="glyphicon glyphicon-play"></i> Edição</h3>
         </div>
-      </div>
-    </div>
-    <!-- /block -->
-  </div>
-</div>
+        <div class="panel-body">
+          <div class="block-content collapse in">
+            <div class="span12">  
+              <form class="form-horizontal" action="" method="post" id="{{form_id}}" sequence="{{form_pk}}">
+                {%csrf_token%}     
+                {{ form.as_p }}    
+              </form>    
+              <p>{{grid | safe}}</p>              
+              <input type="hidden" value="{{url_update}}{{object.pk}}/" id="ownurl">  
+              <input type="hidden" value="{{url_list}}" id="listurl">  
+            </div>  
+          </div>
+        </div>
+        <div class="panel-footer">
+          <button type="buttom"  onclick="doPostForm('{{url_update}}{{object.pk}}/', '{{form_id}}',
+            '{{url_list}}', false, '')" 
+            class="btn btn-outline btn-primary">Salvar e listar</button>
+          <button type="reset" class="btn btn-outline btn-danger" 
+              onClick="window.location.assign('{{url_list}}')">Cancelar</button> 
+        </div>
+      </div>    
+    </div> 
+  </div> 
+ </div> 
 
 {% endblock %}
 

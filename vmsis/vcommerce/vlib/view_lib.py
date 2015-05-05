@@ -188,13 +188,15 @@ class StandardFormGrid(ModelForm):
             if self.funcionario:        
                 try:
                     if self.nome_campo_empresa:
-                        copy_data[self.nome_campo_empresa] = self.funcionario['empresa']
+                        if self.funcionario['empresa']:
+                            copy_data[self.nome_campo_empresa] = self.funcionario['empresa']
                 except :
                     pass
 
                 try:
                     if self.nome_campo_unidade:
-                        copy_data[self.nome_campo_unidade] = self.funcionario['unidade']
+                        if self.funcionario['unidade']:
+                            copy_data[self.nome_campo_unidade] = self.funcionario['unidade']
                 except :
                     pass
         else:
@@ -244,21 +246,35 @@ class ViewCreate(CreateView, AjaxableResponseMixin):
 
     def set_fields_list(self, request):        
         if not self.fields: 
-#            self.fields = []
+            self.fields = []
             for field in self.model._meta.fields:
                 if field.name.lower() == 'empresa':
                     self.nome_campo_empresa = field.name
-#                   if request.user.is_superuser:
-#                    self.fields.append(field.name)
-#                    continue
+                    if request.user.is_superuser:
+                        self.fields.append(field.name)
+                    continue
                 elif field.name.lower() == 'unidade':
                     self.nome_campo_unidade = field.name
-#                    if request.user.is_superuser:
-#                    self.fields.append(field.name)
-#                    continue
-#                elif field.editable:
-#                    self.fields.append(field.name)
-    
+                    if request.user.is_superuser:
+                        self.fields.append(field.name)
+                    continue
+                elif field.editable:
+                    self.fields.append(field.name)
+        
+            for field in self.model._meta.many_to_many:
+                if field.name.lower() == 'empresa':
+                    self.nome_campo_empresa = field.name
+                    if request.user.is_superuser:
+                        self.fields.append(field.name)
+                    continue
+                elif field.name.lower() == 'unidade':
+                    self.nome_campo_unidade = field.name
+                    if request.user.is_superuser:
+                        self.fields.append(field.name)
+                    continue
+                elif field.editable:
+                    self.fields.append(field.name)
+
     def get_success_url(self):
         return self.success_url
 
@@ -335,20 +351,34 @@ class ViewUpdate(UpdateView, AjaxableResponseMixin):
 
     def set_fields_list(self, request):
         if not self.fields: 
-#            self.fields = []
+            self.fields = []
             for field in self.model._meta.fields:
                 if field.name.lower() == 'empresa':
                     self.nome_campo_empresa = field.name
-#                   if request.user.is_superuser:
-#                    self.fields.append(field.name)
-#                    continue
+                    if request.user.is_superuser:
+                        self.fields.append(field.name)
+                    continue
                 elif field.name.lower() == 'unidade':
                     self.nome_campo_unidade = field.name
-#                    if request.user.is_superuser:
-#                    self.fields.append(field.name)
-#                    continue
-#                elif field.editable:
-#                    self.fields.append(field.name)
+                    if request.user.is_superuser:
+                        self.fields.append(field.name)
+                    continue
+                elif field.editable:
+                    self.fields.append(field.name)
+
+            for field in self.model._meta.many_to_many:
+                if field.name.lower() == 'empresa':
+                    self.nome_campo_empresa = field.name
+                    if request.user.is_superuser:
+                        self.fields.append(field.name)
+                    continue
+                elif field.name.lower() == 'unidade':
+                    self.nome_campo_unidade = field.name
+                    if request.user.is_superuser:
+                        self.fields.append(field.name)
+                    continue
+                elif field.editable:
+                    self.fields.append(field.name)
     
     def __init__(self, **kwargs):
         if 'MediaFiles' in kwargs :
@@ -458,7 +488,7 @@ class ViewList(ListView):
 
         context = super(ViewList, self).get_context_data(**kwargs)   
         
-        grid = Grid(self.model)
+        grid = Grid(model = self.model, title = page_caption)
        
         context['JsFiles'] = StaticFiles.GetJs(self.MediaFiles)
         context['CssFiles'] = StaticFiles.GetCss(self.MediaFiles)  

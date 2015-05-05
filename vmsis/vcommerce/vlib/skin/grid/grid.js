@@ -277,15 +277,22 @@ function Grid(DivGridId, Data) {
   var selected_page = parseInt(Data.selected_page);
   var title = Data.title;
 
+  if (readonly === "True"){
+    var table_class = 'tablegrid table table-condensed table-hover table-striped table-readonly'
+  }else{
+    var table_class = 'tablegrid table table-bordered table-hover table-striped table-editable'
+  }; 
+
   var html = "";
   
   if (readonly === "True") {
-    html = "<div class='grid'>";
+    html += "<div class='grid panel-default panel-customizado'>";
+    html += "<div class='panel-heading grid-custom-title'>";
     for (item_bar in bar) {
       if (bar.hasOwnProperty(item_bar)) {
         if ((bar[item_bar].type === 'link') && (readonly === "True")) {
           html += "<a class = 'fa fa-file-o' href = '" + bar[item_bar].value + "' title='" + 
-            bar[item_bar].label + "'>" + "</a> <div class='separador'></div> ";
+            bar[item_bar].label + "'>" + "</a> <div class='separador'>|</div> ";
         };
       };
     };
@@ -293,15 +300,18 @@ function Grid(DivGridId, Data) {
     html += "<a class = 'glyphicon glyphicon-search' href='JavaScript:void()' "+
       "onclick='Filter(\"" + module + "\", \"" + model + "\", " + JSON.stringify(columns)  +
       "  )' title='Filtrar' ></a>";
+    html += "<div class='separador'></div> <i class='glyphicon glyphicon-play'></i> <div class='separador'></div>";
+    html +=  title ;
+    html += "</div>"
   }
   else{
-    html += "<div class='grid panel panel-default' >";
+    html += "<div class='grid panel panel-default panel-customizado' >";
     html += "<div class='panel-heading'>" + title + "</div>";
-  }
-
+  };
+  html += "<div class='panel-body'>"
   html += "<table id='" + grid_id + "' parent='" + 
     parent + "'" + "link_to_form='" + link_to_form + "'" +
-    " class='tablegrid table table-bordered table-hover table-striped' module='" +
+    " class='"+ table_class + "' module='" +
      module + "' " + "mod='" + model + "'><thead class = 'header'> <tr>";
 
   if(readonly === "False") {
@@ -339,9 +349,10 @@ function Grid(DivGridId, Data) {
 
   html += "</tbody>";
   html += "</table>";
-
+  html += "</div>"; 
+  html += "<div class='panel-footer'>";  
   if (readonly === "False") {
-    html += "<div class='panel-footer'>";
+    
     html += "  <a href='javascript:void(0)' class='fa fa-file-o' title='Adicionar'" + 
       "onclick='InsertEmptyRow(" + JSON.stringify(columns) + ",\"" + grid_id + "\", \"" + link_to_form + "\" )'>" +
        "</a> | ";
@@ -354,7 +365,7 @@ function Grid(DivGridId, Data) {
 
     html += "  <a href='javascript:void(0)' onclick='doPostGrid(\"" + grid_id + "\")' class='glyphicon glyphicon-floppy-disk' " + 
       " title='Salvar'></a>";
-    html += "</div>";
+  
   }else{
     html += "<div class='navigation' >";
     html += "<div class='navigation-centralize'>"
@@ -377,7 +388,8 @@ function Grid(DivGridId, Data) {
     html += "</div>";
     html += "</div>"    
   };
-
+  
+  html += "</div>";
   html += "</div>"
   $("#" + DivGridId).html(html);
   ControlPagination(pages, columns, selected_page, module, model, "");
