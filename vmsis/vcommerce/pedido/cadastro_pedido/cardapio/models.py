@@ -33,5 +33,5 @@ class ItAgrupAdicional(models.Model):
 		db_table = "itagrupadicional"
 		verbose_name = "Agrupamentos de Adicionais Permitidos"
 		verbose_name_plural = "Agrupamentos de Adicionais Permitidos"
-	
+	cardapio = models.ForeignKey(Cardapio)
 	agrupadicional = models.ForeignKey(AgrupAdicional, verbose_name="Agrupamentos de Adicionais")

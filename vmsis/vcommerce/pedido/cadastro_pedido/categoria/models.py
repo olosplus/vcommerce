@@ -20,7 +20,7 @@ class Categoria(models.Model):
 		return self.nmcategoria
 
 class ItemCategoria(models.Model):
-#	cdcategoria = models.OneToOneField(Categoria)
+	categoria = models.ForeignKey(Categoria)
 	produto = models.ForeignKey(Produto, verbose_name="Produto")
 	def __str__(self):
 		return self.produto.nmproduto
