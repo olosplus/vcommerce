@@ -75,4 +75,13 @@ form ul.alert{
   border-top: 1px solid #ddd !important;
   border-bottom: 1px solid #ddd !important;
   color : #337ab7; !important;
+  border-top-left-radius : 10px !important; 
+  border-top-right-radius : 10px !important; 
+
+}
+
+.panel-customizado > .panel-footer{
+  border-bottom-left-radius : 10px !important; 
+  border-bottom-right-radius : 10px !important; 
+
 }

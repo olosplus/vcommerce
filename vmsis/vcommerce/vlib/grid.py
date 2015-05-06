@@ -87,6 +87,9 @@ class Grid:
         attr = self.get_model_attribute(field_name)
         return attr[field_name]['grid-type']
 
+    def get_field_query_set(self, model_rel_to, field_name):
+        return model_rel_to.objects.all()
+
     def get_grid_columns_config(self, field_name, read_only = True, check_link_to_form = True):
         
         str_objects, id_values = [], []
@@ -112,9 +115,10 @@ class Grid:
            (self.parent_model.__base__ == column_model)):
                 return {"type":"", "objects":"", "values":"", "is_link_to_form" : True }
 
-        if column_model != None:
-            query = column_model.objects.all()
-            str_objects, id_values = [], []
+        if column_model != None:            
+            query = self.get_field_query_set(model_rel_to = column_model, field_name = field_name)
+            #column_model.objects.all()
+            str_objects, id_values = ['--------'], ['']            
             for q in query:
                 str_objects.append(str(q));
                 id_values.append(str(q.id))

@@ -35,7 +35,6 @@ def index(request):
      
     request.session['apps_label'] = MenuApps.GetAppsVerboseName()
     
-#    if UtilizaFuncionario:
     try:                
         func = Funcionario.objects.get(user = request.user)
         unidades = func.unidade.all()
@@ -53,8 +52,6 @@ def index(request):
             "empresa" : empresa_id, "unidades" : list_unidades, "unidade":list_unidades[0]["id"]}
                 
     except :
-        print(request.user)
-#        raise
         request.session['funcionario'] = {"id" : request.user.id, "nome" : request.user.username, 
             "usuario" : request.user.id,
             "empresa" : None, "unidades" : None, "unidade":None}
@@ -77,7 +74,7 @@ def SetUnidade(request):
         return HttpResponse('error')
 
 def insert(data, model, commit = True, link_to_form = "", parent_instance = None, 
-    execute_on_after_insert = None):
+    execute_on_after_insert = None, grid_id = ""):
 
     if not data:
         return str()
@@ -134,8 +131,15 @@ def insert(data, model, commit = True, link_to_form = "", parent_instance = None
 
         try:
             mod.full_clean(exclude = tuple(exclude_validations))
-        except ValidationError as e:            
-            return "<input id='grid_erros' value='%s'>" % str(e).replace("'", "").replace('"', "")
+        except ValidationError as e:                      
+            re = e.message_dict
+            val = []
+            for k in list(re.keys()):
+                val.append(k + ":" + \
+                str(re[k]).replace("'", "").replace('"', "").replace("[","").replace("]","" ).replace(",", ".") )
+            print(str(val))
+            return "<input id='grid_erros' name='%s' value='%s' data-indexrow = '%s'>" % \
+                 (grid_id, str(val).replace("'", "").replace('"', "") , row_json['data-indexrow'])
 
         if commit :            
             mod.save()            
@@ -163,7 +167,7 @@ def delete(data, model, execute_on_before_delete = None):
     return ""    
 
 #@staticmethod
-def update(data, model, commit = True, execute_on_after_update = None):
+def update(data, model, commit = True, execute_on_after_update = None, grid_id = ""):
 
     if data.count(LINE_SEPARATOR) > 0:
         lista = data.split(LINE_SEPARATOR)    
@@ -189,7 +193,14 @@ def update(data, model, commit = True, execute_on_after_update = None):
         try:
             mod.full_clean()
         except ValidationError as e:
-            return "<input id='grid_erros' value='%s'>" % str(e).replace("'", "").replace('"', "")
+            re = e.message_dict
+            val = []
+            for k in list(re.keys()):
+                val.append(k + ":" + \
+                str(re[k]).replace("'", "").replace('"', "").replace("[","").replace("]","" ).replace(",", ".") )
+            print(str(val))
+            return "<input id='grid_erros' name='%s' value='%s' data-indexrow = '%s'>" % \
+                 (grid_id, str(val).replace("'", "").replace('"', "") , row_json['data-indexrow'])
 
         if commit :
             mod.save()

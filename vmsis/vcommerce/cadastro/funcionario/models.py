@@ -31,7 +31,7 @@ class Funcionario(Master_empresa):
 	dtadmissao = models.DateField(verbose_name='Data de admissão',null=True,blank=True)
 	dtdemissao = models.DateField(verbose_name='Data de demissão',null=True,blank=True)
 	pessoa = models.CharField(max_length=2,verbose_name='Tipo',choices=TIPO_C, blank=True, null=True)
-#	unidade = models.ForeignKey(Unidade,verbose_name="Unidade padrão")
+#	unidadePadrao = models.CharField(verbose_name="Unidade padrão", QuerySet=Unidade.objects.all())
 	unidade = models.ManyToManyField(Unidade, verbose_name="Unidades permitidas", blank=True, null=True)
 
 	class Meta:

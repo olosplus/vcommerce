@@ -95,7 +95,7 @@ class StandardFormGrid(ModelForm):
     def get_grids_erros(self, parent_instance):
         erro = ""
         if self.child_models:
-            grids = self.split_child_models()
+            grids = self.split_child_models()           
 
             for grid in grids:
                 if not grid:
@@ -109,12 +109,14 @@ class StandardFormGrid(ModelForm):
      
                 if data_dict['rows_inserted']:
                     erro = vlib_views.insert(data = data_dict['rows_inserted'], model = model, commit = False,
-                        link_to_form = data_dict['link_to_form'], parent_instance = parent_instance)                                 
+                        link_to_form = data_dict['link_to_form'], parent_instance = parent_instance, 
+                        grid_id = data_dict['grid_id'])                                 
                 if erro:
                     return erro
                 else:
                     if data_dict['rows_updated']:
-                        erro = vlib_views.update(data = data_dict['rows_updated'], model = model, commit = False)
+                        erro = vlib_views.update(data = data_dict['rows_updated'], model = model, commit = False,
+                            grid_id = data_dict['grid_id'])
                     if erro:
                         return erro
         return str()
