@@ -5,7 +5,6 @@ from cadastro.produto.models import Produto
 choice_tipo_ativ = (('A','Ativa'),
 	('D','Inativa'))
 
-
 # Create your models here.
 class AgrupAdicional(models.Model):
 	class Meta:

@@ -12,7 +12,6 @@ class Almoxarifado(Master_endereco):
     	                'cadastro.contato.models.Contato',]
 
     nmalmoxa = models.CharField(max_length=250,verbose_name="Nome")
-    dtcadastro = models.DateField(auto_now_add=True, verbose_name='Data de cadastro')
 
     def __str__(self):
     	return self.nmalmoxa

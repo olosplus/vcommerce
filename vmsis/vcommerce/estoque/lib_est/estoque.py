@@ -72,7 +72,6 @@ class Estoque(object):
 			produto = Produto.objects.get(pk=p_produto)
 			medida = Unimedida.objects.get(pk=produto.unimedida_id)
 			qtfatorconv = medida.qtfatorconv
-			print(str(qtfatorconv))
 		except Unimedida.DoesNotExist:
 			return 'Erro: Unidade de medida não existe.'
 		except Produto.DoesNotExist:

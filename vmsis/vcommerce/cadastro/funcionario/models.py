@@ -27,7 +27,6 @@ class Funcionario(Master_empresa):
 	bairro = models.ForeignKey(Bairro, blank=True, null=True, verbose_name='Bairro')
 	cidade = models.ForeignKey(Cidade,verbose_name='Cidade', null=True)
 	estado = models.ForeignKey(Estado,verbose_name='Estado', null=True)
-	dtcadastro = models.DateField(auto_now_add=True, verbose_name='Data de cadastro')
 	dtadmissao = models.DateField(verbose_name='Data de admissão',null=True,blank=True)
 	dtdemissao = models.DateField(verbose_name='Data de demissão',null=True,blank=True)
 	pessoa = models.CharField(max_length=2,verbose_name='Tipo',choices=TIPO_C, blank=True, null=True)

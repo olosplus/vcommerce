@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 from django.db import models
+from vlib.control.models import Master_empresa
 
 # Create your models here.
-class Pais(models.Model):
+class Pais(Master_empresa):
 	"""docstring for ClassName"""
 	class Meta:
 		db_table = "pais"
