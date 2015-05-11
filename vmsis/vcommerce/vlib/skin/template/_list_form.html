@@ -4,6 +4,8 @@
 
 {% block js %}
   <script src="{% static 'js/base.js' %}"></script>
+  <script src="{% static 'vReport/vReport.js' %}"></script>
+
   {% for media in JsFiles %}
     <script type="text/javascript" src='{% static media %}'></script>
   {% endfor %}
@@ -26,6 +28,7 @@
 {% endblock %}
 
 {% block css %}
+  <link rel="stylesheet" style="text/css" href="{%  static  'vReport/vReport.css' %}" />
   {% for media in CssFiles %}
      <link rel="stylesheet" style="text/css" href="{%  static  media %}" />
   {% endfor %}  

@@ -49,12 +49,12 @@ function GetGridChange(idGrid, operation) {
   for (tr in list_tr) {
     
     if (list_tr.hasOwnProperty(tr)) {
-      if (tr === 'context') 
+      if (isNaN(tr)) 
         continue
       
       tds = list_tr[tr].children;
       if (list_tr[tr].childElementCount > 0) {
-        str_row += '{' + JoinToJson("data-indexrow", list_tr[tr].getAttribute('data-indexrow'));        
+        str_row = '{' + JoinToJson("data-indexrow", list_tr[tr].getAttribute('data-indexrow'));        
       };
       for (td in tds) {
         if (tds.hasOwnProperty(td)) {
@@ -342,8 +342,13 @@ function Grid(DivGridId, Data) {
     html += "<a class = 'glyphicon glyphicon-search' href='JavaScript:void()' "+
       "onclick='Filter(\"" + module + "\", \"" + model + "\", " + JSON.stringify(columns)  +
       "  )' title='Filtrar' ></a>";
-    html += "<div class='separador'></div> <i class='glyphicon glyphicon-play'></i> <div class='separador'></div>";
-    html +=  title ;
+    html += "<div class='separador'>|</div> <a class='glyphicon glyphicon-print' href='JavaScript:void()' "+
+      "title='Relatório'  onclick='Print(\"" + module + "\", \"" +
+              model + "\", " + JSON.stringify(columns)  +
+            ", \"id\", \""+ title +" \")'> </a>";
+    html += "<div class='separador'></div>  <div class='separador'></div>";
+    
+    html +=  "<strong style='font-size:20px'>" + title + "</strong>";
     html += "</div>"
   }
   else{
@@ -738,4 +743,51 @@ function PaginagionCentralize(){
   $(".navigation").prepend("<div id='navigation-wrapper' class='inline'></div>");
   $("#navigation-wrapper").width(width_wrap);
   $("#navigation-wrapper").height(35);
+}
+
+function Print(module, model, columns, column, title){
+  var filter = $("#filter_cache").val();
+  var palavras_inteiras = $("#palavras_inteiras").val();
+  var filtro = ""; 
+  ordenacao = $("#grid_order_by").val();
+
+  if(filter === undefined){
+    filter = "";
+  }else{
+    filter = JSON.parse(filter)
+  };
+ 
+  if (filter != ""){
+    filtro = JSON.stringify(filter);    
+  };
+
+  if(palavras_inteiras === undefined){
+    palavras_inteiras = "";
+  };
+
+    $.ajax({
+      url: '/printgrid',
+      type: 'get',
+      //this is the default though, you don't actually need to always mention it
+      data: {"module" : module, "model" : model, "columns" : JSON.stringify(columns), "form_serialized" : filtro,
+      "partial_search" : palavras_inteiras, "page" : -1, "order_by" : ordenacao, "title" : title},
+
+      success: function (data) {
+        var response = eval(data);
+//        var myWindow = window.open("about:blank", "", "_blank");
+        report = new vReport("A4", "body", response);   
+        report.view() 
+        
+
+//        var parser = new DOMParser()
+//        var doc_received = parser.parseFromString(data, "text/html");        
+//        var myWindow = window.open("about:blank", "", "_blank");
+//        myWindow.document.write("<html>" + doc_received.getElementsByTagName("html")[0].innerHTML + "</html>");
+//        alert(data);
+      },
+      failure: function (data) {
+        alert('Got an error dude');
+      }
+    });
+
 }

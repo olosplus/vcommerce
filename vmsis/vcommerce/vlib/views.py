@@ -17,6 +17,7 @@ from django.contrib.auth.decorators import login_required
 from importlib import import_module
 from django.conf import settings
 from django.core import serializers
+from vlib.vReport.vReport import PageHeader, MasterBand, PageFooter, Report
 
 try:
     from cadastro.funcionario.models import Funcionario
@@ -281,8 +282,8 @@ def Filtro(request):
     Filtrar = FormFiltro(model = model, request = request)    
     return Filtrar.Response()
 
-def GetGridCrud(request):
-    
+
+def GetGridConfiguration(request):
     str_model = request.GET.get('model')
     str_module = request.GET.get('module')    
     
@@ -345,12 +346,91 @@ def GetGridCrud(request):
                         else:    
                             dict_filter.update({field_name + "__icontains": field["value"]})
     
-    GridData = Grid(model)            
+    return {"model" : model, "filter" : dict_filter, "fields" : fields_display, "page" : page, "order" : order_by}
+
+def GetGridCrud(request):
+    try:
+        conf = GetGridConfiguration(request = request)    
     
-    grid_js = GridData.get_js_grid(use_crud = True, dict_filter = dict_filter,
-        display_fields = tuple(fields_display), page = page, order_by = order_by)
-    
+        GridData = Grid(conf["model"])            
+        
+        grid_js = GridData.get_js_grid(use_crud = True, dict_filter = conf["filter"],
+            display_fields = tuple(conf["fields"]), page = conf["page"], order_by = conf["order"])
+    except Exception as e:
+        print(e)
     return HttpResponse(grid_js)    
 
 
 
+
+def PrintGrid(request):
+
+    try:
+       conf = GetGridConfiguration(request = request)               
+    except Exception as e:
+        print(e)
+    
+    model = conf["model"]
+    fields = conf["fields"]    
+
+    try:    
+        header = PageHeader()
+        
+        style_label_header = 'font-family: "Times New Roman", Times, serif; font-style: normal;font-size: 20px; '\
+            'font-weight: bold;margin:13px auto 3px;max-width:100px';
+    
+        header.set_style(style = "border-bottom:solid 1px black" )    
+        
+        header.add_component(type = "p", name = "lblTitulo", text = request.GET.get("title"), 
+            style = style_label_header)    
+        
+        header.add_component(type = "p", name = "lblLinhaHeader", text = "", 
+            style = "border-bottom:solid 1px black;")    
+
+        for field in fields:
+            if field.upper() == "ID":                
+                continue        
+            
+            if field.find('__') >= 0:
+                field = field[0:field.find('__')]
+
+            header.add_component(type="p", name=field, text= model._meta.get_field(field).verbose_name , 
+                style="margin:3px 5px 3px 1px; float:left;width:150px; font-weight:bold")
+        
+        footer = PageFooter()
+        footer.set_style(style = "border-top:solid 1px black" )    
+
+        footer.add_component(type = "p", name = "lblTitulo", text = "vmsis", 
+            style = style_label_header)    
+    
+        master = MasterBand()    
+        
+        for field in fields:            
+            if field.upper() == "ID":
+                continue
+
+            master.add_component(type = "dataP", name=field, db_link=field, 
+                style="margin:3px 5px 3px 1px;float:left;width:150px")
+
+    except Exception as e:
+        print(e)
+
+    try:        
+        
+        if conf["filter"]:
+            q = model.objects.filter(conf["filter"])
+        else:
+            q = model.objects.all()
+        
+#        if conf["order"]:
+#            q = q.order_by(conf["order"])
+        q = q.values(*fields)        
+        master.query = q
+        
+        report = Report(page_header = header, master_band = master, page_footer = footer,
+            template="", page_title = request.GET.get("title"))
+        return HttpResponse(report.get_rel_configuration())
+    except Exception as e:
+        print(e)
+        return HttpResponse(e)
+        
