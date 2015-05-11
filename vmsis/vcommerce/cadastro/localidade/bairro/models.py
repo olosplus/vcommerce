@@ -9,6 +9,7 @@ class Bairro(Master_empresa):
 		db_table = "bairro"
 		verbose_name = "Bairro"
 		verbose_name_plural = "Bairros"
+		ordering = ['nmbairro']
 
 	cdbairro = models.CharField(max_length=10,verbose_name="Código",unique=True,db_index=True)
 	nmbairro = models.CharField(max_length=250,verbose_name="Nome")

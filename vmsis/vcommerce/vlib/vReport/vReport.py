@@ -152,7 +152,7 @@ class Report(object):
             '      })() '\
             '    </scrip> '\
             '  </head> '\
-            '  <body > '\
+            '  <body class="vReport"> '\
             '  </body> '\
             '</html>   ' % (self.page_title, settings.STATIC_URL, settings.STATIC_URL, self.get_rel_configuration())
         

@@ -5,14 +5,15 @@ from vlib.control.models import Master_empresa
 choice_TipoMed = (
 	('C','Capacidade'),
 	('V','Volume'),
-	('M','Massa'))
+	('M','Massa'),
+	('U','Unidade'))
 
-# Create your models here.
 class Unimedida(Master_empresa):
 	class Meta:
 		db_table = "unimedida"
 		verbose_name = "Unidade de Medida"
 		verbose_name_plural = "Unidades de Medidas"
+		ordering = ['idtipomed','nmmedida']
 
 	nmmedida = models.CharField(max_length=100,verbose_name='Nome')
 	sgmedida = models.CharField(max_length=5,verbose_name='Abreviatura')

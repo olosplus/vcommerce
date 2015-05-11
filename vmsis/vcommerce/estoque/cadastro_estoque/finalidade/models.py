@@ -8,6 +8,7 @@ class Finalidade(Master_empresa):
 		db_table = "finalidade"
 		verbose_name = "Finalidade"
 		verbose_name_plural = "Finalidades"
+		ordering = ['descricao']
 
 	descricao = models.CharField(max_length=150,verbose_name="Descrição",blank=True)
 

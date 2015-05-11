@@ -41,8 +41,8 @@ vReport = function(pageType, container, data){
 		return text;
 	};
 	
-	var body = getE(container)[0];		
-    
+	var body = getE(container)[0];    
+    $('body').addClass('vReport');
     body.innerHTML = "";
 	
 	var getPage = function(){

@@ -10,12 +10,12 @@ choice_tipo_jfo = (('J','Jurídica'),
 	('F','Física'),
 	('O','Outros'))
 
-# Create your models here.
 class Unidade(Master_endereco):
     class Meta:
         db_table = "unidade"
         verbose_name = "Unidade"
         verbose_name_plural = "Unidades"
+        ordering = ['nmfantasia']
         child_models = ['cadastro.localidade.endereco.models.Endereco',
                         'cadastro.contato.models.Contato']        
 

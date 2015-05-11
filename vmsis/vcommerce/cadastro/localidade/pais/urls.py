@@ -5,4 +5,4 @@ from cadastro.localidade.pais.models import Pais
 
 Crud = CrudView(Pais)
 
-urlpatterns = Crud.AsUrl()
+urlpatterns = Crud.AsUrl(GridFields  = ('cdpais','nmpais','sgpais2','sgpais3',))

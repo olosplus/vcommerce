@@ -5,4 +5,4 @@ from cadastro.produto.models import Produto
 
 Crud = CrudView(Produto)
 
-urlpatterns = Crud.AsUrl(GridFields  = ('posarvore','nmproduto','unimedida',))
+urlpatterns = Crud.AsUrl(GridFields  = ('nmproduto','unimedida__sgmedida','cdbarra',))

@@ -18,5 +18,6 @@
  {"pk": 18, "model": "unimedida.Unimedida", "fields": {"nmmedida": "Metro cúbico", "sgmedida": "m³", "qtfatorconv":1, "idtipomed":"V"}},
  {"pk": 19, "model": "unimedida.Unimedida", "fields": {"nmmedida": "Decímetro cúbico", "sgmedida": "dm³", "qtfatorconv":0.001, "idtipomed":"V"}},
  {"pk": 20, "model": "unimedida.Unimedida", "fields": {"nmmedida": "Centímetro cúbico", "sgmedida": "cm³", "qtfatorconv":0.000001, "idtipomed":"V"}},
- {"pk": 21, "model": "unimedida.Unimedida", "fields": {"nmmedida": "Milímetro cúbico", "sgmedida": "mm³", "qtfatorconv":0.000000001, "idtipomed":"V"}}
+ {"pk": 21, "model": "unimedida.Unimedida", "fields": {"nmmedida": "Milímetro cúbico", "sgmedida": "mm³", "qtfatorconv":0.000000001, "idtipomed":"V"}},
+ {"pk": 22, "model": "unimedida.Unimedida", "fields": {"nmmedida": "Unidade", "sgmedida": "UN", "qtfatorconv":1, "idtipomed":"U"}}
 ]

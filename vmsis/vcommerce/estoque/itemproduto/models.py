@@ -12,6 +12,7 @@ class Itemproduto(Master_empresa):
 		db_table = "itemproduto"
 		verbose_name = "Item"
 		verbose_name_plural = "Itens"
+		ordering = ['-id']
 	
 	produto = models.ForeignKey(Produto,verbose_name='Produto')
 	almoxarifado = models.ForeignKey(Almoxarifado,verbose_name='Almoxarifado')

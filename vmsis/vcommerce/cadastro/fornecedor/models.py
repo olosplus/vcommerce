@@ -12,6 +12,7 @@ class Fornecedor(Master_endereco):
         db_table = "fornecedor"
         verbose_name = "Fornecedor"
         verbose_name_plural = "Fornecedores"
+        ordering = ['nmfornecedor']
         child_models = ['cadastro.localidade.endereco.models.Endereco',
                         'cadastro.contato.models.Contato']
 

@@ -10,6 +10,7 @@ class Entrada(Master_moviest):
 		verbose_name = "Entrada"
 		verbose_name_plural = "Entradas"
 		child_models = ['estoque.itemproduto.models.Itemproduto']
+		ordering = ['-id']
 
 	dtentrada = models.DateTimeField(verbose_name='Data de Entrada')
 	fornecedor = models.ForeignKey(Fornecedor,verbose_name='Fornecedor', null=True)

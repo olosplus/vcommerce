@@ -12,6 +12,7 @@ class Cliente(Master_endereco):
         db_table = "cliente"
         verbose_name = "Cliente"
         verbose_name_plural = "Clientes"
+        ordering = ['nmcliente']
         child_models = ['cadastro.localidade.endereco.models.Endereco',
                         'cadastro.contato.models.Contato']
 

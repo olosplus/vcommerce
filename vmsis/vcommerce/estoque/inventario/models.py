@@ -8,6 +8,7 @@ class Inventario(Master_moviest):
         db_table = "inventario"
         verbose_name = "Inventário"
         verbose_name_plural = "Inventários"
+        ordering = ['-id']
         child_models = ['estoque.itemproduto.models.Itemproduto']
 
     dtinventario = models.DateTimeField(verbose_name='Data do inventário')
