@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
 from django.db import models
 from cadastro.localidade.cidade.models import Cidade
+from vlib.control.models import Master_empresa
 
 # Create your models here.
-class Bairro(models.Model):
+class Bairro(Master_empresa):
 	class Meta:
 		db_table = "bairro"
 		verbose_name = "Bairro"

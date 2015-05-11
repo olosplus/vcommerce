@@ -24,7 +24,6 @@ class Unidade(Master_endereco):
     nmfantasia = models.CharField(max_length=255,verbose_name="Nome Fantasia")
     idtipo = models.CharField(max_length=1,verbose_name="Tipo de Unidade",choices=choice_tipo)
     identificador = models.CharField(max_length=1,verbose_name="Tipo",choices=choice_tipo_jfo, default = 'J')
-    dtcadastro = models.DateField(auto_now_add=True, verbose_name='Data de cadastro')
     almoxarifado = models.ManyToManyField(Almoxarifado,verbose_name="Almoxarifado", null=True)
 
     def __str__(self):

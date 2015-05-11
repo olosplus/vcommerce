@@ -3,8 +3,6 @@ from django.db import models
 from vlib.control.models import Master_empresa
 from cadastro.unidade.models import Unidade
 
-# Create your models here.
-
 class CentroCusto(Master_empresa):
     class Meta:
     	db_table = "centro_custo"

@@ -20,4 +20,4 @@ class Unimedida(Master_empresa):
 	idtipomed = models.CharField(max_length=1, verbose_name="Tipo de Medida", choices=choice_TipoMed)
 
 	def __str__(self):
-		return self.nmmedida
+		return "%s - %s" % (self.nmmedida, self.sgmedida)

@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
 from django.db import models
 from cadastro.localidade.pais.models import Pais
+from vlib.control.models import Master_empresa
 
 # Create your models here.
-class Estado(models.Model):
+class Estado(Master_empresa):
 	class Meta:
 		db_table = "estado"
 		verbose_name = "Estado"
