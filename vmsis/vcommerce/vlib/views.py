@@ -372,6 +372,7 @@ def PrintGrid(request):
     
     model = conf["model"]
     fields = conf["fields"]    
+    columns_size = 800 / (len(fields));
 
     try:    
         header = PageHeader()
@@ -395,7 +396,7 @@ def PrintGrid(request):
                 field = field[0:field.find('__')]
 
             header.add_component(type="p", name=field, text= model._meta.get_field(field).verbose_name , 
-                style="margin:3px 5px 3px 1px; float:left;width:150px; font-weight:bold")
+                style="margin:3px 5px 3px 1px; float:left;width:%spx; font-weight:bold" % columns_size)
         
         footer = PageFooter()
         footer.set_style(style = "border-top:solid 1px black" )    
@@ -410,7 +411,7 @@ def PrintGrid(request):
                 continue
 
             master.add_component(type = "dataP", name=field, db_link=field, 
-                style="margin:3px 5px 3px 1px;float:left;width:150px")
+                style="margin:3px 5px 3px 1px;float:left;width:%spx" %columns_size)
 
     except Exception as e:
         print(e)
@@ -418,7 +419,7 @@ def PrintGrid(request):
     try:        
         
         if conf["filter"]:
-            q = model.objects.filter(conf["filter"])
+            q = model.objects.filter(**conf["filter"])
         else:
             q = model.objects.all()
         

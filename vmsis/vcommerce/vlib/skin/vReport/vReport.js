@@ -6,15 +6,21 @@ PageHeader - Div com tamanho de 100%
 
 */
 
-vReport = function(pageType, container, data){	
+vReport = function(pageType, container, data, sel_document){	
     
     if(pageType == "A4"){	
 	  var pageHeight = 1207; //default 3508 / 3 -- 1207
 	  var pageWidth = 826.67; //default 2480 / 3 --826.67
 	};
 	
-	var doc = document;
+	if (sel_document != undefined && sel_document != null && sel_document != ""){
+	  var doc = sel_document;
+	}else{
+	  var doc = document;
+    };    
+	
 	var pages = 1;
+    
 
     /*utilidade*/ 
 	var getE = function(select){
@@ -40,10 +46,44 @@ vReport = function(pageType, container, data){
 		};
 		return text;
 	};
-	
-	var body = getE(container)[0];    
-    $('body').addClass('vReport');
+
+	var applyStyle = function(){
+		getE("head")[0].innerHTML +=
+		"<style type='text/css'> "+
+        " .body.vReport{ "+
+        "   background-color:#E6E6E6; "+
+        "  } "+
+        ".page{ "+
+        " background-color:white; "+
+        "} "+
+
+        ".pageHeader, .masterBand, .pageFooter{ "+
+        " display : inline; "+
+	    " float: left; "+
+	    " width: 100%;	"+
+        " }  "+
+        ".progress-bar { "+
+        "	float: left; "+
+        "	width: 0; "+
+        "	height: 100%; "+
+        "	font-size: 12px; "+
+        "	line-height: 20px; "+
+        "	color: #fff; "+
+        "	text-align: center; "+
+        "	background-color: #337ab7; "+
+        "	-webkit-box-shadow: inset 0 -1px 0 rgba(0,0,0,.15); "+
+        "	box-shadow: inset 0 -1px 0 rgba(0,0,0,.15); "+
+        "	-webkit-transition: width .6s ease; "+
+        "	-o-transition: width .6s ease; "+
+        "	transition: width .6s ease; "+
+        "} "+
+        "</style>";
+	};
+	    
+	var body = getE(container)[0];        
+    body.className +=  'body vReport';
     body.innerHTML = "";
+
 	
 	var getPage = function(){
 		return pages - 1;
@@ -104,8 +144,6 @@ vReport = function(pageType, container, data){
 		var lastChildTop = lastChild.offsetTop;
 		var lastChildHeight = lastChild.offsetHeight;
 		
-		//lastChildTop = lastChildTop - ( (getPage() -1) * pageHeight)
-		//lastChildTop + lastChildHeight > pageHeight
 		if ( (lastChildTop + lastChildHeight) >= (pageHeight * getPage() ) ){
 			pg.removeChild(lastChild);
 			addPage();
@@ -135,10 +173,14 @@ vReport = function(pageType, container, data){
 	};
 	
 	this.view = function(){		
+        
+        applyStyle();
+
         var pageHeader = data.pageHeader;
 		var masterBand = data.masterBand;
         var row = [];    
         if(masterBand.bandData != undefined){
+		    		    
 			addPage();
 		    configPageHeader(pageHeader);
 			var i = 0;
@@ -156,13 +198,14 @@ vReport = function(pageType, container, data){
 							if (row[b].name == component.dbLink){
 								addLabel(format("masterBand_%s_%s", [getPage(), i + 1] ) , component.name, row[b].value, component.style);
 								checkPageSize(pageHeader, i + 1);
+								
 							};
 						};
 					}else if(component.type == "dataP"){
 						for(b = 0; b <= row.length - 1; b++){
 							if (row[b].name == component.dbLink){
 								addP(format("masterBand_%s_%s", [getPage(), i + 1] ) , component.name, row[b].value, component.style);
-								checkPageSize(pageHeader, i + 1);
+								checkPageSize(pageHeader, i + 1);								
 							};					  
 						};	
 					}else if(component.type == "dataDiv"){

@@ -774,16 +774,11 @@ function Print(module, model, columns, column, title){
 
       success: function (data) {
         var response = eval(data);
-//        var myWindow = window.open("about:blank", "", "_blank");
-        report = new vReport("A4", "body", response);   
-        report.view() 
-        
 
-//        var parser = new DOMParser()
-//        var doc_received = parser.parseFromString(data, "text/html");        
-//        var myWindow = window.open("about:blank", "", "_blank");
-//        myWindow.document.write("<html>" + doc_received.getElementsByTagName("html")[0].innerHTML + "</html>");
-//        alert(data);
+        var myWindow = window.open("about:blank", "Relatório: " + title, "_blank");
+        
+        report = new vReport("A4", "body", response, myWindow.document);   
+        report.view()         
       },
       failure: function (data) {
         alert('Got an error dude');
