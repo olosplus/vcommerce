@@ -9,7 +9,8 @@ class FormEntrada(StandardFormGrid):
     
     def after_insert_grid_row(self, instance):
         FunEstoque = Estoque(self.funcionario["empresa"])
-        FunEstoque.entr_prod_est(instance.produto_id, instance.almoxarifado, instance.lote_id, instance.qtdeprod)
+        if FunEstoque.entr_prod_est(instance.produto_id, instance.almoxarifado, instance.lote_id, instance.qtdeprod):
+        	Entrada.objects.get(pk=instance.master_moviest_id).delete()
 
 class ViewEntrada(ViewCreate):
     form_class = FormEntrada
