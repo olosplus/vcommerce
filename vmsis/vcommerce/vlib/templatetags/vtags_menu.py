@@ -111,6 +111,8 @@ def get_apps_html(path, hab_UL=False, nivel=1):
                     html += TAG_LI
 
                 url_app = load_url_app(path + "/" + directory)
+                if app_name == 'parametro.paramgeral':
+                    url_app = url_app.replace('(?P<pk>\d+)/$','1') #Arrumar: Passar id da empresa no lugar do 1
                 html += "%s %s '%s' %s" % (TAG_A_PARTIAL, ATTR_HREF, url_app, CLOSE_TAG)
                 if menu_apps.MenuApps.ImgMenuApp(app_name):
                     html += "%s class='%s'> %s" % (TAG_I, menu_apps.MenuApps.ImgMenuApp(app_name),CLOSE_TAG_I)

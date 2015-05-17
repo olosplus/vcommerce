@@ -244,7 +244,7 @@ class ViewCreate(CreateView, AjaxableResponseMixin):
     template_name = TEMPLATE_INSERT
     MediaFiles = []   
     nome_campo_empresa = str()
-    nome_campo_unidade = str()    
+    nome_campo_unidade = str()
 
     def set_fields_list(self, request):        
         if not self.fields: 
@@ -337,7 +337,7 @@ class ViewCreate(CreateView, AjaxableResponseMixin):
         context = super(ViewCreate, self).get_context_data(**kwargs)   
         context['JsFiles'] = StaticFiles.GetJs(self.MediaFiles)
         context['CssFiles'] = StaticFiles.GetCss(self.MediaFiles)
-        context['url_list'] =  Urls.BaseUrlList(CountPageBack = 1)    
+        context['url_list'] = Urls.BaseUrlList(CountPageBack = 1)
         context['url_insert'] = Urls.BaseUrlInsert(1)
         context['form_id'] = self.model.__name__
         context['grid'] = grid.grid_as_text(use_crud = False, read_only = False, dict_filter = {'id':-1});        
@@ -412,7 +412,7 @@ class ViewUpdate(UpdateView, AjaxableResponseMixin):
         context['form_pk'] = objeto.pk
         context['JsFiles'] = StaticFiles.GetJs(self.MediaFiles)
         context['CssFiles'] = StaticFiles.GetCss(self.MediaFiles)    
-        context['url_list'] =  Urls.BaseUrlList(CountPageBack = 2)    
+        context['url_list'] =  Urls.BaseUrlList(CountPageBack = 2)
         context['url_update'] = Urls.BaseUrlUpdate(CountPageBack = 2)        
         context['titulo'] = page_caption                        
         context['funcionario'] = self.request.session['funcionario']        
@@ -466,7 +466,7 @@ class ViewDelete(DeleteView):
         context = super(ViewDelete, self).get_context_data(**kwargs)   
         context['JsFiles'] = StaticFiles.GetJs(self.MediaFiles)
         context['CssFiles'] = StaticFiles.GetCss(self.MediaFiles)    
-        context['url_list'] = Urls.BaseUrlList(CountPageBack = 1)        
+        context['url_list'] = Urls.BaseUrlList(CountPageBack = 1)
         context['funcionario'] = self.request.session['funcionario']        
         return context
 
@@ -560,7 +560,7 @@ class CrudView:
 #            fields_crud = fields_list   
 
         urls = patterns('', 
-            url(self.UrlCrud.UrlList(), self.view.List(MediaFiles = MediaFilesList, Grid_Fields = GridFields,
+            url(self.UrlCrud.UrlList(), self.view.List(MediaFiles = MediaFilesList, Grid_Fields = GridFields, 
                 ClassView = ClassList)),
 
             url(self.UrlCrud.UrlInsert(), self.view.Create(MediaFiles = MediaFilesInsert, ClassView = ClassCreate)), 
@@ -569,4 +569,4 @@ class CrudView:
 
             url(self.UrlCrud.UrlDelete(), self.view.Delete(MediaFiles = MediaFilesDelete, ClassView = ClassDelete)))
 
-        return urls 
+        return urls

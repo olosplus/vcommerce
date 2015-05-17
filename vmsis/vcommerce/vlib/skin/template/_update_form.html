@@ -24,9 +24,9 @@
                 {%csrf_token%}     
                 {{ form.as_p }}    
               </form>    
-              <p>{{grid | safe}}</p>              
-              <input type="hidden" value="{{url_update}}{{object.pk}}/" id="ownurl">  
-              <input type="hidden" value="{{url_list}}" id="listurl">  
+              <p>{{grid | safe}}</p>
+              <input type="hidden" value="{{url_update}}{{object.pk}}/" id="ownurl">
+              <input type="hidden" value="{{url_list}}" id="listurl">
             </div>  
           </div>
         </div>
@@ -35,7 +35,7 @@
             '{{url_list}}', false, '')" 
             class="btn btn-outline btn-primary">Salvar e listar</button>
           <button type="reset" class="btn btn-outline btn-danger" 
-              onClick="window.location.assign('{{url_list}}')">Cancelar</button> 
+              onClick="window.location.assign('{{url_list}}')">Cancelar</button>
         </div>
       </div>    
     </div> 
@@ -49,4 +49,3 @@
     <link rel="stylesheet" style="text/css" href="{% static  media %}" />
   {% endfor %}  
 {% endblock %}
-
