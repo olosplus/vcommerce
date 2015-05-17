@@ -6,8 +6,6 @@ apps_on_menu = (
     {'app': 'cadastro.contato', 'verbose_name' : 'Contato', 'visible': False},
     {'app': 'cadastro.empresa', 'verbose_name' : 'Empresa'},
     {'app': 'cadastro.fornecedor', 'verbose_name' : 'Fornecedor'},
-    {'app': 'cadastro.banco', 'verbose_name': 'Banco', 'visible': False},
-    {'app': 'cadastro.conta', 'verbose_name': 'Conta'},
     {'app': 'cadastro.localidade', 'verbose_name' : 'Localidades' },
     {'app': 'cadastro.localidade.bairro', 'verbose_name' : 'Bairro'},
     {'app': 'cadastro.localidade.cidade', 'verbose_name' : 'Cidade'},
@@ -62,5 +60,11 @@ apps_on_menu = (
     {'app': 'pedido.cadastro_pedido.agrupadicional', 'verbose_name' : 'Agrupamento de Adicionais'},
     {'app': 'pedido.cadastro_pedido.cardapio', 'verbose_name' : 'Cardápio'},
     {'app': 'pedido.cadastro_pedido.composicaoproduto', 'verbose_name' : 'Composição do Produto', 'visible' : False},
+
+    #TELAS DO FINANCEIRO
+    {'app': 'financeiro', 'verbose_name':'Financeiro', 'imgmenu':'fa fa-dollar'},
+    {'app': 'financeiro.banco', 'verbose_name': 'Banco', 'visible': False},
+    {'app': 'financeiro.conta', 'verbose_name': 'Conta'},
+    {'app': 'financeiro.mov_financeira','verbose_name': 'Transferencia Financeira'},
 
 )

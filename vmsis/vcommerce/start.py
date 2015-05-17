@@ -29,7 +29,7 @@ try:
     #print("\nBairro...")
     #return_code = subprocess.call('python manage.py loaddata cadastro/fix/bairro.json', shell=True)
     print("\nBanco...")
-    return_code = subprocess.call('python manage.py loaddata cadastro/fix/banco.json', shell=True)
+    return_code = subprocess.call('python manage.py loaddata financeiro/fix/banco.json', shell=True)
     print("\nCentro de Custo...")
     return_code = subprocess.call('python manage.py loaddata cadastro/fix/centrodecusto.json', shell=True)
     print("\nUnidade de Medida...")

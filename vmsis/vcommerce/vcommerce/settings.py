@@ -125,4 +125,5 @@ STATICFILES_DIRS = (
 
 FIXTURE_DIRS = (
     os.path.join(BASE_DIR,'cadastro/fix/'),
+    os.path.join(BASE_DIR,'financeiro/fix/'),
 )
