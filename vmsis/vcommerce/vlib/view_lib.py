@@ -24,13 +24,6 @@ from django.forms.utils import ErrorList
 from importlib import import_module
 from django.conf import settings
 
-#try:
-#    from cadastro.funcionario.models import Funcionario
-#    UtilizaFuncionario = True
-#except ImportError:
-#    UtilizaFuncionario = False
-
-
 #CONSTS
 TEMPLATE_INSERT = '_insert_form.html'
 TEMPLATE_UPDATE = '_update_form.html'

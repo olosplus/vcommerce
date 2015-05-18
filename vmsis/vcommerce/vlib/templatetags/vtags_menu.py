@@ -80,7 +80,7 @@ def installed_apps():
     return lapps
 
 NAME_APPS_INSTALLED = installed_apps() 
-def get_apps_html(path, hab_UL=False, nivel=1):
+def get_apps_html(path, hab_UL=False, nivel=1, empresa=None):
     """ monta o html do menu"""
     html = ""
     abrir_ul = False
@@ -112,7 +112,7 @@ def get_apps_html(path, hab_UL=False, nivel=1):
 
                 url_app = load_url_app(path + "/" + directory)
                 if app_name == 'parametro.paramgeral':
-                    url_app = url_app.replace('(?P<pk>\d+)/$','1') #Arrumar: Passar id da empresa no lugar do 1
+                    url_app = url_app.replace('(?P<pk>\d+)/$',str(empresa))
                 html += "%s %s '%s' %s" % (TAG_A_PARTIAL, ATTR_HREF, url_app, CLOSE_TAG)
                 if menu_apps.MenuApps.ImgMenuApp(app_name):
                     html += "%s class='%s'> %s" % (TAG_I, menu_apps.MenuApps.ImgMenuApp(app_name),CLOSE_TAG_I)
@@ -120,7 +120,7 @@ def get_apps_html(path, hab_UL=False, nivel=1):
                 if bool_apps_filho(path + "/" + directory):
                     html += TAG_DROP
                 html += CLOSE_TAG_A
-                html += get_apps_html(path + "/" + directory, True, nivel)
+                html += get_apps_html(path=path + "/" + directory, hab_UL=True, nivel=nivel, empresa=empresa)
                 
                 if html:
                     html += CLOSE_TAG_LI
@@ -147,4 +147,9 @@ register = template.Library()
 @register.assignment_tag(takes_context=True)
 def get_menu(context, request):
     """Retorna o html do menu(uma lista)"""
-    return get_apps_html(DIR)
+    #Arrumar:
+    try:
+        empresa = request.session['funcionario']['empresa']
+    except:
+        empresa = None
+    return get_apps_html(path=DIR, empresa=empresa)

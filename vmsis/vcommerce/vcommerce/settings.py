@@ -39,7 +39,7 @@ INSTALLED_APPS_BASE = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'vlib',
-    'vlib.control',
+    'vlib.control'
 )
 
 INSTALLED_APPS = INSTALLED_APPS_BASE + menu_apps.MenuApps.GetAppsOnMenu()
@@ -72,8 +72,6 @@ WSGI_APPLICATION = 'vcommerce.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/1.7/ref/settings/#databases
-
-
 
 DATABASES = {
     'default': {

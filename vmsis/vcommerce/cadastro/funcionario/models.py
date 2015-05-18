@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from django.db import models
+from vlib.vmodels import widgets
 from django.contrib.auth.models import User
 from cadastro.unidade.models import Unidade
 from vlib.control.models import Master_empresa
@@ -17,7 +18,7 @@ class Funcionario(Master_empresa):
 	nome = models.CharField(max_length=255, verbose_name='Nome')
 	usuario = models.CharField(max_length=255, verbose_name='Usuário')
 	sexo = models.CharField(max_length=1,choices=SEXO_C, verbose_name='Sexo')
-	dtnascimento = models.DateField(verbose_name='Data de nascimento',null=True,blank=True)
+	dtnascimento = widgets.VDateField(verbose_name='Data de nascimento',null=True,blank=True)
 	email = models.EmailField(max_length=255, verbose_name='E-mail')
 	senha = models.CharField(max_length=30, verbose_name='Senha')
 	endereco = models.CharField(max_length=255, verbose_name='Endereço', blank=True, null=True)
@@ -27,8 +28,8 @@ class Funcionario(Master_empresa):
 	bairro = models.ForeignKey(Bairro, blank=True, null=True, verbose_name='Bairro')
 	cidade = models.ForeignKey(Cidade,verbose_name='Cidade', null=True)
 	estado = models.ForeignKey(Estado,verbose_name='Estado', null=True)
-	dtadmissao = models.DateField(verbose_name='Data de admissão',null=True,blank=True)
-	dtdemissao = models.DateField(verbose_name='Data de demissão',null=True,blank=True)
+	dtadmissao = widgets.VDateField(verbose_name='Data de admissão',null=True,blank=True)
+	dtdemissao = widgets.VDateField(verbose_name='Data de demissão',null=True,blank=True)
 	pessoa = models.CharField(max_length=2,verbose_name='Tipo',choices=TIPO_C, blank=True, null=True)
 #	unidadePadrao = models.CharField(verbose_name="Unidade padrão", QuerySet=Unidade.objects.all())
 	unidade = models.ManyToManyField(Unidade, verbose_name="Unidades permitidas", blank=True, null=True)

@@ -7,7 +7,6 @@ from estoque.lib_est.estoque import Estoque
 class FormSaida(StandardFormGrid):
     class Meta:
         model = Saida
-    print('Teste')
     def after_insert_grid_row(self, instance):
         FunEstoque = Estoque(self.funcionario["empresa"])
         if FunEstoque.said_prod_est(instance.produto_id, instance.almoxarifado, instance.lote_id, instance.qtdeprod):

@@ -7,7 +7,8 @@ function Inicializacao() {
   $('form input[type="decimal"]').addClass('form-control');  
   $('form input[type="email"]').addClass('form-control');  
   $('form input[type="time"]').addClass('form-control');  
-  $('form input[type="url"]').addClass('form-control');  
+  $('form input[type="url"]').addClass('form-control'); 
+  $('form input[type="password"]').addClass('form-control');
   $('form select').addClass('form-control');
   $('form textarea').addClass('form-control');
   $('.errorlist').css('color','#990000');
