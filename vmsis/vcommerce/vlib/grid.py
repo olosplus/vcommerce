@@ -97,8 +97,12 @@ class Grid:
 
         if field_choices:
             for choice in field_choices:                                
-                id_values.append('"'+ str(choice[0])+ '"')
-                str_objects.append('"'+str(choice[1])+ '"')                
+                if read_only:
+                    id_values.append('"'+ str(choice[0])+ '"')
+                    str_objects.append('"'+str(choice[1])+ '"')                
+                else:
+                    id_values.append(str(choice[0]))
+                    str_objects.append(str(choice[1]))
 
         if read_only:
             if field_choices:

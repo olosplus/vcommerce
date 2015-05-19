@@ -138,7 +138,7 @@ def insert(data, model, commit = True, link_to_form = "", parent_instance = None
             for k in list(re.keys()):
                 val.append(k + ":" + \
                 str(re[k]).replace("'", "").replace('"', "").replace("[","").replace("]","" ).replace(",", ".") )
-            print(str(val))
+            
             return "<input id='grid_erros' name='%s' value='%s' data-indexrow = '%s'>" % \
                  (grid_id, str(val).replace("'", "").replace('"', "") , row_json['data-indexrow'])
 
@@ -199,7 +199,7 @@ def update(data, model, commit = True, execute_on_after_update = None, grid_id =
             for k in list(re.keys()):
                 val.append(k + ":" + \
                 str(re[k]).replace("'", "").replace('"', "").replace("[","").replace("]","" ).replace(",", ".") )
-            print(str(val))
+            
             return "<input id='grid_erros' name='%s' value='%s' data-indexrow = '%s'>" % \
                  (grid_id, str(val).replace("'", "").replace('"', "") , row_json['data-indexrow'])
 
@@ -359,8 +359,6 @@ def GetGridCrud(request):
     except Exception as e:
         print(e)
     return HttpResponse(grid_js)    
-
-
 
 
 def PrintGrid(request):

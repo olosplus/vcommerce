@@ -1,6 +1,6 @@
 # from vlib import view_lib, url_lib
 # from django.shortcuts import render
-from vlib.view_lib import ViewCreate, StandardFormGrid
+from vlib.view_lib import ViewCreate, StandardFormGrid, ViewUpdate
 # from django.core.exceptions import ValidationError
 # from django.forms import ModelForm, Form
 
@@ -34,7 +34,13 @@ class FormLancamentoContabil(StandardFormGrid):
         novo_lancamento.save()
     
     def before_delete_grid_row(self, instance):    
-        print(instance.id)
+        print(instance)
         
-class ViewLancamentoContabil(ViewCreate):  
+class ViewLancamentoContabilCreate(ViewCreate):  
     form_class = FormLancamentoContabil
+
+class ViewLancamentoContabilUpdate(ViewUpdate):  
+    form_class = FormLancamentoContabil
+
+#class ViewLancamentoContabilUpdate(VieDelete):  
+#    form_class = FormLancamentoContabil

@@ -20,10 +20,10 @@ from vlib.grid import Grid
 from django.forms import ModelForm, Form
 from vlib import views as vlib_views
 from django.forms.utils import ErrorList
-
+from django.db import models
 from importlib import import_module
 from django.conf import settings
-
+from copy import deepcopy
 #CONSTS
 TEMPLATE_INSERT = '_insert_form.html'
 TEMPLATE_UPDATE = '_update_form.html'
@@ -32,6 +32,8 @@ TEMPLATE_LIST = '_list_form.html'
 GRID_SEPARATOR = "[[<<ROW_SEPARATOR>>]]"
 DOT_CSS = '.CSS'
 DOT_JAVA_SCRIPT = '.JS'
+LINE_SEPARATOR = "<<LINE_SEPARATOR>>"
+
 
 class StaticFiles:  
     @staticmethod
@@ -82,6 +84,136 @@ class StandardFormGrid(ModelForm):
     nome_campo_empresa = str()
     nome_campo_unidade = str()
     
+    def delete_grid(self, data, model):
+        lista = data.split(LINE_SEPARATOR)    
+    
+        for row in lista:        
+            if not row:
+                continue
+            row_json = dict(json.loads(row))
+            mod = model.objects.get(pk=row_json['id'])
+            try:
+                self.before_delete_grid_row(instance = mod)                    
+                mod.delete()
+            except Exception as e:                
+                return e
+        
+        return str()
+
+    def insert_grid(self, data, model, commit = True, link_to_form = "", parent_instance = None, grid_id = ""):        
+        if not data:
+            return str()
+    
+        if link_to_form[-3:].upper() == "_ID":
+            link_to_form = link_to_form[:-3]
+    
+        if data.count(LINE_SEPARATOR) > 0:
+            lista = data.split(LINE_SEPARATOR)    
+        else:
+            lista = [data]
+            
+        for row in lista:     
+            if not row:
+                continue    
+            
+            is_fk_to_parent = False
+            model_field_rel_to = None
+            link_to_form_alreay_found = False
+            exclude_validations = []
+            
+            row_json = dict(json.loads(row))
+            mod = model()
+            for field in model._meta.fields:
+                is_fk_to_parent = False
+    
+                if field.name == 'id':
+                    continue
+    
+                if field.name == link_to_form and not link_to_form_alreay_found:
+                    if commit:                    
+                        setattr(mod, field.name, parent_instance)
+                    exclude_validations.append(field.name)
+                    link_to_form_alreay_found = True
+                    continue
+                elif not link_to_form_alreay_found: 
+                    if field.__class__ == models.ForeignKey:
+                        model_field_rel_to = mod._meta.get_field(field.name).rel.to
+                        is_fk_to_parent = (model_field_rel_to == parent_instance.__class__ or \
+                            model_field_rel_to == parent_instance.__class__.__base__)
+        
+                    if is_fk_to_parent:
+                        setattr(mod, field.name, parent_instance)  
+                        link_to_form_alreay_found = True
+                        exclude_validations.append(field.name)
+                        continue 
+    
+                if field.name in row_json:
+                    setattr(mod, field.name, row_json[field.name])
+                else:
+                    if field.name + '_id' in row_json:
+                        setattr(mod, field.name + '_id', row_json[field.name + '_id'])
+    
+            try:
+                mod.full_clean(exclude = tuple(exclude_validations))
+            except ValidationError as e:                      
+                re = e.message_dict
+                val = []
+                for k in list(re.keys()):
+                    val.append(k + ":" + \
+                    str(re[k]).replace("'", "").replace('"', "").replace("[","").replace("]","" ).replace(",", ".") )
+                
+                return "<input id='grid_erros' name='%s' value='%s' data-indexrow = '%s'>" % \
+                     (grid_id, str(val).replace("'", "").replace('"', "") , row_json['data-indexrow'])
+    
+            if commit : 
+                mod.save()                            
+                self.after_insert_grid_row(instance = mod)
+    
+        return str()
+
+    def update_grid(self, data, model, commit = True, grid_id = ""):
+    
+        if data.count(LINE_SEPARATOR) > 0:
+            lista = data.split(LINE_SEPARATOR)    
+        else:
+            lista = [data]
+    
+        for row in lista:                
+            if not row:
+                continue
+    
+            row_json = dict(json.loads(row))        
+            mod = model.objects.get(pk=row_json['id'])
+            old_mod = deepcopy(mod)
+    
+            for field in model._meta.fields:
+                if field.name == 'id':
+                    continue
+                if field.name in row_json:
+                    setattr(mod, field.name, row_json[field.name])
+                else:
+                    if field.name + '_id' in row_json:
+                        setattr(mod, field.name + '_id', row_json[field.name + '_id'])
+    
+            try:
+                mod.full_clean()
+            except ValidationError as e:
+                re = e.message_dict
+                val = []
+                for k in list(re.keys()):
+                    val.append(k + ":" + \
+                    str(re[k]).replace("'", "").replace('"', "").replace("[","").replace("]","" ).replace(",", ".") )
+                
+                return "<input id='grid_erros' name='%s' value='%s' data-indexrow = '%s'>" % \
+                     (grid_id, str(val).replace("'", "").replace('"', "") , row_json['data-indexrow'])
+    
+            if commit :                
+                self.before_update_grid_row(instance = mod, old_instance = old_mod)
+                mod.save()            
+                self.after_update_grid_row(instance = mod, old_instance = old_mod)
+    
+        return str()    
+
     def split_child_models(self):        
         return self.child_models.split(GRID_SEPARATOR)
                      
@@ -101,14 +233,14 @@ class StandardFormGrid(ModelForm):
                 model = vlib_views.get_model_by_string(data_dict['module'], data_dict['model'])
      
                 if data_dict['rows_inserted']:
-                    erro = vlib_views.insert(data = data_dict['rows_inserted'], model = model, commit = False,
+                    erro = self.insert_grid(data = data_dict['rows_inserted'], model = model, commit = False,
                         link_to_form = data_dict['link_to_form'], parent_instance = parent_instance, 
                         grid_id = data_dict['grid_id'])                                 
                 if erro:
                     return erro
                 else:
                     if data_dict['rows_updated']:
-                        erro = vlib_views.update(data = data_dict['rows_updated'], model = model, commit = False,
+                        erro = self.update_grid(data = data_dict['rows_updated'], model = model, commit = False,
                             grid_id = data_dict['grid_id'])
                     if erro:
                         return erro
@@ -123,7 +255,13 @@ class StandardFormGrid(ModelForm):
            This method have a object's instance inserted on the database as parameter(instance)
         '''
 
-    def after_update_grid_row(self, instance):
+    def before_update_grid_row(self, instance, old_instance):
+        '''override this method to make custom procedures for each grid row updated.
+           This method have a object's instance updated on the database as parameter(instance)
+        '''
+
+
+    def after_update_grid_row(self, instance, old_instance):
         '''override this method to make custom procedures for each grid row updated.
            This method have a object's instance updated on the database as parameter(instance)
         '''
@@ -132,6 +270,8 @@ class StandardFormGrid(ModelForm):
         '''override this method to make custom procedures for each grid row that will be delete.
            This method have a object's instance that will be deleted on the database as parameter(instance)
         '''
+
+
 
     def save_grids(self, parent_instance_pk):        
         erro = str()
@@ -156,19 +296,16 @@ class StandardFormGrid(ModelForm):
 
                 if 'rows_deleted' in data_dict:                    
                     if data_dict['rows_deleted']:
-                        return vlib_views.delete(data = data_dict['rows_deleted'], model = model,
-                            execute_on_before_delete = self.before_delete_grid_row)                                  
+                        return self.delete_grid(data = data_dict['rows_deleted'], model = model)                                  
                 else:
                     if data_dict['rows_inserted']:                    
-                        erro = vlib_views.insert(data = data_dict['rows_inserted'], model = model, commit = True,
-                            link_to_form = data_dict['link_to_form'], parent_instance = parent_instance_pk,
-                            execute_on_after_insert = self.after_insert_grid_row) 
+                        erro = self.insert_grid(data = data_dict['rows_inserted'], model = model, commit = True,
+                            link_to_form = data_dict['link_to_form'], parent_instance = parent_instance_pk) 
                     if erro:
                         return erro
     
                     if data_dict['rows_updated']:                        
-                        erro = vlib_views.update(data = data_dict['rows_updated'], model = model, commit = True,
-                            execute_on_after_update = self.after_update_grid_row)
+                        erro = self.update_grid(data = data_dict['rows_updated'], model = model, commit = True)
                         if erro:
                             return erro
         return str()        
@@ -339,11 +476,21 @@ class ViewCreate(CreateView, AjaxableResponseMixin):
         context['funcionario'] = self.request.session['funcionario']
         return context
  
-class ViewUpdate(UpdateView, AjaxableResponseMixin):
+class ViewUpdate(UpdateView):
     template_name = TEMPLATE_UPDATE
     MediaFiles = []
     nome_campo_empresa = str()
     nome_campo_unidade = str()
+
+    def __init__(self, **kwargs):
+        if 'MediaFiles' in kwargs :
+            self.MediaFiles = kwargs.get('MediaFiles')
+        if 'nome_campo_empresa' in kwargs :
+            self.nome_campo_empresa = kwargs.get('nome_campo_empresa')
+        if 'nome_campo_unidade' in kwargs :
+            self.nome_campo_unidade = kwargs.get('nome_campo_unidade')
+
+        super(ViewUpdate, self).__init__(**kwargs)
 
     def set_fields_list(self, request):
         if not self.fields: 
@@ -376,16 +523,6 @@ class ViewUpdate(UpdateView, AjaxableResponseMixin):
                 elif field.editable:
                     self.fields.append(field.name)
     
-    def __init__(self, **kwargs):
-        if 'MediaFiles' in kwargs :
-            self.MediaFiles = kwargs.get('MediaFiles')
-        if 'nome_campo_empresa' in kwargs :
-            self.nome_campo_empresa = kwargs.get('nome_campo_empresa')
-        if 'nome_campo_unidade' in kwargs :
-            self.nome_campo_unidade = kwargs.get('nome_campo_unidade')
-
-        super(ViewUpdate, self).__init__(**kwargs)
-
     def get_success_url(self):
         return self.success_url
 
@@ -422,8 +559,9 @@ class ViewUpdate(UpdateView, AjaxableResponseMixin):
 
     def post(self, request, *args, **kwargs):
         self.set_fields_list(request)
-#        grids_data = request.POST['child_models']
+
         grids_data = request.POST.get('child_models', {})
+
         if self.form_class == None:
             self.form_class = StandardFormGrid
 
