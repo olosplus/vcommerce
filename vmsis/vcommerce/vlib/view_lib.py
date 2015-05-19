@@ -224,7 +224,7 @@ class CreateForm(object):
         class vmsisForm(class_form):                    
             class Meta:
                 model = self.model                
-
+            
             child_models = GridsData
             current_user = user
             funcionario = colaborador
@@ -293,8 +293,9 @@ class ViewCreate(CreateView, AjaxableResponseMixin):
 
     def post(self, request, *args, **kwargs):        
         self.set_fields_list(request)
-        grids_data = request.POST['child_models']
         
+#        grids_data = request.POST['child_models']
+        grids_data = request.POST.get('child_models', {})
         if self.form_class == None:
             self.form_class = StandardFormGrid
         
@@ -421,7 +422,8 @@ class ViewUpdate(UpdateView, AjaxableResponseMixin):
 
     def post(self, request, *args, **kwargs):
         self.set_fields_list(request)
-        grids_data = request.POST['child_models']
+#        grids_data = request.POST['child_models']
+        grids_data = request.POST.get('child_models', {})
         if self.form_class == None:
             self.form_class = StandardFormGrid
 
@@ -532,25 +534,6 @@ class CrudView:
     def AsUrl(self, MediaFilesInsert = [], MediaFilesUpdate = [], MediaFilesDelete = [], MediaFilesList = [], 
         GridFields = (), ClassCreate = ViewCreate, ClassUpdate = ViewUpdate, ClassDelete = ViewDelete, 
         ClassList = ViewList):
-
-#        fields_crud = []
-#        campo_empresa = str()
-#        campo_unidade = str()
-
-#        if not fields_list: 
-#            for field in self.model._meta.fields:
-#                if field.name.lower() == 'empresa':
-#                    campo_empresa = field.name
-#                    fields_crud.append(field.name)
-#                    continue
-#                elif field.name.lower() == 'unidade':
-#                    campo_unidade = field.name
-#                    fields_crud.append(field.name)
-#                    continue
-#                elif field.editable:
-#                    fields_crud.append(field.name)
-#        else:
-#            fields_crud = fields_list   
 
         urls = patterns('', 
             url(self.UrlCrud.UrlList(), self.view.List(MediaFiles = MediaFilesList, Grid_Fields = GridFields, 

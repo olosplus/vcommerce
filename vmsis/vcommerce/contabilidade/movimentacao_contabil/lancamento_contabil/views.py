@@ -33,5 +33,8 @@ class FormLancamentoContabil(StandardFormGrid):
         novo_lancamento.historico_complementar = 'inserido automaticamente'
         novo_lancamento.save()
     
+    def before_delete_grid_row(self, instance):    
+        print(instance.id)
+        
 class ViewLancamentoContabil(ViewCreate):  
     form_class = FormLancamentoContabil

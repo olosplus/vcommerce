@@ -1,16 +1,21 @@
 # -*- coding: utf-8 -*- 
-from django import forms
-from django.views.generic.edit import UpdateView
-from parametro.paramgeral.models import Paramgeral
-from vlib.view_lib import TEMPLATE_UPDATE, ViewUpdate
+from vlib.view_lib import TEMPLATE_UPDATE, CrudView, ViewUpdate, ConvertView, urlsCrud
+from django.conf.urls import patterns, include, url
 
-class ParamGeralView(ViewUpdate):
-    model = Paramgeral
-    template_name = TEMPLATE_UPDATE
 
-    def get_context_data(self, **kwargs): 
-        context = super(ParamGeralView, self).get_context_data(**kwargs)
-        empresa = self.request.session['funcionario']['empresa']
-        if empresa:
-            context['object'] = Paramgeral.objects.get(pk=empresa)
-        return context
+class ConvertViewParam(ConvertView):
+    def Update(self, MediaFiles = [],  ClassView = ViewUpdate):
+
+        return ClassView.as_view(model = self.model, success_url = '', 
+            template_name = TEMPLATE_UPDATE, MediaFiles = MediaFiles)
+    
+class CrudUpd(CrudView):
+    def __init__(self, model):
+        self.model = model
+        self.view = ConvertViewParam(model)
+        self.UrlCrud = urlsCrud(model);
+
+    def AsUrl(self, MediaFilesUpdate = ['js/paramgeral.js'],  ClassUpdate = ViewUpdate):
+        urls = patterns('', 
+            url(self.UrlCrud.UrlUpdate(), self.view.Update(MediaFiles = MediaFilesUpdate, ClassView = ClassUpdate)))
+        return urls
