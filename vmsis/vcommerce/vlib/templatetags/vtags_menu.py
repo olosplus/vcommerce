@@ -147,9 +147,4 @@ register = template.Library()
 @register.assignment_tag(takes_context=True)
 def get_menu(context, request):
     """Retorna o html do menu(uma lista)"""
-    #Arrumar:
-    try:
-        empresa = request.session['funcionario']['empresa']
-    except:
-        empresa = None
-    return get_apps_html(path=DIR, empresa=empresa)
+    return get_apps_html(path=DIR, empresa=context['funcionario']['empresa'])
