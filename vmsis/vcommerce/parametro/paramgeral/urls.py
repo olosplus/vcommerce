@@ -10,7 +10,7 @@ class CrudUpd(CrudView):
         self.view = ConvertView(model)
         self.UrlCrud = urlsCrud(model);
 
-    def AsUrl(self, MediaFilesUpdate = ['paramgeral.js'],  ClassUpdate = ViewUpdate):
+    def AsUrl(self, MediaFilesUpdate = ['js/paramgeral.js'],  ClassUpdate = ViewUpdate):
         urls = patterns('', 
             url(self.UrlCrud.UrlUpdate(), self.view.Update(MediaFiles = MediaFilesUpdate, ClassView = ClassUpdate)))
         return urls
