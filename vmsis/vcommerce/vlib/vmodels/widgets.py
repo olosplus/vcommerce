@@ -7,14 +7,14 @@ class VDateField(models.DateField):
         defaults.update(kwargs)
         return super(VDateField, self).formfield(**defaults)
 
-class VDateTimeInput(models.DateField):
+class VDateTimeInput(models.DateTimeField):
     def formfield(self, **kwargs):
-        defaults = {'widget': widgets.VDateInput}
+        defaults = {'widget': widgets.VDateTimeInput}
         defaults.update(kwargs)
-        return super(VDateField, self).formfield(**defaults)
+        return super(VDateTimeInput, self).formfield(**defaults)
 
-class VTimeInput(models.DateField):
+class VTimeInput(models.TimeField):
     def formfield(self, **kwargs):
-        defaults = {'widget': widgets.VDateInput}
+        defaults = {'widget': widgets.VTimeInput}
         defaults.update(kwargs)
-        return super(VDateField, self).formfield(**defaults)
+        return super(VTimeInput, self).formfield(**defaults)

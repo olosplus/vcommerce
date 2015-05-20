@@ -85,7 +85,7 @@ class StandardFormGrid(ModelForm):
     nome_campo_unidade = str()
     
     def delete_grid(self, data, model):
-        lista = data.split(LINE_SEPARATOR)    
+        lista = data.split(LINE_SEPARATOR)
     
         for row in lista:        
             if not row:

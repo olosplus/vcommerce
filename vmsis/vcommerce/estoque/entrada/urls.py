@@ -6,4 +6,5 @@ from estoque.entrada.views import ViewEntradaCreate, ViewEntradaUpdate
 
 Crud = CrudView(Entrada)
 
-urlpatterns = Crud.AsUrl(ClassCreate = ViewEntradaCreate, ClassUpdate = ViewEntradaUpdate)
+urlpatterns = Crud.AsUrl(ClassCreate = ViewEntradaCreate, ClassUpdate = ViewEntradaUpdate, 
+	GridFields  = ('dtentrada','fornecedor__nmfornecedor',))

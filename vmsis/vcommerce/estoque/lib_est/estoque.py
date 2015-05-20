@@ -66,7 +66,7 @@ class Estoque(object):
 		if not p_produto:
 			return 'Erro: Produto não foi informado.'
 		if not p_almoxa:
-			return 'Erro: Almoxarifado não foi informado.'
+			return 'Erro: Almoxarifado não foi informado.' 
 
 		try:
 			produto = Produto.objects.get(pk=p_produto)
@@ -77,7 +77,6 @@ class Estoque(object):
 		except Produto.DoesNotExist:
 			return 'Erro: Produto não existe.'
 
-		print('Teste')
 		try:
 			if p_lote:
 				posicao = Posestoque.objects.get(empresa_id=self.empresa, produto_id=p_produto, almoxarifado=p_almoxa, lote=p_lote)
@@ -134,9 +133,15 @@ class Estoque(object):
 				posicao = Posestoque.objects.get(empresa_id=self.empresa, produto_id=p_produto, almoxarifado=p_almoxa, lote=p_lote)
 			else:
 				posicao = Posestoque.objects.get(empresa_id=self.empresa, produto_id=p_produto, almoxarifado=p_almoxa)
-			if (posicao.qtdeproduto - (p_qtde*qtfatorconv)) >= 0:
+
+			if (posicao.qtdeproduto - (p_qtde*qtfatorconv)) > 0:
 				posicao.qtdeproduto -= (p_qtde*qtfatorconv)
 				posicao.save()
+			elif (posicao.qtdeproduto - (p_qtde*qtfatorconv)) == 0:
+				if p_lote:
+					Posestoque.objects.get(empresa_id=self.empresa, produto_id=p_produto, almoxarifado=p_almoxa, lote=p_lote).delete()
+				else:
+					Posestoque.objects.get(empresa_id=self.empresa, produto_id=p_produto, almoxarifado=p_almoxa).delete()
 			else:
 				return 'Erro: Posição de estoque ficaria negativa.'
 		except Posestoque.DoesNotExist:

@@ -6,4 +6,5 @@ from estoque.saida.views import ViewSaidaCreate, ViewSaidaUpdate
 
 Crud = CrudView(Saida)
 
-urlpatterns = Crud.AsUrl(ClassCreate = ViewSaidaCreate, ClassUpdate = ViewSaidaUpdate)
+urlpatterns = Crud.AsUrl(ClassCreate = ViewSaidaCreate, ClassUpdate = ViewSaidaUpdate, 
+	GridFields  = ('dtsaida','cliente__nmcliente',))
