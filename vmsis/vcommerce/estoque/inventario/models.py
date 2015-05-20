@@ -10,7 +10,7 @@ class Inventario(Master_moviest):
         verbose_name = "Inventário"
         verbose_name_plural = "Inventários"
         ordering = ['-id']
-        child_models = ['estoque.itemproduto.models.Itemproduto']
+        child_models = ['estoque.iteminvent.models.Iteminvent']
 
     dtinventario = models.DateTimeField(verbose_name='Data do inventário')
     almoxarifado = models.ForeignKey(Almoxarifado,verbose_name='Almoxarifado')

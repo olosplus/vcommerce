@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from vlib.view_lib import ViewCreate, StandardFormGrid, ViewUpdate  
+from vlib.view_lib import ViewCreate, StandardFormGrid, ViewUpdate
 from estoque.saida.models import Saida
 from estoque.itemproduto.models import Itemproduto
 from estoque.lib_est.estoque import Estoque
