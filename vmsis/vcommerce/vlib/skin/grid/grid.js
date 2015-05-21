@@ -339,10 +339,10 @@ function Grid(DivGridId, Data) {
       };
     };
 
-    html += "<a class = 'glyphicon glyphicon-search' href='JavaScript:void()' "+
+    html += "<a class = 'glyphicon glyphicon-search' href='javascript:void(0)' "+
       "onclick='Filter(\"" + module + "\", \"" + model + "\", " + JSON.stringify(columns)  +
       "  )' title='Filtrar' ></a>";
-    html += "<div class='separador'>|</div> <a class='glyphicon glyphicon-print' href='JavaScript:void()' "+
+    html += "<div class='separador'>|</div> <a class='glyphicon glyphicon-print' href='javascript:void(0)' "+
       "title='Relatório'  onclick='Print(\"" + module + "\", \"" +
               model + "\", " + JSON.stringify(columns)  +
             ", \"id\", \""+ title +" \")'> </a>";
@@ -378,7 +378,7 @@ function Grid(DivGridId, Data) {
           html += "<th>" + columns[column].label + 
             " <a class='glyphicon glyphicon-triangle-bottom' onclick='get_grid_orderly(\"" + module + "\", \"" +
               model + "\", " + JSON.stringify(columns)  +
-            ", \"" + columns[column].name + "\")' href='javascript:void()'></a></th>";
+            ", \"" + columns[column].name + "\")' href='javascript:void(0)'></a></th>";
         }else{
           html += "<th>" + columns[column].label + "</th>";
         }  
@@ -420,7 +420,7 @@ function Grid(DivGridId, Data) {
     html += "<div class='navigation-centralize'>"
     html += "<div class='inline' id='div_prior'>"
     html += "<ul class='pagination'> <li>"
-    html += "<a href='javascript:void()' aria-label='Previous' onclick='ControlPagination(" + pages + "," + 
+    html += "<a href='javascript:void(0)' aria-label='Previous' onclick='ControlPagination(" + pages + "," + 
       JSON.stringify(columns) + "," + 
       selected_page.toString() + ",\"" + module + "\",\"" + model + "\"," + " \"prior\")'> "+         
       "<span aria-hidden='true'>&laquo;</span></a> </li></ul></div>";    
@@ -430,7 +430,7 @@ function Grid(DivGridId, Data) {
     html += "</nav>"; 
     html += "<div class='inline' id='div_next'>"
     html += "<ul class='pagination'> <li>"
-    html += "<a href='javascript:void()' aria-label='Next' onclick='ControlPagination(" + pages + "," + 
+    html += "<a href='javascript:void(0)' aria-label='Next' onclick='ControlPagination(" + pages + "," + 
       JSON.stringify(columns) + "," + 
       selected_page.toString() + ",\"" + module + "\",\"" + model + "\"," + " \"next\")'> "+         
       "<span aria-hidden='true'>&raquo;</span></a> </li></ul></div>";    
@@ -714,7 +714,7 @@ function ControlPagination(total_pages, columns, selected_page, module, model, c
       class_selected_page = "no-selected-page";
     };
 
-    html += "<li class='"+ class_selected_page +"' ><a href='javascript:void()' onclick='get_grid_page(\"" + 
+    html += "<li class='"+ class_selected_page +"' ><a href='javascript:void(0)' onclick='get_grid_page(\"" + 
       module + "\", \"" + model + "\", " +
       JSON.stringify(columns)  + "," + i.toString() + ")' >" +
       i.toString() +"</a></li>";
@@ -775,10 +775,20 @@ function Print(module, model, columns, column, title){
       success: function (data) {
         var response = eval(data);
 
-        var myWindow = window.open("about:blank", "Relatório: " + title, "_blank");
+ //       var parser = new DOMParser()
+//        var doc_received = parser.parseFromString("", "text/html");
+        var winRel = window.open("", title, "_blank");
+        var report = new vReport("A4 portrait", "body", response, winRel.document );       
+        report.view();
         
-        report = new vReport("A4", "body", response, myWindow.document);   
-        report.view()         
+
+                
+//        var fileCode = doc_received.getElementsByTagName("html")[0].innerHTML;
+//        fileCode = "<html> " + fileCode + "</html>";
+//        var fileBlob = new Blob([fileCode], {type: 'text/html'});
+//        var url = URL.createObjectURL(fileBlob);
+//        var myWindow = window.open(url);
+
       },
       failure: function (data) {
         alert('Got an error dude');

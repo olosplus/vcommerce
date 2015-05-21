@@ -166,6 +166,7 @@ class StandardFormGrid(ModelForm):
                      (grid_id, str(val).replace("'", "").replace('"', "") , row_json['data-indexrow'])
     
             if commit : 
+                self.before_insert_grid_row(instance = mod)
                 mod.save()                            
                 self.after_insert_grid_row(instance = mod)
     
@@ -249,6 +250,11 @@ class StandardFormGrid(ModelForm):
     def custom_grid_validations(self, grid_model, grid_data, parent_instance):
         '''override this method to make custom validations'''
         return str()
+
+    def before_insert_grid_row(self, instance):
+        '''override this method to make custom procedures for each grid row inserted.
+           This method have a object's instance inserted on the database as parameter(instance)
+        '''
 
     def after_insert_grid_row(self, instance):
         '''override this method to make custom procedures for each grid row inserted.

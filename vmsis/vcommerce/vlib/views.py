@@ -370,7 +370,7 @@ def PrintGrid(request):
     
     model = conf["model"]
     fields = conf["fields"]    
-    columns_size = 800 / (len(fields));
+    columns_size = 765 / (len(fields));
 
     try:    
         header = PageHeader()
@@ -428,7 +428,7 @@ def PrintGrid(request):
         
         report = Report(page_header = header, master_band = master, page_footer = footer,
             template="", page_title = request.GET.get("title"))
-        return HttpResponse(report.get_rel_configuration())
+        return HttpResponse(report.get_rel_configuration() ) #get_rel_configuration()
     except Exception as e:
         print(e)
         return HttpResponse(e)
