@@ -43,6 +43,7 @@ apps_on_menu = (
     # TELAS DO ESTOQUE
     {'app': 'estoque', 'verbose_name' : 'Estoque', 'imgmenu' : 'fa fa-th'},
     {'app': 'estoque.itemproduto', 'verbose_name' : 'Item', 'visible' : False},
+    {'app': 'estoque.iteminvent', 'verbose_name' : 'Item', 'visible' : False},
     {'app': 'estoque.cadastro_estoque', 'verbose_name' : 'Cadastros Estoque'},
     {'app': 'estoque.cadastro_estoque.finalidade', 'verbose_name' : 'Finalidade'},      
     {'app': 'estoque.entrada', 'verbose_name' : 'Entrada'},
