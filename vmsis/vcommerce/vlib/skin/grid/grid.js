@@ -10,7 +10,7 @@ function activeLine(line, columns){
     if(tr.attr("operation") == 'inserted'){
       $("table[parent = '"+parent.attr('id')+"']").each(function(){
         $(this).find("tbody tr").addClass("notvis");
-        $(this).find("tr[data-parent-indexrow='" + tr.attr("data-indexrow") +"']").removeClass("notvis");
+        $(this).find("tr[data-parent-indexrdow='" + tr.attr("data-indexrow") +"']").removeClass("notvis");
       });      
     }else{
       
