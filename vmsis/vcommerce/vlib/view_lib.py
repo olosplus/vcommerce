@@ -86,7 +86,7 @@ class StandardFormGrid(ModelForm):
     grids_child_map = {}
 
     def delete_grid(self, data, model):
-        print('opa')
+        
         lista = data.split(LINE_SEPARATOR)
     
         for row in lista:        
@@ -330,11 +330,11 @@ class StandardFormGrid(ModelForm):
                         return self.delete_grid(data = data_dict['rows_deleted'], model = model)                                  
                 else:
                     if data_dict['rows_inserted']:                    
-                        #print(data_dict)
+                        
                         erro = self.insert_grid(data = data_dict['rows_inserted'], model = model, commit = True,
                             link_to_form = data_dict['link_to_form'], parent_instance = parent_instance_pk,
                             parent_model = data_dict['parent']) 
-                        #print(self.grids_child_map)
+                        
 
                     if erro:
                         return erro
@@ -381,8 +381,7 @@ class StandardFormGrid(ModelForm):
 
         instance = super(StandardFormGrid, self).save(commit = commit)
 
-        if commit:  
-            print('eita')
+        if commit:              
             self.grid_erros = self.save_grids(parent_instance_pk = instance)                        
             if self.grid_erros:
                 return None
@@ -467,7 +466,6 @@ class ViewCreate(CreateView, AjaxableResponseMixin):
 
     def post(self, request, *args, **kwargs):        
         self.set_fields_list(request)
-        print('blef')
 #        grids_data = request.POST['child_models']
         grids_data = request.POST.get('child_models', {})
 

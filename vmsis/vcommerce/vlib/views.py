@@ -289,8 +289,10 @@ def GetGridConfiguration(request):
     str_parent = request.GET.get('parent_model')    
     str_parent_module = request.GET.get('parent_module')
     parent_id = request.GET.get('parent_id')
-
-    parent_model = get_model_by_string(str_parent_module, str_parent)
+    
+    parent_model = None
+    if(str_parent_module and str_parent):
+        parent_model = get_model_by_string(str_parent_module, str_parent)
     
     page = request.GET.get('page')    
     order_by = request.GET.get('order_by')
