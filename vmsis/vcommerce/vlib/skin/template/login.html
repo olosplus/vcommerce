@@ -6,9 +6,9 @@
 
 {% block corpo %}
 
-{% if form.errors %}
-  {{ form.non_field_errors }}
-{% endif %}
+  {% if form.errors %}
+    {{ form.non_field_errors }}
+  {% endif %}
 
   <div class="container">
     <div class="row">
