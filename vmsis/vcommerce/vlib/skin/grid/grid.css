@@ -122,3 +122,9 @@ color: #337ab7;
 .errorgrid{
   border : 1px solid red;
 }
+
+.rowactive{
+  border: 3px groove #99CCFF; !important;
+  /*outline-style: groove;
+  outline-color: #99CCFF;*/
+}

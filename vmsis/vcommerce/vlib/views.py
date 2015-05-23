@@ -286,6 +286,11 @@ def Filtro(request):
 def GetGridConfiguration(request):
     str_model = request.GET.get('model')
     str_module = request.GET.get('module')    
+    str_parent = request.GET.get('parent_model')    
+    str_parent_module = request.GET.get('parent_module')
+    parent_id = request.GET.get('parent_id')
+
+    parent_model = get_model_by_string(str_parent_module, str_parent)
     
     page = request.GET.get('page')    
     order_by = request.GET.get('order_by')
@@ -321,6 +326,7 @@ def GetGridConfiguration(request):
     except LookupError:
         return HttpResponse("An error ocurred. The model or module don't exists")
 
+
     dict_filter = {}
     field_name = str()
     
@@ -346,7 +352,8 @@ def GetGridConfiguration(request):
                         else:    
                             dict_filter.update({field_name + "__icontains": field["value"]})
     
-    return {"model" : model, "filter" : dict_filter, "fields" : fields_display, "page" : page, "order" : order_by}
+    return {"model" : model, "filter" : dict_filter, "fields" : fields_display, "page" : page, "order" : order_by,
+       "parent":parent_model, "parent_id":parent_id}
 
 def GetGridCrud(request):
     try:
@@ -359,6 +366,21 @@ def GetGridCrud(request):
     except Exception as e:
         print(e)
     return HttpResponse(grid_js)    
+
+def GetGridEditable(request):
+    try:
+        conf = GetGridConfiguration(request = request)    
+        
+        GridData = Grid(conf["model"], parent_model = conf["parent"], parent_pk_value = conf["parent_id"])
+
+        grid_js = GridData.get_js_grid(use_crud = False, read_only = False, dict_filter = conf["filter"])
+
+
+    except Exception as e:
+        print(e)
+
+    return HttpResponse(grid_js)    
+
 
 
 def PrintGrid(request):

@@ -25,20 +25,37 @@ class Pedido(models.Model):
 	cliente = models.ForeignKey(Cliente, verbose_name="Cliente",blank=True,null=True)
 	nmcliente = models.CharField(max_length=250,verbose_name="Nome",blank=True,null=True)
 	mesa = models.ForeignKey(Mesa, verbose_name="Mesa",blank=True,null=True)
-	vrpedido = models.FloatField(verbose_name="Valor Total")
-	idstatusped = models.CharField(max_length=1, verbose_name="Status",choices=choice_status_pedido,default='P')
-	
-class ItemPedido(models.Model):
-	#class Meta:
-	#	db_table="itempedido"
-	#	child_models = ['ItAdicional']
-	
-	#categoria = models.ForeignKey(Categoria, verbose_name="Categoria")
-	cardapio = models.ForeignKey(Cardapio, verbose_name="Item")
-	qtitem = models.FloatField(verbose_name="Quantidade")
-	vrvenda = models.ForeignKey(Cardapio, related_name='Preço', verbose_name="Valor Item")
-	vrtotal = models.FloatField(verbose_name="Valor Total")
-	idadicional = models.CharField(max_length=1,verbose_name="Adicional?",choices=choice_SN,default='N')
+	#vrpedido = models.FloatField(verbose_name="Valor Total" , editable = False)
+	vrpedido = models.FloatField(default=0,editable = False)
+	#idstatusped = models.CharField(max_length=1, verbose_name="Status",choices=choice_status_pedido,default='P' , editable = False)
+	idstatusped = models.CharField(max_length=1, default='P' , editable = False)
 
-#class ItAdicional(models.Model):
+class ItemPedido(models.Model):
+	class Meta:
+		db_table = "itempedido"
+		verbose_name = "Item do Pedido"
+		verbose_name_plural = "Itens dos Pedidos"
+		child_models = ['ItAdicional']
+
+	#categoria = models.ForeignKey(Categoria, verbose_name="Categoria")
+	pedido = models.ForeignKey(Pedido)
+	cardapio = models.ForeignKey(Cardapio, verbose_name="Produto")
+	qtitem = models.FloatField(verbose_name="Quantidade")
+	#vrvenda = models.ForeignKey(Cardapio, related_name='Preço', verbose_name="Valor Item")
+	#vrvenda = models.ForeignKey(Cardapio, related_name='Preço',editable = False)
+	vrvenda = models.FloatField(default=0,editable=False)
+	#vrtotal = models.FloatField(verbose_name="Valor Total")
+	vrtotal = models.FloatField(default=0,editable = False)
+	#idadicional = models.CharField(max_length=1,verbose_name="Adicional?",choices=choice_SN,default='N')
+
+class ItAdicional(models.Model):
+	class Meta:
+		verbose_name = "Adicional do produto"
+		verbose_name_plural = "Adicionais do produto"
+		
+
 	#adicional = models.ForeignKey(Adicionais, verbose_name="Adicional")
+#	pedido = models.ForeignKey(Pedido)
+	itempedido = models.ForeignKey(ItemPedido)
+	produto = models.ForeignKey(Produto, verbose_name="Produto")
+	qtitem = models.FloatField(verbose_name="Quantidade")

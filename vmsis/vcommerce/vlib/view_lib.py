@@ -79,12 +79,14 @@ class AjaxableResponseMixin(object):
 class StandardFormGrid(ModelForm):
     child_models = str()
     current_user = None
-    grid_erros = str();
+    grid_erros = str()
     funcionario = None
     nome_campo_empresa = str()
     nome_campo_unidade = str()
-    
+    grids_child_map = {}
+
     def delete_grid(self, data, model):
+        print('opa')
         lista = data.split(LINE_SEPARATOR)
     
         for row in lista:        
@@ -94,13 +96,15 @@ class StandardFormGrid(ModelForm):
             mod = model.objects.get(pk=row_json['id'])
             try:
                 self.before_delete_grid_row(instance = mod)                    
-                mod.delete()
+                mod.delete()                
             except Exception as e:                
+                print(e)
                 return e
         
         return str()
 
-    def insert_grid(self, data, model, commit = True, link_to_form = "", parent_instance = None, grid_id = ""):        
+    def insert_grid(self, data, model, commit = True, link_to_form = "", parent_instance = None, grid_id = "", \
+        parent_model = ""):        
         if not data:
             return str()
     
@@ -111,7 +115,9 @@ class StandardFormGrid(ModelForm):
             lista = data.split(LINE_SEPARATOR)    
         else:
             lista = [data]
-            
+        
+        maps = {}
+
         for row in lista:     
             if not row:
                 continue    
@@ -120,18 +126,28 @@ class StandardFormGrid(ModelForm):
             model_field_rel_to = None
             link_to_form_alreay_found = False
             exclude_validations = []
-            
+
             row_json = dict(json.loads(row))
+            
             mod = model()
             for field in model._meta.fields:
                 is_fk_to_parent = False
-    
+
                 if field.name == 'id':
                     continue
     
                 if field.name == link_to_form and not link_to_form_alreay_found:
                     if commit:                    
-                        setattr(mod, field.name, parent_instance)
+
+                        if parent_model in self.grids_child_map:
+                            if row_json['data-parent-indexrow'] in self.grids_child_map[parent_model]:
+                                setattr(mod, field.get_attname_column()[0], self.grids_child_map[parent_model]\
+                                    [row_json['data-parent-indexrow']])
+                            else:
+                                setattr(mod, field.name, parent_instance)
+                        else:
+                            setattr(mod, field.name, parent_instance)
+                    
                     exclude_validations.append(field.name)
                     link_to_form_alreay_found = True
                     continue
@@ -167,18 +183,23 @@ class StandardFormGrid(ModelForm):
     
             if commit : 
                 self.before_insert_grid_row(instance = mod)
-                mod.save()                            
+                mod.save()
+
+                maps.update({row_json['data-indexrow'] : mod.id})
                 self.after_insert_grid_row(instance = mod)
-    
+
+        if commit:
+            self.grids_child_map.update({mod.__class__.__name__ : maps})
+        
         return str()
 
-    def update_grid(self, data, model, commit = True, grid_id = ""):
+    def update_grid(self, data, model, commit = True, grid_id = "", parent_model = ""):
     
         if data.count(LINE_SEPARATOR) > 0:
             lista = data.split(LINE_SEPARATOR)    
         else:
             lista = [data]
-    
+        maps = {}
         for row in lista:                
             if not row:
                 continue
@@ -211,14 +232,18 @@ class StandardFormGrid(ModelForm):
             if commit :                
                 self.before_update_grid_row(instance = mod, old_instance = old_mod)
                 mod.save()            
+                maps.update({row_json['data-indexrow'] : mod.id})
                 self.after_update_grid_row(instance = mod, old_instance = old_mod)
-    
+
+        if commit:
+            self.grids_child_map.update({mod.__class__.__name__ : maps})
+            
         return str()    
 
     def split_child_models(self):        
         return self.child_models.split(GRID_SEPARATOR)
                      
-    def get_grids_erros(self, parent_instance):
+    def get_grids_erros(self, parent_instance):        
         erro = ""
         if self.child_models:
             grids = self.split_child_models()           
@@ -236,14 +261,15 @@ class StandardFormGrid(ModelForm):
                 if data_dict['rows_inserted']:
                     erro = self.insert_grid(data = data_dict['rows_inserted'], model = model, commit = False,
                         link_to_form = data_dict['link_to_form'], parent_instance = parent_instance, 
-                        grid_id = data_dict['grid_id'])                                 
+                        grid_id = data_dict['grid_id'], parent_model = data_dict['parent'])
+                    
                 if erro:
                     return erro
                 else:
                     if data_dict['rows_updated']:
                         erro = self.update_grid(data = data_dict['rows_updated'], model = model, commit = False,
-                            grid_id = data_dict['grid_id'])
-                    if erro:
+                            grid_id = data_dict['grid_id'], parent_model = data_dict['parent'])
+                    if erro:                        
                         return erro
         return str()
 
@@ -278,40 +304,44 @@ class StandardFormGrid(ModelForm):
         '''
 
 
-
     def save_grids(self, parent_instance_pk):        
         erro = str()
 
         if self.child_models:            
-
+            
             grids = self.split_child_models()
             
             for grid in grids:
-            
+                
                 if not grid:
                     continue                    
           
                 data_dict = json.loads(grid)        
                 model = vlib_views.get_model_by_string(data_dict['module'], data_dict['model'])
-
+                
                 erro = self.custom_grid_validations(grid_model = model, grid_data = data_dict, \
                     parent_instance = parent_instance_pk)
-
+                
                 if erro:
                     return erro
-
-                if 'rows_deleted' in data_dict:                    
+                
+                if 'rows_deleted' in data_dict:                                                        
                     if data_dict['rows_deleted']:
                         return self.delete_grid(data = data_dict['rows_deleted'], model = model)                                  
                 else:
                     if data_dict['rows_inserted']:                    
+                        #print(data_dict)
                         erro = self.insert_grid(data = data_dict['rows_inserted'], model = model, commit = True,
-                            link_to_form = data_dict['link_to_form'], parent_instance = parent_instance_pk) 
+                            link_to_form = data_dict['link_to_form'], parent_instance = parent_instance_pk,
+                            parent_model = data_dict['parent']) 
+                        #print(self.grids_child_map)
+
                     if erro:
                         return erro
     
                     if data_dict['rows_updated']:                        
-                        erro = self.update_grid(data = data_dict['rows_updated'], model = model, commit = True)
+                        erro = self.update_grid(data = data_dict['rows_updated'], model = model, commit = True,
+                            parent_model = data_dict['parent'])
                         if erro:
                             return erro
         return str()        
@@ -352,6 +382,7 @@ class StandardFormGrid(ModelForm):
         instance = super(StandardFormGrid, self).save(commit = commit)
 
         if commit:  
+            print('eita')
             self.grid_erros = self.save_grids(parent_instance_pk = instance)                        
             if self.grid_erros:
                 return None
@@ -436,9 +467,10 @@ class ViewCreate(CreateView, AjaxableResponseMixin):
 
     def post(self, request, *args, **kwargs):        
         self.set_fields_list(request)
-        
+        print('blef')
 #        grids_data = request.POST['child_models']
         grids_data = request.POST.get('child_models', {})
+
         if self.form_class == None:
             self.form_class = StandardFormGrid
         
@@ -455,7 +487,7 @@ class ViewCreate(CreateView, AjaxableResponseMixin):
             instance = form.get_instace()            
             
             error = form.get_grids_erros(instance)
-            
+                      
             if error:
                 return HttpResponse(error)
             else:
@@ -580,7 +612,7 @@ class ViewUpdate(UpdateView):
         self.object = self.model        
         
         grid_erros = form.get_grids_erros(None)
-
+        
         if grid_erros:
             return HttpResponse(grid_erros)
 
