@@ -22,6 +22,7 @@ class AgrupAdicional(models.Model):
 class Adicionais(models.Model):
 	agrupadicional = models.ForeignKey(AgrupAdicional)
 	item = models.ForeignKey(Produto, verbose_name="Adicional")
-	
+	def __str__(self):
+		return self.item.nmproduto
 
 
