@@ -8,10 +8,10 @@ class Pais(Master_empresa):
 	class Meta:
 		db_table = "pais"
 		verbose_name = "País"
-		verbose_name_plural = "Países"
+		verbose_name_plural = "País"
 		ordering = ['nmpais']
 
-	cdpais = models.CharField(max_length=5,verbose_name='Código IBGE',unique=True,db_index=True)
+	cdpais = models.CharField(max_length=5,verbose_name='Código BACEN',unique=True,db_index=True)
 	nmpais = models.CharField(max_length=250,verbose_name='País', null=False)
 	cdsiscomex = models.CharField(max_length=5,verbose_name='Código SISCOMEX',db_index=True, null=True)
 	sgpais2 = models.CharField(max_length=2,verbose_name='Sigla', null=True)
