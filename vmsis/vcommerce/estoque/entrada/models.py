@@ -13,7 +13,7 @@ class Entrada(Master_moviest):
 		child_models = ['estoque.itemproduto.models.Itemproduto']
 		ordering = ['-id']
 
-	dtentrada = widgets.VDateTimeInput(verbose_name='Data de Entrada')
+	dtentrada = widgets.VDateField(verbose_name='Data de Entrada')
 	fornecedor = models.ForeignKey(Fornecedor,verbose_name='Fornecedor', null=True)
 
 	def __str__(self):
