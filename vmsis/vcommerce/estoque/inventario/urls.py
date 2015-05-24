@@ -7,4 +7,5 @@ from estoque.inventario.views import ViewInventarioCreate, ViewInventarioUpdate
 Crud = CrudView(Inventario)
 
 urlpatterns = Crud.AsUrl(ClassCreate = ViewInventarioCreate, ClassUpdate = ViewInventarioUpdate,
-	GridFields  = ('dtinventario','almoxarifado__nmalmoxa'))
+	GridFields  = ('dtinventario','almoxarifado__nmalmoxa'), MediaFilesUpdate = ['js/inventario_upd.js'],
+	MediaFilesInsert = ['js/inventario_ins.js'])
