@@ -84,7 +84,12 @@ class StandardFormGrid(ModelForm):
     nome_campo_empresa = str()
     nome_campo_unidade = str()
     grids_child_map = {}
-
+    
+    @staticmethod
+    def formatMsgError(model_name, msg, index =-1):
+        return "<input id='grid_erros' name='%s' value='%s' data-indexrow = '%s'>" % \
+                (model_name, str(msg).replace("'", "").replace('"', "") , index)
+    
     def delete_grid(self, data, model):
         
         lista = data.split(LINE_SEPARATOR)
@@ -117,7 +122,7 @@ class StandardFormGrid(ModelForm):
             lista = [data]
         
         maps = {}
-
+        erro = str()
         for row in lista:     
             if not row:
                 continue    
@@ -180,13 +185,20 @@ class StandardFormGrid(ModelForm):
                 
                 return "<input id='grid_erros' name='%s' value='%s' data-indexrow = '%s'>" % \
                      (grid_id, str(val).replace("'", "").replace('"', "") , row_json['data-indexrow'])
-    
+            
             if commit : 
-                self.before_insert_grid_row(instance = mod)
+                erro = self.before_insert_grid_row(instance = mod)                
+                if erro:
+                    return self.formatMsgError(mod.__class__.__name__, erro)
                 mod.save()
 
                 maps.update({row_json['data-indexrow'] : mod.id})
-                self.after_insert_grid_row(instance = mod)
+
+                erro = self.after_insert_grid_row(instance = mod)
+
+                if erro:
+                    return self.formatMsgError(mod.__class__.__name__, erro)
+
 
         if commit:
             self.grids_child_map.update({mod.__class__.__name__ : maps})
@@ -200,6 +212,7 @@ class StandardFormGrid(ModelForm):
         else:
             lista = [data]
         maps = {}
+        erro = str()
         for row in lista:                
             if not row:
                 continue
@@ -230,10 +243,18 @@ class StandardFormGrid(ModelForm):
                      (grid_id, str(val).replace("'", "").replace('"', "") , row_json['data-indexrow'])
     
             if commit :                
-                self.before_update_grid_row(instance = mod, old_instance = old_mod)
+                erro = self.before_update_grid_row(instance = mod, old_instance = old_mod)
+                
+                if erro:
+                    return self.formatMsgError(mod.__class__.__name__, erro)
+
                 mod.save()            
                 maps.update({row_json['data-indexrow'] : mod.id})
-                self.after_update_grid_row(instance = mod, old_instance = old_mod)
+                
+                erro = self.after_update_grid_row(instance = mod, old_instance = old_mod)
+
+                if erro:
+                    return self.formatMsgError(mod.__class__.__name__, erro)
 
         if commit:
             self.grids_child_map.update({mod.__class__.__name__ : maps})
@@ -281,16 +302,19 @@ class StandardFormGrid(ModelForm):
         '''override this method to make custom procedures for each grid row inserted.
            This method have a object's instance inserted on the database as parameter(instance)
         '''
+        return str()
 
     def after_insert_grid_row(self, instance):
         '''override this method to make custom procedures for each grid row inserted.
            This method have a object's instance inserted on the database as parameter(instance)
         '''
+        return str()
 
     def before_update_grid_row(self, instance, old_instance):
         '''override this method to make custom procedures for each grid row updated.
            This method have a object's instance updated on the database as parameter(instance)
         '''
+        return str()
 
 
     def after_update_grid_row(self, instance, old_instance):
@@ -335,7 +359,6 @@ class StandardFormGrid(ModelForm):
                             link_to_form = data_dict['link_to_form'], parent_instance = parent_instance_pk,
                             parent_model = data_dict['parent']) 
                         
-
                     if erro:
                         return erro
     
@@ -380,10 +403,13 @@ class StandardFormGrid(ModelForm):
     def save(self, commit = True):
 
         instance = super(StandardFormGrid, self).save(commit = commit)
-
+        
         if commit:              
-            self.grid_erros = self.save_grids(parent_instance_pk = instance)                        
+            self.grid_erros = self.save_grids(parent_instance_pk = instance)
+            self.erros = self.grid_erros
+
             if self.grid_erros:
+                self.erros = self.grid_erros
                 return None
 
         return instance    
@@ -466,7 +492,6 @@ class ViewCreate(CreateView, AjaxableResponseMixin):
 
     def post(self, request, *args, **kwargs):        
         self.set_fields_list(request)
-#        grids_data = request.POST['child_models']
         grids_data = request.POST.get('child_models', {})
 
         if self.form_class == None:
@@ -485,13 +510,16 @@ class ViewCreate(CreateView, AjaxableResponseMixin):
             instance = form.get_instace()            
             
             error = form.get_grids_erros(instance)
-                      
+            
             if error:
                 return HttpResponse(error)
             else:
                 return self.form_valid(form)
         else:
             return self.form_invalid(form)
+
+    def get_grid_instance(self):
+        return Grid(self.model)
 
     def get_context_data(self, **kwargs):   
         apps = dict(self.request.session['apps_label'])
@@ -500,8 +528,10 @@ class ViewCreate(CreateView, AjaxableResponseMixin):
         page_caption = apps[module]
 
         Urls = urlsCrud(self.model);
-        grid = Grid(self.model)
+        grid = self.get_grid_instance()
+
         context = super(ViewCreate, self).get_context_data(**kwargs)   
+
         context['JsFiles'] = StaticFiles.GetJs(self.MediaFiles)
         context['CssFiles'] = StaticFiles.GetCss(self.MediaFiles)
         context['url_list'] = Urls.BaseUrlList(CountPageBack = 1)
@@ -562,6 +592,9 @@ class ViewUpdate(UpdateView):
     def get_success_url(self):
         return self.success_url
 
+    def get_grid_instance(self, parent_pk_value):
+        return Grid(model = self.model, parent_pk_value = parent_pk_value)
+
     def get_context_data(self, **kwargs):   
         apps = dict(self.request.session['apps_label'])
         module = self.model.__module__
@@ -573,7 +606,8 @@ class ViewUpdate(UpdateView):
         context['form_id'] = self.model.__name__        
         objeto =  context['object']
 
-        grid = Grid(model = self.model, parent_pk_value = objeto.pk)
+        grid = self.get_grid_instance(parent_pk_value = objeto.pk)
+        
         context['grid'] = grid.grid_as_text(use_crud = False, read_only = False);
 
         context['form_pk'] = objeto.pk
@@ -614,9 +648,10 @@ class ViewUpdate(UpdateView):
         if grid_erros:
             return HttpResponse(grid_erros)
 
-        return super(ViewUpdate, self).post(request, *args, **kwargs)         
-        
-        
+        return super(ViewUpdate, self).post(request, *args, **kwargs)
+#        self.form_class.erros
+
+                
 class ViewDelete(DeleteView):
     template_name = TEMPLATE_DELETE
     MediaFiles = []

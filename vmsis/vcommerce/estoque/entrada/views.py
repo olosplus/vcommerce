@@ -9,16 +9,16 @@ class FormEntrada(StandardFormGrid):
         model = Entrada
     
     def after_insert_grid_row(self, instance):
-        msgErro = ''
+        msgErro = str()
         FunEstoque = Estoque(self.funcionario["empresa"])
         msgErro = FunEstoque.entr_prod_est(instance.produto_id, instance.almoxarifado, instance.lote_id, instance.qtdeprod)
         if msgErro:
         	Entrada.objects.get(pk=instance.master_moviest_id).delete()
-        print(msgErro)
+        return 'teste'#msgErro
 
     def after_update_grid_row(self, instance, old_instance):
         lote_ok = True
-        msgErro = ''
+        msgErro = str()
         FunEstoque = Estoque(self.funcionario["empresa"])
 
         qtdetemp = FunEstoque.qtde_prod_est(old_instance.produto_id, old_instance.almoxarifado, old_instance.lote_id)
@@ -34,13 +34,13 @@ class FormEntrada(StandardFormGrid):
             if not msgErro:
                 msgErro = FunEstoque.entr_prod_est(instance.produto_id, instance.almoxarifado, instance.lote_id, instance.qtdeprod)
 
-        print(msgErro)
+        return msgErro
 
     def before_delete_grid_row(self, instance):
-        msgErro = ''
+        msgErro = str()
         FunEstoque = Estoque(self.funcionario["empresa"])
         msgErro = FunEstoque.said_prod_est(instance.produto_id, instance.almoxarifado, instance.lote_id, instance.qtdeprod)
-        print(msgErro)
+        return msgErro
 
 class ViewEntradaCreate(ViewCreate):
     form_class = FormEntrada

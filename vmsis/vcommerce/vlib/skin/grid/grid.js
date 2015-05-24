@@ -353,6 +353,11 @@ function ShowError(input_error){
   var value = input_error.value;
   var grid_id = input_error.name;
   var row = input_error.getAttribute("data-indexrow");
+  
+  if(row == -1){
+    alert(value);
+  };
+
   var list = value.split(",");
   var ele_sel = undefined;
   var ele = undefined;
