@@ -2,13 +2,16 @@
 from django.db import models
 from django.contrib.auth.models import User
 from cadastro.unidade.models import Unidade
-from cadastro.empresa.models import Empresa
+from vlib.control.models import Master_empresa
+from cadastro.localidade.bairro.models import Bairro
+from cadastro.localidade.cidade.models import Cidade
+from cadastro.localidade.estado.models import Estado
 
 TIPO_C = (('PF',u'Pessoa Física'),('PJ',u'Pessoa Jurídica'),)
 SEXO_C = (('F','Feminino'),('M','Masculino'),)
 
 # Create your models here.
-class Funcionario(models.Model):
+class Funcionario(Master_empresa):
 	user = models.ForeignKey(User, blank=True, null=True, editable=False)
 
 	nome = models.CharField(max_length=255, verbose_name='Nome')
@@ -20,16 +23,15 @@ class Funcionario(models.Model):
 	endereco = models.CharField(max_length=255, verbose_name='Endereço', blank=True, null=True)
 	numero = models.CharField(max_length=20, verbose_name='Número', blank=True, null=True)
 	complemento = models.CharField(max_length=255, null=True, blank=True, verbose_name='Complemento')
-	cep = models.CharField(max_length=9,verbose_name='CEP')
-	bairro = models.CharField(max_length=255, blank=True, null=True, verbose_name='Bairro')
-	estado = models.CharField(max_length=2,verbose_name='Estado')
-	cidade = models.CharField(max_length=255,verbose_name='Cidade')
-	dtcadastro = models.DateField(auto_now_add=True, verbose_name='Data de cadastro')
+	cep = models.CharField(max_length=9,verbose_name='CEP', null=True)
+	bairro = models.ForeignKey(Bairro, blank=True, null=True, verbose_name='Bairro')
+	cidade = models.ForeignKey(Cidade,verbose_name='Cidade', null=True)
+	estado = models.ForeignKey(Estado,verbose_name='Estado', null=True)
 	dtadmissao = models.DateField(verbose_name='Data de admissão',null=True,blank=True)
 	dtdemissao = models.DateField(verbose_name='Data de demissão',null=True,blank=True)
 	pessoa = models.CharField(max_length=2,verbose_name='Tipo',choices=TIPO_C, blank=True, null=True)
-	unidade = models.ForeignKey(Unidade,verbose_name="Unidade", null=True, blank=True)
-	empresa = models.ForeignKey(Empresa,verbose_name="Empresa", null=True)
+#	unidadePadrao = models.CharField(verbose_name="Unidade padrão", QuerySet=Unidade.objects.all())
+	unidade = models.ManyToManyField(Unidade, verbose_name="Unidades permitidas", blank=True, null=True)
 
 	class Meta:
 		ordering = ['-id']

@@ -6,11 +6,13 @@ from django.db.models.loading import get_model
 from django.apps import apps
 import math
 
+
 class Grid:
-    def __init__(self, model, parent_model = None, parent_pk_value = -1):
+    def __init__(self, model, parent_model = None, parent_pk_value = -1, title = str()):
         self.model = model
         self.parent_model = parent_model
         self.parent_pk_value = parent_pk_value
+        self.title = title
 
     def convert_model_type_field_to_grid_type(self, model_type_field):
         if model_type_field in ("CharField", "FilePathField", "IPAddressField", "GenericIPAddressField"):
@@ -40,6 +42,13 @@ class Grid:
             return "time"
         if model_type_field == "URLField" :
             return "url"
+
+    def get_title(self):
+        if self.title:
+            return self.title
+        else:
+            return self.model._meta.verbose_name
+
 
     def parse_type_field_to_text(self, field_type):        
         list_str = str(field_type).split(".")
@@ -78,38 +87,68 @@ class Grid:
         attr = self.get_model_attribute(field_name)
         return attr[field_name]['grid-type']
 
-    def get_grid_columns_config(self, field_name, read_only = True):
+    def get_field_query_set(self, model_rel_to, field_name):
+        return model_rel_to.objects.all()
+
+    def get_grid_columns_config(self, field_name, read_only = True, check_link_to_form = True):
+        
+        str_objects, id_values = [], []
+        field_choices = self.model._meta.get_field(field_name).choices
+
+        if field_choices:
+            for choice in field_choices:                                
+                id_values.append('"'+ str(choice[0])+ '"')
+                str_objects.append('"'+str(choice[1])+ '"')                
+
         if read_only:
-            return {"type":"", "objects":"", "values":"", "is_link_to_form" : False } 
+            if field_choices:
+                return {"type":"select-readonly", "objects":str(str_objects).replace("'",""), \
+                   "values":str(id_values).replace("'",""), "is_link_to_form" : False }
+            else :    
+                return {"type":"", "objects":"", "values":"", "is_link_to_form" : False } 
+
         attr = self.get_model_attributes(field_name)
         column_type = attr[field_name]['grid-type']
         column_model = attr[field_name]['model']
 
-        if self.parent_model and column_model == self.parent_model:
-            return {"type":"", "objects":"", "values":"", "is_link_to_form" : True }
-        
-        if column_model != None:
-            query = column_model.objects.all()
-            str_objects, id_values = [], []
+        if self.parent_model and check_link_to_form and ((column_model == self.parent_model) or \
+           (self.parent_model.__base__ == column_model)):
+                return {"type":"", "objects":"", "values":"", "is_link_to_form" : True }
+
+        if column_model != None:            
+            query = self.get_field_query_set(model_rel_to = column_model, field_name = field_name)
+            #column_model.objects.all()
+            str_objects, id_values = ['--------'], ['']            
             for q in query:
                 str_objects.append(str(q));
                 id_values.append(str(q.id))
+
             return {"type":column_type, "objects":str_objects, "values":id_values, 
                 "is_link_to_form" : False}
+
         else:
-            return {"type":column_type, "objects":"", "values":"", 
-                "is_link_to_form" : False}
+            if field_choices:
+                return {"type":"select", "objects":str_objects, "values":id_values, 
+                    "is_link_to_form" : False}
+            else:
+                return {"type":column_type, "objects":"", "values":"", 
+                    "is_link_to_form" : False}
 
     def get_model_field_config(self, field_name, field_config):
         return getattr(self.model._meta.get_field(field_name), field_config)            
     
     def get_data(self, fields_to_display, dict_filter):        
+
         if dict_filter == {}:
-            if self.parent_model != None:
-                for field in self.model._meta.fields:                  
-                    if self.get_grid_column_model(field.name) == self.parent_model:
+            column_model = None
+
+            if self.parent_model != None:                                                
+                for field in self.model._meta.fields: 
+                    column_model = self.get_grid_column_model(field.name)                    
+                    if (column_model == self.parent_model) or (self.parent_model.__base__ == column_model):
                         dic = {self.get_name_column_grid(field.name, type(field)) : 
                             self.parent_pk_value }
+                        
                         return self.model.objects.filter(**dic).values_list(*fields_to_display)     
             else:
                 return self.model.objects.values_list(*fields_to_display)
@@ -117,7 +156,7 @@ class Grid:
             return self.model.objects.filter(**dict_filter).values_list(*fields_to_display)
 
 
-    def get_pagination_data(self, fields_to_display, dict_filter, page, limit_data, order_by = 'id'):                
+    def get_pagination_data(self, fields_to_display, dict_filter, page, limit_data, order_by = 'id'):                                
         data = self.get_data(fields_to_display = fields_to_display, dict_filter = dict_filter)        
         initial = (int(page)-1) * limit_data                              
         pages = math.ceil(data.count() / limit_data)                
@@ -137,7 +176,7 @@ class Grid:
 
         # get the fields declared on model
         fields_model = self.model._meta.fields
-
+        
         fields_to_display = list(display_fields)
 
         if self.parent_model:
@@ -165,11 +204,15 @@ class Grid:
         link_to_form = ""
 
         #makes the loop on fields model's, creating the columns list's. if the field is "id", dont show
-        for field in fields_model:                             
-            grid_conf = self.get_grid_columns_config(field.name, read_only)
+        for field in fields_model:            
+            if link_to_form:
+                grid_conf = self.get_grid_columns_config(field.name, read_only, check_link_to_form = False)
+            else:
+                grid_conf = self.get_grid_columns_config(field.name, read_only, check_link_to_form = True)
             
             if grid_conf["is_link_to_form"]:
-                link_to_form = self.get_name_column_grid(field.name, type(field))
+                if not link_to_form:
+                    link_to_form = self.get_name_column_grid(field.name, type(field))
 
             if not display_fields :
 
@@ -180,8 +223,7 @@ class Grid:
                     columns += '"%s":{"name":"%s", "label":"%s", "type":"%s", "name_field_display":"%s"},' % \
                     (field.name, self.get_name_column_grid(field.name, type(field)), 
                       field.verbose_name, grid_conf["type"], field.name)
-                else:
-                    print(grid_conf["objects"])
+                else:                    
                     columns += '"%s":{"name":"%s", "label":"%s", "type":"%s", "options":%s, "values":%s, \
                     "name_field_display":"%s"},'\
                     % (field.name, self.get_name_column_grid(field.name, type(field)), field.verbose_name, 
@@ -199,9 +241,16 @@ class Grid:
                         temp_display.update({f.upper():{"name":f.upper(), "display_name" : f}})
                 
                 if field.name.upper() in temp_display:
-                    columns += '"%s":{"name":"%s", "label":"%s", "type":"%s", "name_field_display":"%s"},' % \
-                    (field.name, self.get_name_column_grid(field.name, type(field)), field.verbose_name,
-                        grid_conf["type"], temp_display[field.name.upper()]["display_name"] )
+                    if not grid_conf["objects"]:                
+                        columns += '"%s":{"name":"%s", "label":"%s", "type":"%s", "name_field_display":"%s"},' % \
+                            (field.name, self.get_name_column_grid(field.name, type(field)), field.verbose_name,
+                            grid_conf["type"], temp_display[field.name.upper()]["display_name"] )
+                    else:
+                        columns += '"%s":{"name":"%s", "label":"%s", "type":"%s", "options":%s, "values":%s, \
+                            "name_field_display":"%s"},' % \
+                            (field.name, self.get_name_column_grid(field.name, type(field)), field.verbose_name,
+                            grid_conf["type"], grid_conf["objects"], grid_conf["values"], 
+                            temp_display[field.name.upper()]["display_name"] )
                         
         if use_crud:
             columns += '"col_update":{"name":"update", "label":"%s", "type":"link"},' % ''#(_('Update'))            
@@ -261,10 +310,10 @@ class Grid:
         
         return '{"columns":{%s}, "rows":{%s}, "bar":{%s}, "grid_key":"%s", "grid_mod" : "%s", '\
             '"use_crud":"%s", "read_only":"%s", "url_insert":"%s", "url_update":"%s", "url_delete":"%s", \
-            "parent":"%s", "link_to_form":"%s", "number_of_pages" : "%s", "selected_page" : "%s" }' % \
+            "parent":"%s", "link_to_form":"%s", "number_of_pages" : "%s", "selected_page" : "%s", "title":"%s" }' % \
             (columns, rows, bottom_bar, self.model.__module__, self.model.__name__, str(use_crud), 
             str(read_only), url_insert, url_update, url_delete, parent_model_str, link_to_form, 
-            pagination['pages'], pagination['selected_page'])
+            pagination['pages'], pagination['selected_page'], self.get_title())
 
     @staticmethod
     def grid_script(data, model):

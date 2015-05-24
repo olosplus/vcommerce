@@ -1,16 +1,16 @@
 # -*- coding: utf-8 -*-
 from django.db import models
-from cadastro.unidade.models import Unidade
+from vlib.control.models import Master_empresa
 
 # Create your models here.
-class Finalidade(models.Model):
+class Finalidade(Master_empresa):
 	class Meta:
 		db_table = "finalidade"
 		verbose_name = "Finalidade"
 		verbose_name_plural = "Finalidades"
+		ordering = ['descricao']
 
 	descricao = models.CharField(max_length=150,verbose_name="Descrição",blank=True)
-	unidade = models.ForeignKey(Unidade,verbose_name="Unidade")
 
 	def __str__(self):
 		return self.descricao

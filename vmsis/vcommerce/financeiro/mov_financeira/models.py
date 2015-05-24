@@ -2,6 +2,7 @@
 from django.db import models
 from financeiro.conta.models import Conta
 from cadastro.unidade.models import Unidade
+from cadastro.centro_custo.models import
 
 # Create your models here.
 class Mov_Financeira(models.Model):

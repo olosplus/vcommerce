@@ -24,7 +24,7 @@ function selectLine(element) {
     parent.attr('sel', 'true');
   } else {
     parent.attr('sel', 'false');
-  }
+  };
   return true;
 }
 
@@ -47,13 +47,15 @@ function GetGridChange(idGrid, operation) {
   var str_json = '';
   var str_row = '';
   for (tr in list_tr) {
-    str_row = "";
+    
     if (list_tr.hasOwnProperty(tr)) {
-      if (tr === 'context') continue
+      if (isNaN(tr)) 
+        continue
+      
       tds = list_tr[tr].children;
       if (list_tr[tr].childElementCount > 0) {
-        str_row += '{';
-      }
+        str_row = '{' + JoinToJson("data-indexrow", list_tr[tr].getAttribute('data-indexrow'));        
+      };
       for (td in tds) {
         if (tds.hasOwnProperty(td)) {
           if (tds[td].childElementCount > 0) {
@@ -62,7 +64,8 @@ function GetGridChange(idGrid, operation) {
               str_row += JoinToJson(element.name, element.value);
             };
             if (element.nodeName === "SELECT") {
-              if (element.selectedIndex > -1) str_row += JoinToJson(element.name, element.options[element.selectedIndex].value);
+              if (element.selectedIndex > -1) 
+                str_row += JoinToJson(element.name, element.options[element.selectedIndex].value);
             };
           };
         };
@@ -73,11 +76,10 @@ function GetGridChange(idGrid, operation) {
       str_row += '}' + line_separator + " ";
       if (str_row != '}' + line_separator + " ") {
         str_json += str_row;
-      }
+      };
     };
   };
   str_json = str_json.substr(0, str_json.length - 1);
-
 
   return str_json;
 };
@@ -93,7 +95,8 @@ function ParseGridToJson(idGrid) {
     rows_updated: GetGridChange(idGrid, "updated"),
     model: getAttrGrid(idGrid, 'mod'),
     module: getAttrGrid(idGrid, 'module'),
-    link_to_form: getAttrGrid(idGrid, 'link_to_form')
+    link_to_form: getAttrGrid(idGrid, 'link_to_form'),
+    grid_id: idGrid
   };
 }
 
@@ -108,8 +111,16 @@ function ParseGridToJsonDelete(idGrid) {
 function InsertEmptyRow(columns, idGrid, link_to_form) {
   var html_input = "<input type='{{TYPE}}' value='{{VALOR}}' {{DISABLE}} {{STEP}} " + "class = 'gridtag' name = {{NAME}} onchange='SetChangesLine(this)'></input>";
   var type_input = "";
+  var data_row = 1;
+  var last_tr = $("#" + idGrid + " > tbody > tr").last();
 
-  html = "<tr operation='inserted' sel='true'>";
+  if(last_tr != undefined){
+    var last_index = last_tr.attr('data-indexrow');
+    if(last_index != "" && last_index != undefined)
+      data_row = parseInt(last_index) + 1;
+  };
+
+  html = "<tr operation='inserted' sel='true' data-indexrow='"+data_row+"'>";
   html += "<td> <center><input type='checkbox' checked onchange='selectLine(this)'></input> </td></center>";
   for (column in columns) {
     if (columns.hasOwnProperty(column)) {
@@ -120,9 +131,10 @@ function InsertEmptyRow(columns, idGrid, link_to_form) {
         html += "<td class='notvis'>";
       } else {
         html += "<td>";
-      }
+      };
       //for inputs
-      if ((columns[column].type != 'select') && (columns[column].type != 'link') && (columns[column].type != 'textarea')) {
+      if ((columns[column].type != 'select') && (columns[column].type != 'link') 
+         /*&& (columns[column].type != 'textarea')*/) {
         html += html_input.replace('{{TYPE}}', columns[column].type);
         html = html.replace('{{VALOR}}', "");
         html = html.replace('{{DISABLE}}', '');
@@ -133,19 +145,26 @@ function InsertEmptyRow(columns, idGrid, link_to_form) {
           html = html.replace("{{STEP}}", "");
         };
       };
-      if (columns[column].type === 'textarea') {
+/*      if (columns[column].type === 'textarea') {
         html += "<textarea class = 'gridtag' name='" + columns[column].name + "' onchange='SetChangesLine(this)'>" + "</textarea>";
-      };
+      };*/
       if (columns[column].type == 'select') {
         if (columns[column].options != 'undefined') {
           var options = columns[column].options;
           var values = columns[column].values;
+          var selected = "selected";
           html += "<select class = 'gridtag' name='" + columns[column].name + "' onclick='SetChangesLine(this)'>";
           for (option in options) {
             if (options.hasOwnProperty(option)) {
-              html += "<option value='" + values[option] + "'>";
+              html += "<option value='" + values[option] + "'";
+              
+              if (selected != "")
+                html += selected;
+               
+              html += ">";
               html += options[option] + "</option>";
             };
+            selected = "";
           };
           html += "</select>";
         };
@@ -158,14 +177,16 @@ function InsertEmptyRow(columns, idGrid, link_to_form) {
   $("#" + idGrid + "> tbody").append(html);
 };
 
-function InsertLineWithValue(row, columns, readonly, link_to_form) {
+function InsertLineWithValue(row, columns, readonly, link_to_form, index_row) {
   var html_input = "<input type='{{TYPE}}' value='{{VALOR}}' {{STEP}} class = 'gridtag' name = " + "{{NAME}}  onchange='SetChangesLine(this)'>" + "</input>";
   var type_input = "";
   var class_links = "";
   var events = "";
   var index = 0;
+  var options = undefined
+  var values = undefined
 
-  html = "<tr>";
+  html = "<tr data-indexrow='" + index_row + "'>"
   if (readonly === "False") {
     html += "<td> <center><input type='checkbox' onchange='selectLine(this)'> " + "</input> </td></center>";
   };
@@ -180,7 +201,9 @@ function InsertLineWithValue(row, columns, readonly, link_to_form) {
         html += "<td>"
       }
       //for inputs
-      if ((columns[column].type != 'select') && (columns[column].type != 'link') && (columns[column].type != 'textarea') && (columns[column].type != "")) {
+      if ((columns[column].type != 'select') && (columns[column].type != 'link') && 
+          /*(columns[column].type != 'textarea')*/  (columns[column].type != "") && 
+          (columns[column].type != "select-readonly") ) {
         html += html_input.replace('{{TYPE}}', columns[column].type);
         html = html.replace('{{VALOR}}', row.v[index]);
         html = html.replace('{{NAME}}', columns[column].name);
@@ -190,9 +213,9 @@ function InsertLineWithValue(row, columns, readonly, link_to_form) {
           html = html.replace("{{STEP}}", "");
         };
       };
-      if (columns[column].type === 'textarea') {
+/*      if (columns[column].type === 'textarea') {
         html += "<textarea class = 'gridtag' name='" + columns[column].name + "' onchange='SetChangesLine(this)'>" + row.v[index] + "</textarea>"
-      };
+      };*/
       if ((columns[column].type === 'link') && (readonly === "True")) {
         if (columns[column].name === "update") {
           class_links = "fa fa-pencil";
@@ -204,11 +227,29 @@ function InsertLineWithValue(row, columns, readonly, link_to_form) {
         };
         html += "<center><a  href = '" + row.v[index] + "' class='" + class_links + "' title= '" + columns[column].label + "' onclick='" + events + "'>" + "</a></center>";
       };
+      
+      if(columns[column].type == 'select-readonly'){
+        if (columns[column].options != 'undefined') {
+          options = columns[column].options;
+          values = columns[column].values;
+
+          for (option in options) {
+            if (options.hasOwnProperty(option)) {        
+              if (row.v[index] === values[option]) {
+                html += options[option];
+              };
+            };
+          };
+        }  
+      };
+
       if (columns[column].type == 'select') {
         if (columns[column].options != 'undefined') {
-          var options = columns[column].options;
-          var values = columns[column].values;
-          html += "<select class = 'gridtag' name=' " + columns[column].name + "' " + " onclick='SetChangesLine(this)' onkeydown='SetChangesLine(this)'>";
+          options = columns[column].options;
+          values = columns[column].values;
+          
+          html += "<select  class='gridtag' name='" + columns[column].name + "' " + 
+            " onclick='SetChangesLine(this)' onkeydown='SetChangesLine(this)'>";
           for (option in options) {
             if (options.hasOwnProperty(option)) {
               html += "<option value='" + values[option] + "'";
@@ -235,6 +276,30 @@ function InsertLineWithValue(row, columns, readonly, link_to_form) {
   return html
 };
 
+function ShowError(input_error){
+  $('.errorgrid').attr('title', '');
+  $('.errorgrid').removeClass('errorgrid');
+  var value = input_error.value;
+  var grid_id = input_error.name;
+  var row = input_error.getAttribute("data-indexrow");
+  var list = value.split(",");
+  var ele_sel = undefined;
+  var ele = undefined;
+  var ele_sel_name = "";
+  var i = 0;  
+  
+  for(i = 0; i <= list.length - 1; i++ ){
+    ele_sel_name = list[i].split(":")[0]
+    ele_sel_name = ele_sel_name.replace('[', '').replace(']', '');
+    ele_sel = $("#" + grid_id + " tr[data-indexrow='" + row + "']");
+    ele = ele_sel.find('[name= '+ ele_sel_name + ']');
+    if (ele[0] == undefined)
+      ele = ele_sel.find('[name= '+ ele_sel_name + '_id]');
+    ele.addClass("errorgrid");
+    ele.attr('title', list[i].split(":")[1].replace('[', '').replace(']', ''))
+  };
+}
+
 function Grid(DivGridId, Data) {
 
   var columns = Data.columns;
@@ -252,15 +317,24 @@ function Grid(DivGridId, Data) {
   var link_to_form = Data.link_to_form;
   var pages = parseInt(Data.number_of_pages);
   var selected_page = parseInt(Data.selected_page);
-  
-  var html = "<div class='grid'>";
+  var title = Data.title;
+
+  if (readonly === "True"){
+    var table_class = 'tablegrid table table-condensed table-hover table-striped table-readonly'
+  }else{
+    var table_class = 'tablegrid table table-bordered table-hover table-striped table-editable'
+  }; 
+
+  var html = "";
   
   if (readonly === "True") {
+    html += "<div class='grid panel-default panel-customizado'>";
+    html += "<div class='panel-heading grid-custom-title'>";
     for (item_bar in bar) {
       if (bar.hasOwnProperty(item_bar)) {
         if ((bar[item_bar].type === 'link') && (readonly === "True")) {
           html += "<a class = 'fa fa-file-o' href = '" + bar[item_bar].value + "' title='" + 
-            bar[item_bar].label + "'>" + "</a> <div class='separador'></div> ";
+            bar[item_bar].label + "'>" + "</a> <div class='separador'>|</div> ";
         };
       };
     };
@@ -268,11 +342,23 @@ function Grid(DivGridId, Data) {
     html += "<a class = 'glyphicon glyphicon-search' href='JavaScript:void()' "+
       "onclick='Filter(\"" + module + "\", \"" + model + "\", " + JSON.stringify(columns)  +
       "  )' title='Filtrar' ></a>";
+    html += "<div class='separador'>|</div> <a class='glyphicon glyphicon-print' href='JavaScript:void()' "+
+      "title='Relatório'  onclick='Print(\"" + module + "\", \"" +
+              model + "\", " + JSON.stringify(columns)  +
+            ", \"id\", \""+ title +" \")'> </a>";
+    html += "<div class='separador'></div>  <div class='separador'></div>";
+    
+    html +=  "<strong style='font-size:20px'>" + title + "</strong>";
+    html += "</div>"
+  }
+  else{
+    html += "<div class='grid panel panel-default panel-customizado' >";
+    html += "<div class='panel-heading'>" + title + "</div>";
   };
-
+  html += "<div class='panel-body'>"
   html += "<table id='" + grid_id + "' parent='" + 
     parent + "'" + "link_to_form='" + link_to_form + "'" +
-    " class='tablegrid table table-bordered table-hover table-striped' module='" +
+    " class='"+ table_class + "' module='" +
      module + "' " + "mod='" + model + "'><thead class = 'header'> <tr>";
 
   if(readonly === "False") {
@@ -302,28 +388,33 @@ function Grid(DivGridId, Data) {
 
   html += "</tr></thead>";
   html += "<tbody>"
+  var index_row = 0;
   for (row in rows) {
     if (rows.hasOwnProperty(row)) {
-      html += InsertLineWithValue(rows[row], columns, readonly, link_to_form)
+      index_row += 1;
+      html += InsertLineWithValue(rows[row], columns, readonly, link_to_form, index_row)
     };
   };
 
   html += "</tbody>";
   html += "</table>";
-
+  html += "</div>"; 
+  html += "<div class='panel-footer'>";  
   if (readonly === "False") {
-    html += "  <a href='#' class='fa fa-file-o' title='Adicionar'" + 
+    
+    html += "  <a href='javascript:void(0)' class='fa fa-file-o' title='Adicionar'" + 
       "onclick='InsertEmptyRow(" + JSON.stringify(columns) + ",\"" + grid_id + "\", \"" + link_to_form + "\" )'>" +
        "</a> | ";
 
-    html += "  <a href='#' id='linkcancel' class='glyphicon glyphicon-floppy-remove' " +
+    html += "  <a href='javascript:void(0)' id='linkcancel' class='glyphicon glyphicon-floppy-remove' " +
       "onclick='RemoveSelectedRows(\"" + grid_id + "\" )' title='Cancelar'>" + "</a> | ";
 
-    html += "  <a href='#' onclick='doDeleteGrid(\"" + grid_id + "\")' class = 'fa fa-trash-o' " + 
+    html += "  <a href='javascript:void(0)' onclick='doDeleteGrid(\"" + grid_id + "\")' class = 'fa fa-trash-o' " + 
       "title='Deletar selecionados'></a> | ";
 
-    html += "  <a href='#' onclick='doPostGrid(\"" + grid_id + "\")' class='glyphicon glyphicon-floppy-disk' " + 
+    html += "  <a href='javascript:void(0)' onclick='doPostGrid(\"" + grid_id + "\")' class='glyphicon glyphicon-floppy-disk' " + 
       " title='Salvar'></a>";
+  
   }else{
     html += "<div class='navigation' >";
     html += "<div class='navigation-centralize'>"
@@ -346,7 +437,8 @@ function Grid(DivGridId, Data) {
     html += "</div>";
     html += "</div>"    
   };
-
+  
+  html += "</div>";
   html += "</div>"
   $("#" + DivGridId).html(html);
   ControlPagination(pages, columns, selected_page, module, model, "");
@@ -355,6 +447,9 @@ function Grid(DivGridId, Data) {
 function doPostGrid(idGrid) {
   var parent = $('#' + idGrid).attr('parent');
   var sequence = "";
+  var send_to = $('#ownurl').val();
+  var redirect_to = $('#listurl').val();
+
   if ((parent != "") && (parent != undefined)) {
     sequence = $('#' + parent).attr('sequence');
     var link_to_form = $('#' + idGrid).attr('link_to_form');
@@ -367,9 +462,12 @@ function doPostGrid(idGrid) {
     };
   };
   if (parent != "") {
-    var send_to = $('#ownurl').val();
-    var redirect_to = $('#listurl').val();
-    doPostForm(send_to, parent, "", false, "");
+    if(sequence === "" || sequence === undefined) {   
+      doPostForm(send_to, parent, redirect_to, false, "");
+    }else{
+      doPostForm(send_to, parent, "", false, "");
+    }
+
   } else {
     var jsgrid = ParseGridToJson(idGrid);
     $.ajax({
@@ -382,9 +480,10 @@ function doPostGrid(idGrid) {
         var doc_received = parser.parseFromString(data, "text/html");
         var erros = doc_received.getElementById('grid_erros');
         if (erros != null) {
-          alert(erros.value);
+           ShowError(erros);
         } else {
           ClearOperations(idGrid);
+          
           alert('Dados salvos com sucesso!');
         }
       },
@@ -479,7 +578,7 @@ function doPostForm(send_to, form_id, url_redirect, is_delete, id_grid_delete) {
       if (frm_received === null) {
         var erros = doc_received.getElementById("grid_erros");
         if (erros != null) {
-          alert(erros.value);
+          ShowError(erros)
         } else {
           if (url_redirect != "") {
             window.location.href = url_redirect;
@@ -644,4 +743,46 @@ function PaginagionCentralize(){
   $(".navigation").prepend("<div id='navigation-wrapper' class='inline'></div>");
   $("#navigation-wrapper").width(width_wrap);
   $("#navigation-wrapper").height(35);
+}
+
+function Print(module, model, columns, column, title){
+  var filter = $("#filter_cache").val();
+  var palavras_inteiras = $("#palavras_inteiras").val();
+  var filtro = ""; 
+  ordenacao = $("#grid_order_by").val();
+
+  if(filter === undefined){
+    filter = "";
+  }else{
+    filter = JSON.parse(filter)
+  };
+ 
+  if (filter != ""){
+    filtro = JSON.stringify(filter);    
+  };
+
+  if(palavras_inteiras === undefined){
+    palavras_inteiras = "";
+  };
+
+    $.ajax({
+      url: '/printgrid',
+      type: 'get',
+      //this is the default though, you don't actually need to always mention it
+      data: {"module" : module, "model" : model, "columns" : JSON.stringify(columns), "form_serialized" : filtro,
+      "partial_search" : palavras_inteiras, "page" : -1, "order_by" : ordenacao, "title" : title},
+
+      success: function (data) {
+        var response = eval(data);
+
+        var myWindow = window.open("about:blank", "Relatório: " + title, "_blank");
+        
+        report = new vReport("A4", "body", response, myWindow.document);   
+        report.view()         
+      },
+      failure: function (data) {
+        alert('Got an error dude');
+      }
+    });
+
 }

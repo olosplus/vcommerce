@@ -5,4 +5,4 @@ from estoque.cadastro_estoque.finalidade.models import Finalidade
 
 Crud = CrudView(Finalidade)
 
-urlpatterns = Crud.AsUrl(GridFields  = ('descricao','unidade__nmfantasia',))
+urlpatterns = Crud.AsUrl(GridFields  = ('descricao',))

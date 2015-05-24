@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from vlib import view_lib
 from cadastro.empresa.models import Empresa
+from cadastro.almoxarifado.models import Almoxarifado
 from cadastro.unidade.models import Unidade 
 from django.core.exceptions import ValidationError
 from django.forms import ModelForm
@@ -26,6 +27,16 @@ class FormEmpresa(view_lib.StandardFormGrid):
             raise
         else:
             unidade.save()
+
+        almoxarifado = Almoxarifado()
+        setattr(almoxarifado, 'empresa_id' , instance.id)
+        setattr(almoxarifado, 'nmalmoxa' , 'Almoxarifado padrão')
+        try:
+            almoxarifado.full_clean()
+        except ValidationError as e:
+            raise
+        else:
+            almoxarifado.save()
 
 # Create your views here.
 class ViewEmpresa(view_lib.ViewCreate):

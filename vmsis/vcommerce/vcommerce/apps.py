@@ -1,6 +1,7 @@
 apps_on_menu = (
     {'app': 'cadastro', 'verbose_name' : 'Cadastro', 'imgmenu':'fa fa-cubes'},
     {'app': 'cadastro.almoxarifado', 'verbose_name' : 'Almoxarifado'},
+    {'app': 'cadastro.almoxarifado.localizacao', 'verbose_name' : 'Localização', 'visible': False},
     {'app': 'cadastro.cliente', 'verbose_name' : 'Cliente'},
     {'app': 'cadastro.contato', 'verbose_name' : 'Contato', 'visible': False},
     {'app': 'cadastro.empresa', 'verbose_name' : 'Empresa'},
@@ -11,10 +12,8 @@ apps_on_menu = (
     {'app': 'cadastro.localidade.endereco', 'verbose_name' : 'Endereço', 'visible': False},
     {'app': 'cadastro.localidade.estado', 'verbose_name' : 'Estado'},
     {'app': 'cadastro.localidade.pais', 'verbose_name' : 'Países'},
+    {'app': 'cadastro.unimedida', 'verbose_name' : 'Unidade de Medida', 'visible': False},
     {'app': 'cadastro.produto', 'verbose_name' : 'Produto'},
-    {'app': 'cadastro.produto.item', 'verbose_name' : 'Produto'},
-    {'app': 'cadastro.produto.localizacao', 'verbose_name' : 'Localização', 'visible': False},
-    {'app': 'cadastro.produto.unimedida', 'verbose_name' : 'Unidade de Medida'},
     {'app': 'cadastro.unidade', 'verbose_name' : 'Unidade'},
     {'app': 'cadastro.funcionario', 'verbose_name' : 'Funcionário'},
     {'app': 'financeiro', 'verbose_name': 'Financeiro', 'imgmenu':'fa fa-usd'},
@@ -26,6 +25,11 @@ apps_on_menu = (
     {'app': 'vatualiza', 'verbose_name' : 'Atualização', 'visible': False},
     {'app': 'cadastro.centro_custo', 'verbose_name' : 'Centro de Custos'},    
     
+    # TELAS DO FLUXO DE CAIXA
+    {'app': 'fluxocaixa', 'verbose_name' : 'Fluxo de Caixa', 'imgmenu':'fa fa-money'},
+    {'app': 'fluxocaixa.contapagar', 'verbose_name' : 'Conta a Pagar'},
+    {'app': 'fluxocaixa.contareceber', 'verbose_name' : 'Conta a Receber'},
+
     # TELAS DA CONTABILIDADE
     {'app': 'contabilidade', 'verbose_name' : 'Contabilidade', 'imgmenu' : 'glyphicon glyphicon-book'},
     {'app': 'contabilidade.cadastro_contabil', 'verbose_name' : 'Cadastros Contábeis'},
@@ -49,5 +53,15 @@ apps_on_menu = (
     {'app': 'estoque.posestoque', 'verbose_name' : 'Posição de Estoque', 'visible' : False},
     {'app': 'estoque.lote', 'verbose_name' : 'Lote', 'visible' : False},
     {'app': 'estoque.inventario', 'verbose_name' : 'Inventário'},
+
+   # TELAS DO PEDIDO
+    {'app': 'pedido', 'verbose_name' : 'Pedido', 'imgmenu' : 'fa fa-building-o'},
+    {'app': 'pedido.frentecaixa', 'verbose_name' : 'Pedido'},
+    {'app': 'pedido.cadastro_pedido', 'verbose_name' : 'Cadastros Pedido'},
+    {'app': 'pedido.cadastro_pedido.mesa', 'verbose_name' : 'Mesa'},
+    {'app': 'pedido.cadastro_pedido.categoria', 'verbose_name' : 'Categoria'},
+    {'app': 'pedido.cadastro_pedido.agrupadicional', 'verbose_name' : 'Agrupamento de Adicionais'},
+    {'app': 'pedido.cadastro_pedido.cardapio', 'verbose_name' : 'Cardápio'},
+    {'app': 'pedido.cadastro_pedido.composicaoproduto', 'verbose_name' : 'Composição do Produto', 'visible' : False},
 
 )

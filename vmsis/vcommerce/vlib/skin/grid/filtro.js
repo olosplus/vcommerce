@@ -67,4 +67,3 @@ function Filter (module, model, columns) {
     }
   });  
 };
-

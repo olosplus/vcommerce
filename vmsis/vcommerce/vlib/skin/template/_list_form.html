@@ -3,7 +3,9 @@
 {% load db_tags %}
 
 {% block js %}
+  <script src="{% static 'vReport/vReport.js' %}"></script>
   <script src="{% static 'js/base.js' %}"></script>
+
   {% for media in JsFiles %}
     <script type="text/javascript" src='{% static media %}'></script>
   {% endfor %}
@@ -14,9 +16,6 @@
   <div class="row-fluid">
     <!-- block -->
     <div class="block">
-      <div class="navbar navbar-inner block-header">
-        <div class="page-header title"><h4>{{ titulo }} >> Lista</h4></div>
-      </div>
       <div class="block-content collapse in">
         <div class="span12">          
           {{grid | safe}}
@@ -31,5 +30,6 @@
 {% block css %}
   {% for media in CssFiles %}
      <link rel="stylesheet" style="text/css" href="{%  static  media %}" />
-  {% endfor %}  
+  {% endfor %} 
+  <link rel="stylesheet" style="text/css" href="{%  static  'vReport/vReport.css' %}" /> 
 {% endblock %}

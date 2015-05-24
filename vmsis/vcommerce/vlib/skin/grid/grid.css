@@ -4,6 +4,7 @@
 
 .grid{
   overflow: auto;
+
 }
 
 .grid .pagination{
@@ -17,6 +18,9 @@
   float : left;
 }
 
+.grid .tablegrid{
+  margin-bottom: 0px !important;
+}
 .navigation{
   /*margin-left: 15%;
   display: inline;
@@ -60,8 +64,9 @@
 }
 
 .gridtag{
+   height: 27px;
    width : 100%;
-   height : 100%;
+/*   height : 100%;*/
    margin : 0px;
    padding : 0px;
    border : none;
@@ -69,13 +74,14 @@
    background-color: white;
 }
 
-table>tbody>tr>td, 
-.table>tbody>tr>th, 
-.table>tfoot>tr>td, 
-.table>tfoot>tr>th, 
-.table>thead>tr>td, 
-.table>thead>tr>th,
-.table>thead>tr>td>.gridtag{
+
+.table-editable>tbody>tr>td, 
+.table-editable>tbody>tr>th, 
+.table-editable>tfoot>tr>td, 
+.table-editable>tfoot>tr>th, 
+.table-editable>thead>tr>td, 
+.table-editable>thead>tr>th,
+.table-editable>thead>tr>td>.gridtag{
 padding: 2px !important;
 font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
 font-size: 14px;
@@ -93,7 +99,26 @@ color: #337ab7;
    color : blue;
    padding-left: 0.5em;
    padding-right: 0.3em;   
-   padding-bottom: 0.3em;   
+   padding-bottom: 0.3em;    
+}
 
- 
+.grid .panel-body{
+  padding: 0px !important;
+}
+
+.grid .panel-footer {
+  padding: 5px !important;
+}
+
+.grid .panel-customizado {
+  border : 1px solid #ddd !important;
+}
+
+.grid-custom-title{
+
+  font-size: 16px;
+}
+
+.errorgrid{
+  border : 1px solid red;
 }

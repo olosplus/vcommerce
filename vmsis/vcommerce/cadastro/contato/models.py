@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
 from django.db import models
-from vlib.control.models import Master
+from vlib.control.models import Master_endereco
+from vlib.control.models import Master_empresa
 
 # Create your models here.
-class Contato(models.Model):
+class Contato(Master_empresa):
 	class Meta:
 		db_table = "contato"
 		verbose_name = "Contato"
@@ -14,7 +15,7 @@ class Contato(models.Model):
 	nrcelular = models.CharField(max_length=30,verbose_name="Celular")
 	dsemail = models.CharField(max_length=150,verbose_name="E-mail")
 	dsobservacao = models.CharField(max_length=400,verbose_name="Observação")
-	master = models.ForeignKey(Master)
+	master = models.ForeignKey(Master_endereco)
 
 	def __str__(self):
 		return self.nmcontato

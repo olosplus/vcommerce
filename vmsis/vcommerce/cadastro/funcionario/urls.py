@@ -5,4 +5,4 @@ from cadastro.funcionario.models import Funcionario
 
 Crud = CrudView(Funcionario)
 
-urlpatterns = Crud.AsUrl(GridFields  = ('nome','usuario','unidade',))
+urlpatterns = Crud.AsUrl(GridFields  = ('nome','usuario',))

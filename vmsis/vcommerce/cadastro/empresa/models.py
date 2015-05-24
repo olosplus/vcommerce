@@ -7,13 +7,11 @@ class Empresa(models.Model):
 		db_table = "empresa"
 		verbose_name = "Empresa"
 		verbose_name_plural = "Empresas"
+		ordering = ['nmempresa']
 
-	codigo = models.CharField(max_length=20,verbose_name="Código")
+	codigo = models.CharField(max_length=14,verbose_name="Código")
 	nmempresa = models.CharField(max_length=255,verbose_name="Nome")
 	dtcadastro = models.DateField(auto_now_add=True, verbose_name='Data de cadastro')
-
-	class Meta:
-		ordering = ['nmempresa']
 
 	def __str__(self):
 		return self.nmempresa

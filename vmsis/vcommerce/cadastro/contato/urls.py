@@ -5,4 +5,4 @@ from cadastro.contato.models import Contato
 
 Crud = CrudView(Contato)
 
-urlpatterns = Crud.AsUrl()
+urlpatterns = Crud.AsUrl(GridFields  = ('nmcontato','nrtelefone','nrcelular','dsemail',))
