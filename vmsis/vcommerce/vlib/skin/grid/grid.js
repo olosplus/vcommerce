@@ -1,3 +1,43 @@
+
+function activeLine(line, columns){
+  var tr = $(line);
+  var parent = tr.parent().parent(".table-editable");
+  if (parent.length > 0){
+    var ok = (!tr.hasClass("rowactive"));
+    if (ok == false){
+      return false;
+    }
+    if(tr.attr("operation") == 'inserted'){
+      $("table[parent = '"+parent.attr('id')+"']").each(function(){
+        $(this).find("tbody tr").addClass("notvis");
+        $(this).find("tr[data-parent-indexrdow='" + tr.attr("data-indexrow") +"']").removeClass("notvis");
+      });      
+    }else{
+      
+      if ((($("table[parent = '"+parent.attr('id')+"']").find("tr[operation='inserted']").length > 0 || 
+            $("table[parent = '"+parent.attr('id')+"']").find("tr[operation='updated']").length > 0)) &&
+          (ok == true) ){
+        ok = false;
+        var msg = 'Existem dados não salvos. Deseja prosseguir e perder os dados não salvos? '+
+          'Caso não queira perder os dados não salvos, cancele e salve-os.';
+        ok = confirm(msg);
+        if (ok == false){
+          return false;
+        };
+      };
+      if (ok == true){
+        $("table[parent = '"+parent.attr('id')+"']").each(function(){
+          GetGridEditable($(this).attr('module'), $(this).attr('id'), "", columns, parent.attr("id"),
+            parent.attr('module'), tr.find("td [name='id']").val());
+        });      
+      };
+    };    
+    $("#" + parent.attr("id") + "  .rowactive").removeClass("rowactive");    
+    tr.addClass("rowactive");
+    SetChangesLine($('#' + parent.attr('parent')).find(".rowactive .gridtag").first());
+  };
+}
+
 function SetChangesLine(element) {
   parent = $(element).parent().parent();
   if (parent.attr('operation') != 'inserted') {
@@ -7,8 +47,12 @@ function SetChangesLine(element) {
 
 function RemoveSelectedRows(idGrid) {
   grid = $('#' + idGrid);
-  grid.find('tr[sel="true"]').remove();
-}
+  //grid.find('tr[sel="true"]').remove()
+  grid.find('tr[sel="true"]').each(function(){
+    $("[parent='" + grid.attr("id") + "']").find("tbody tr").remove();
+    $(this).remove();
+  });
+};
 
 function ClearOperations(idGrid){
   grid = $('#' + idGrid);
@@ -54,7 +98,8 @@ function GetGridChange(idGrid, operation) {
       
       tds = list_tr[tr].children;
       if (list_tr[tr].childElementCount > 0) {
-        str_row = '{' + JoinToJson("data-indexrow", list_tr[tr].getAttribute('data-indexrow'));        
+        str_row = '{' + JoinToJson("data-indexrow", list_tr[tr].getAttribute('data-indexrow'));
+        str_row +=  JoinToJson("data-parent-indexrow", list_tr[tr].getAttribute('data-parent-indexrow'));
       };
       for (td in tds) {
         if (tds.hasOwnProperty(td)) {
@@ -96,6 +141,7 @@ function ParseGridToJson(idGrid) {
     model: getAttrGrid(idGrid, 'mod'),
     module: getAttrGrid(idGrid, 'module'),
     link_to_form: getAttrGrid(idGrid, 'link_to_form'),
+    parent : getAttrGrid(idGrid, 'parent'),
     grid_id: idGrid
   };
 }
@@ -113,6 +159,17 @@ function InsertEmptyRow(columns, idGrid, link_to_form) {
   var type_input = "";
   var data_row = 1;
   var last_tr = $("#" + idGrid + " > tbody > tr").last();
+  var parent_data_index = null;
+  
+  var parent_grid = $("#" + $("#" + idGrid).attr("parent")).last();
+  
+  if(parent_grid != undefined && parent_grid != null) {
+    parent_data_index = parent_grid.find(".rowactive").last().attr("data-indexrow");
+  };
+  
+  if(parent_data_index == undefined || parent_data_index == null) {
+    parent_data_index = "";
+  };
 
   if(last_tr != undefined){
     var last_index = last_tr.attr('data-indexrow');
@@ -120,7 +177,9 @@ function InsertEmptyRow(columns, idGrid, link_to_form) {
       data_row = parseInt(last_index) + 1;
   };
 
-  html = "<tr operation='inserted' sel='true' data-indexrow='"+data_row+"'>";
+  html = "<tr operation='inserted' sel='true' data-indexrow='"+data_row+"' onclick='activeLine(this, "+
+    JSON.stringify(columns) +")' "+
+         " data-parent-indexrow = "+parent_data_index+">";
   html += "<td> <center><input type='checkbox' checked onchange='selectLine(this)'></input> </td></center>";
   for (column in columns) {
     if (columns.hasOwnProperty(column)) {
@@ -177,16 +236,28 @@ function InsertEmptyRow(columns, idGrid, link_to_form) {
   $("#" + idGrid + "> tbody").append(html);
 };
 
-function InsertLineWithValue(row, columns, readonly, link_to_form, index_row) {
+function InsertLineWithValue(row, columns, readonly, link_to_form, index_row, idGrid) {
   var html_input = "<input type='{{TYPE}}' value='{{VALOR}}' {{STEP}} class = 'gridtag' name = " + "{{NAME}}  onchange='SetChangesLine(this)'>" + "</input>";
   var type_input = "";
   var class_links = "";
   var events = "";
   var index = 0;
-  var options = undefined
-  var values = undefined
+  var options = undefined;
+  var values = undefined;
+  var parent_data_index = null;
+  
+  var parent_grid = $("#" + $("#" + idGrid).attr("parent")).last();
+  
+  if(parent_grid != undefined && parent_grid != null) {
+    parent_data_index = parent_grid.find(".rowactive").last().attr("data-indexrow");
+  };
+  
+  if(parent_data_index == undefined || parent_data_index == null) {
+    parent_data_index = "";
+  };
 
-  html = "<tr data-indexrow='" + index_row + "'>"
+  html = "<tr data-indexrow='" + index_row + "' onclick='activeLine(this, "+ JSON.stringify(columns) +")' "+
+    "data-parent-indexrow= "+ parent_data_index+">";
   if (readonly === "False") {
     html += "<td> <center><input type='checkbox' onchange='selectLine(this)'> " + "</input> </td></center>";
   };
@@ -282,6 +353,11 @@ function ShowError(input_error){
   var value = input_error.value;
   var grid_id = input_error.name;
   var row = input_error.getAttribute("data-indexrow");
+  
+  if(row == -1){
+    alert(value);
+  };
+
   var list = value.split(",");
   var ele_sel = undefined;
   var ele = undefined;
@@ -339,10 +415,10 @@ function Grid(DivGridId, Data) {
       };
     };
 
-    html += "<a class = 'glyphicon glyphicon-search' href='JavaScript:void()' "+
+    html += "<a class = 'glyphicon glyphicon-search' href='javascript:void(0)' "+
       "onclick='Filter(\"" + module + "\", \"" + model + "\", " + JSON.stringify(columns)  +
       "  )' title='Filtrar' ></a>";
-    html += "<div class='separador'>|</div> <a class='glyphicon glyphicon-print' href='JavaScript:void()' "+
+    html += "<div class='separador'>|</div> <a class='glyphicon glyphicon-print' href='javascript:void(0)' "+
       "title='Relatório'  onclick='Print(\"" + module + "\", \"" +
               model + "\", " + JSON.stringify(columns)  +
             ", \"id\", \""+ title +" \")'> </a>";
@@ -378,11 +454,11 @@ function Grid(DivGridId, Data) {
           html += "<th>" + columns[column].label + 
             " <a class='glyphicon glyphicon-triangle-bottom' onclick='get_grid_orderly(\"" + module + "\", \"" +
               model + "\", " + JSON.stringify(columns)  +
-            ", \"" + columns[column].name + "\")' href='javascript:void()'></a></th>";
+            ", \"" + columns[column].name + "\")' href='javascript:void(0)'></a></th>";
         }else{
           html += "<th>" + columns[column].label + "</th>";
-        }  
-      }
+        };  
+      };
     };
   };
 
@@ -392,7 +468,7 @@ function Grid(DivGridId, Data) {
   for (row in rows) {
     if (rows.hasOwnProperty(row)) {
       index_row += 1;
-      html += InsertLineWithValue(rows[row], columns, readonly, link_to_form, index_row)
+      html += InsertLineWithValue(rows[row], columns, readonly, link_to_form, index_row, grid_id)
     };
   };
 
@@ -410,17 +486,17 @@ function Grid(DivGridId, Data) {
       "onclick='RemoveSelectedRows(\"" + grid_id + "\" )' title='Cancelar'>" + "</a> | ";
 
     html += "  <a href='javascript:void(0)' onclick='doDeleteGrid(\"" + grid_id + "\")' class = 'fa fa-trash-o' " + 
-      "title='Deletar selecionados'></a> | ";
+      "title='Deletar selecionados'></a>  ";
 
-    html += "  <a href='javascript:void(0)' onclick='doPostGrid(\"" + grid_id + "\")' class='glyphicon glyphicon-floppy-disk' " + 
-      " title='Salvar'></a>";
+/*    html += "  <a href='javascript:void(0)' onclick='doPostGrid(\"" + grid_id + "\")' class='glyphicon glyphicon-floppy-disk' " + 
+      " title='Salvar'></a>"; */
   
   }else{
     html += "<div class='navigation' >";
     html += "<div class='navigation-centralize'>"
     html += "<div class='inline' id='div_prior'>"
     html += "<ul class='pagination'> <li>"
-    html += "<a href='javascript:void()' aria-label='Previous' onclick='ControlPagination(" + pages + "," + 
+    html += "<a href='javascript:void(0)' aria-label='Previous' onclick='ControlPagination(" + pages + "," + 
       JSON.stringify(columns) + "," + 
       selected_page.toString() + ",\"" + module + "\",\"" + model + "\"," + " \"prior\")'> "+         
       "<span aria-hidden='true'>&laquo;</span></a> </li></ul></div>";    
@@ -430,7 +506,7 @@ function Grid(DivGridId, Data) {
     html += "</nav>"; 
     html += "<div class='inline' id='div_next'>"
     html += "<ul class='pagination'> <li>"
-    html += "<a href='javascript:void()' aria-label='Next' onclick='ControlPagination(" + pages + "," + 
+    html += "<a href='javascript:void(0)' aria-label='Next' onclick='ControlPagination(" + pages + "," + 
       JSON.stringify(columns) + "," + 
       selected_page.toString() + ",\"" + module + "\",\"" + model + "\"," + " \"next\")'> "+         
       "<span aria-hidden='true'>&raquo;</span></a> </li></ul></div>";    
@@ -442,6 +518,7 @@ function Grid(DivGridId, Data) {
   html += "</div>"
   $("#" + DivGridId).html(html);
   ControlPagination(pages, columns, selected_page, module, model, "");
+
 };
 
 function doPostGrid(idGrid) {
@@ -543,15 +620,28 @@ function csrfSafeMethod(method) {
   return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
 }
 
+function getJsonChildGrids(id){
+    var script = "";
+    $('table[parent="' + id + '"]').each(function () {
+      script += JSON.stringify(ParseGridToJson($(this).attr('id'))) + "[[<<ROW_SEPARATOR>>]]";
+      script += getJsonChildGrids($(this).attr('id'));
+    });
+    return script;
+}
+
 function doPostForm(send_to, form_id, url_redirect, is_delete, id_grid_delete) {
   var form = $('#' + form_id);
+  if(form.attr('tagName') != 'form'){
+    form = $('form').first();
+  };
   var url = send_to;
   var csrftoken = getCookie('csrftoken');
   var jsgrid = "";
   if (is_delete === false) {
-    $('table[parent="' + form_id + '"]').each(function () {
-      jsgrid += JSON.stringify(ParseGridToJson($(this).attr('id'))) + "[[<<ROW_SEPARATOR>>]]";
-    });
+    //$('table[parent="' + form_id + '"]').each(function () {
+    //  jsgrid += JSON.stringify(ParseGridToJson($(this).attr('id'))) + "[[<<ROW_SEPARATOR>>]]";
+    //});
+    jsgrid += getJsonChildGrids(form_id);
   } else {
     jsgrid += JSON.stringify(ParseGridToJsonDelete(id_grid_delete)) + "[[<<ROW_SEPARATOR>>]]";
   };
@@ -664,6 +754,33 @@ function GetGridData (module, model, filter, columns, partial_search, page, orde
   });       
 }
 
+function GetGridEditable(module, model, filter, columns, parent, parent_module, parent_id) {
+  var modulo = module;
+  var modelo = model;
+  var colunas = columns;    
+  var filtro = "";
+
+  if (filter != ""){
+    filtro = JSON.stringify(filter);    
+  };
+  
+  $.ajax({
+    url: '/getgrideditable',
+    type: 'get',
+    data: {"module" : modulo, "model" : modelo, "columns" : JSON.stringify(colunas), "form_serialized" : filtro,
+      "partial_search" : "", "page" : "", "order_by" : "", "parent_model" : parent, "parent_module": parent_module,
+      "parent_id": parent_id },
+    success: function (data) {
+      dados = JSON.parse(data);
+      Grid("div_" + modelo, dados)
+    },
+    failure: function (data) {
+      alert('Got an error dude');
+    }
+  });       
+}
+
+
 function ControlPagination(total_pages, columns, selected_page, module, model, command){  
   var section_paginate = $("#section_paginate").val();
   
@@ -714,7 +831,7 @@ function ControlPagination(total_pages, columns, selected_page, module, model, c
       class_selected_page = "no-selected-page";
     };
 
-    html += "<li class='"+ class_selected_page +"' ><a href='javascript:void()' onclick='get_grid_page(\"" + 
+    html += "<li class='"+ class_selected_page +"' ><a href='javascript:void(0)' onclick='get_grid_page(\"" + 
       module + "\", \"" + model + "\", " +
       JSON.stringify(columns)  + "," + i.toString() + ")' >" +
       i.toString() +"</a></li>";
@@ -775,10 +892,20 @@ function Print(module, model, columns, column, title){
       success: function (data) {
         var response = eval(data);
 
-        var myWindow = window.open("about:blank", "Relatório: " + title, "_blank");
+ //       var parser = new DOMParser()
+//        var doc_received = parser.parseFromString("", "text/html");
+        var winRel = window.open("", title, "_blank");
+        var report = new vReport("A4 portrait", "body", response, winRel.document );       
+        report.view();
         
-        report = new vReport("A4", "body", response, myWindow.document);   
-        report.view()         
+
+                
+//        var fileCode = doc_received.getElementsByTagName("html")[0].innerHTML;
+//        fileCode = "<html> " + fileCode + "</html>";
+//        var fileBlob = new Blob([fileCode], {type: 'text/html'});
+//        var url = URL.createObjectURL(fileBlob);
+//        var myWindow = window.open(url);
+
       },
       failure: function (data) {
         alert('Got an error dude');

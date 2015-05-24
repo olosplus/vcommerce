@@ -26,7 +26,7 @@ class Cardapio(models.Model):
 	idadicional = models.CharField(max_length=1,verbose_name="Permite Adicionais?",choices=choice_SN,default='N')
 	
 	def __str__(self):
-		return self.item.nmproduto
+		return self.produto.nmproduto
 
 class ItAgrupAdicional(models.Model):
 	class Meta:

@@ -7,7 +7,7 @@ from django.apps import apps
 import math
 
 
-class Grid:
+class Grid(object):
     def __init__(self, model, parent_model = None, parent_pk_value = -1, title = str()):
         self.model = model
         self.parent_model = parent_model
@@ -48,7 +48,6 @@ class Grid:
             return self.title
         else:
             return self.model._meta.verbose_name
-
 
     def parse_type_field_to_text(self, field_type):        
         list_str = str(field_type).split(".")
@@ -97,8 +96,12 @@ class Grid:
 
         if field_choices:
             for choice in field_choices:                                
-                id_values.append('"'+ str(choice[0])+ '"')
-                str_objects.append('"'+str(choice[1])+ '"')                
+                if read_only:
+                    id_values.append('"'+ str(choice[0])+ '"')
+                    str_objects.append('"'+str(choice[1])+ '"')                
+                else:
+                    id_values.append(str(choice[0]))
+                    str_objects.append(str(choice[1]))
 
         if read_only:
             if field_choices:
@@ -117,13 +120,13 @@ class Grid:
 
         if column_model != None:            
             query = self.get_field_query_set(model_rel_to = column_model, field_name = field_name)
-            #column_model.objects.all()
-            str_objects, id_values = ['--------'], ['']            
+            str_objects, id_values = ["--------"], [""]            
             for q in query:
                 str_objects.append(str(q));
                 id_values.append(str(q.id))
-
-            return {"type":column_type, "objects":str_objects, "values":id_values, 
+            
+            return {"type":column_type, "objects":str(str_objects).replace("'", '"'), 
+                "values":str(id_values).replace("'", '"'), 
                 "is_link_to_form" : False}
 
         else:
@@ -320,7 +323,10 @@ class Grid:
         script = '<div id="div_%s" class="grid table-responsive"></div>' % (model.__name__)
         script += '<script type="text/javascript">'
         script += '$(document).ready(function(){'
-        script += 'Grid("div_%s",%s)' % (model.__name__, data)
+        script += '  Grid("div_%s",%s);' % (model.__name__, data)
+#        script += '  $(".table-editable").each(function(){ '
+#        script += '    $(this).find("tbody tr").first().click(); '
+#        script += '  }); '
         script += '});'
         script += '</script>'
         return script
@@ -352,6 +358,18 @@ class Grid:
                     script_grid += self.grid_script(data = GridDetalhe.get_js_grid(use_crud = use_crud,
                         read_only = read_only, display_fields = display_fields, dict_filter = dict_filter),
                         model = mod)
+                    
+                    GridDetalhe.parent_pk_value = -1 
+                    script_grid += GridDetalhe.grid_as_text(read_only = False, use_crud = False, 
+                        display_fields = (), dict_filter = {})
+        
+                script_grid += '<script type="text/javascript">'
+                script_grid += '$(document).ready(function(){'
+                script_grid += '  $(".table-editable").each(function(){ '
+                script_grid += '    $(this).find("tbody tr").first().click(); '
+                script_grid += '  }); '
+                script_grid += '});'
+                script_grid += '</script>'
 
                 return script_grid
             else:

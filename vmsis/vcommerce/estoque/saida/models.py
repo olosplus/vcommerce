@@ -18,7 +18,7 @@ class Saida(Master_moviest):
 
     dtsaida = models.DateTimeField(verbose_name='Data de saída')
     cliente = models.ForeignKey(Cliente,verbose_name='Cliente')
-    finalidade = models.ForeignKey(Finalidade,verbose_name='Finalidade')
+    finalidade = models.ForeignKey(Finalidade,verbose_name='Finalidade',null=True,blank=True)
     idtipo = models.CharField(max_length=1,verbose_name="Tipo de Saída",choices=choice_tipo)
 
     def __str__(self):

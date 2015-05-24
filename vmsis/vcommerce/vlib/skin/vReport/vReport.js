@@ -8,9 +8,12 @@ PageHeader - Div com tamanho de 100%
 
 vReport = function(pageType, container, data, sel_document){	
     
-    if(pageType == "A4"){	
-	  var pageHeight = 1207; //default 3508 / 3 -- 1207
-	  var pageWidth = 826.67; //default 2480 / 3 --826.67
+    if(pageType == "A4 portrait"){	
+	  var pageHeight = 1122.519685039;//1207; 
+	  var pageWidth = 793.700787402;//826.67; 
+	}else if(pageType == "A4 landscape"){
+	  var pageHeight = 826.67;//1207; 
+	  var pageWidth = 1207;//826.67;
 	};
 	
 	if (sel_document != undefined && sel_document != null && sel_document != ""){
@@ -21,8 +24,7 @@ vReport = function(pageType, container, data, sel_document){
 	
 	var pages = 1;
     
-
-    /*utilidade*/ 
+    /*utilidade - Serve para selecionar os elementos. Não utilizei jquery pois ainda não chegamos na matéria*/ 
 	var getE = function(select){
 		var e = undefined;
 		var sel_type = select.substring(0,1);
@@ -37,7 +39,7 @@ vReport = function(pageType, container, data, sel_document){
 			return doc.getElementsByTagName(select);
 		};
 	};
-    
+    /*utilidade - serve para concatenar strings de forma mais elegante*/ 
 	var format = function(str, list){
 		var i = 0;		
 		var text = str;
@@ -47,43 +49,16 @@ vReport = function(pageType, container, data, sel_document){
 		return text;
 	};
 
-	var applyStyle = function(){
-		getE("head")[0].innerHTML +=
-		"<style type='text/css'> "+
-        " .body.vReport{ "+
-        "   background-color:#E6E6E6; "+
-        "  } "+
-        ".page{ "+
-        " background-color:white; "+
-        "} "+
+	/*seleciona o elemento que deverá conter o relatório*/    
+	var allBody = getE(container);        
+	if (allBody.length != undefined)
+		allBody = allBody[0]
 
-        ".pageHeader, .masterBand, .pageFooter{ "+
-        " display : inline; "+
-	    " float: left; "+
-	    " width: 100%;	"+
-        " }  "+
-        ".progress-bar { "+
-        "	float: left; "+
-        "	width: 0; "+
-        "	height: 100%; "+
-        "	font-size: 12px; "+
-        "	line-height: 20px; "+
-        "	color: #fff; "+
-        "	text-align: center; "+
-        "	background-color: #337ab7; "+
-        "	-webkit-box-shadow: inset 0 -1px 0 rgba(0,0,0,.15); "+
-        "	box-shadow: inset 0 -1px 0 rgba(0,0,0,.15); "+
-        "	-webkit-transition: width .6s ease; "+
-        "	-o-transition: width .6s ease; "+
-        "	transition: width .6s ease; "+
-        "} "+
-        "</style>";
-	};
-	    
-	var body = getE(container)[0];        
-    body.className +=  'body vReport';
-    body.innerHTML = "";
-
+    allBody.className += "body vReport";
+//    allBody.innerHTML += "<div id='tools'></div>"
+	allBody.innerHTML += "<div id='relContainer'></div>";
+    
+	var body = getE('#relContainer');
 	
 	var getPage = function(){
 		return pages - 1;
@@ -171,16 +146,58 @@ vReport = function(pageType, container, data, sel_document){
 			};
 		};
 	};
-	
-	this.view = function(){		
-        
-        applyStyle();
 
+	var applyStyle = function(){
+		getE("head")[0].innerHTML +=
+		"<meta charset='UTF-8'>"+
+		"<style type='text/css'> "+
+        " .body.vReport{ "+
+        "   background-color:#E6E6E6; "+
+        "  } "+
+        ".page{ "+
+        " background-color:white; "+
+        "} "+
+
+        ".pageHeader, .masterBand, .pageFooter{ "+
+        " display : inline; "+
+	    " float: left; "+
+	    " width: 100%;	"+
+        " }  "+
+        ".progress-bar { "+
+        "	float: left; "+
+        "	width: 0; "+
+        "	height: 100%; "+
+        "	font-size: 12px; "+
+        "	line-height: 20px; "+
+        "	color: #fff; "+
+        "	text-align: center; "+
+        "	background-color: #337ab7; "+
+        "	-webkit-box-shadow: inset 0 -1px 0 rgba(0,0,0,.15); "+
+        "	box-shadow: inset 0 -1px 0 rgba(0,0,0,.15); "+
+        "	-webkit-transition: width .6s ease; "+
+        "	-o-transition: width .6s ease; "+
+        "	transition: width .6s ease; "+
+        "} "+
+		"#relContainer{ float:left; display:inline; width:100%;} "+
+		"#tools{ "+
+	    "  float:left; "+
+		"  width:100%; "+
+		"  display:inline;"+
+		"  background-color : #F0F5F5;"+
+		"  height: 50px;"+
+        "  margin-bottom : 3px; "+		
+		" } "+
+        "</style>";
+	};
+	    
+	
+	this.view = function(){		                  
         var pageHeader = data.pageHeader;
 		var masterBand = data.masterBand;
         var row = [];    
-        if(masterBand.bandData != undefined){
-		    		    
+        applyStyle();
+
+		if(masterBand.bandData != undefined){		    		    			
 			addPage();
 		    configPageHeader(pageHeader);
 			var i = 0;
@@ -197,8 +214,7 @@ vReport = function(pageType, container, data, sel_document){
 						for(b = 0; b <= row.length - 1; b++){
 							if (row[b].name == component.dbLink){
 								addLabel(format("masterBand_%s_%s", [getPage(), i + 1] ) , component.name, row[b].value, component.style);
-								checkPageSize(pageHeader, i + 1);
-								
+								checkPageSize(pageHeader, i + 1);								
 							};
 						};
 					}else if(component.type == "dataP"){
@@ -215,6 +231,8 @@ vReport = function(pageType, container, data, sel_document){
 								checkPageSize(pageHeader, i + 1);
 							};
                         };							
+					}else if(component.type == "p"){
+						addP(format("masterBand_%s_%s", [getPage(), i + 1] ) , component.name, component.text, component.style)
 					};
 				};
 			};

@@ -145,12 +145,12 @@ class Report(object):
             '      (function(){ '\
             '        novo_relatorio = function(){ '\
             '          %s   '\
-            '          report = new vReport("A4", "body", data);   '\
-            '          report.view() '\
+            '          report = new vReport("A4 portrait", "body", data);   '\
+            '          report.view(); '\
             '        }; '\
-            '        window.addEventListener("load", novo_relatorio, false)  '\
+            '        window.addEventListener("load", novo_relatorio, false);  '\
             '      })() '\
-            '    </scrip> '\
+            '    </script> '\
             '  </head> '\
             '  <body class="vReport"> '\
             '  </body> '\

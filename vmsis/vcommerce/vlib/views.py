@@ -138,7 +138,7 @@ def insert(data, model, commit = True, link_to_form = "", parent_instance = None
             for k in list(re.keys()):
                 val.append(k + ":" + \
                 str(re[k]).replace("'", "").replace('"', "").replace("[","").replace("]","" ).replace(",", ".") )
-            print(str(val))
+            
             return "<input id='grid_erros' name='%s' value='%s' data-indexrow = '%s'>" % \
                  (grid_id, str(val).replace("'", "").replace('"', "") , row_json['data-indexrow'])
 
@@ -199,7 +199,7 @@ def update(data, model, commit = True, execute_on_after_update = None, grid_id =
             for k in list(re.keys()):
                 val.append(k + ":" + \
                 str(re[k]).replace("'", "").replace('"', "").replace("[","").replace("]","" ).replace(",", ".") )
-            print(str(val))
+            
             return "<input id='grid_erros' name='%s' value='%s' data-indexrow = '%s'>" % \
                  (grid_id, str(val).replace("'", "").replace('"', "") , row_json['data-indexrow'])
 
@@ -286,6 +286,13 @@ def Filtro(request):
 def GetGridConfiguration(request):
     str_model = request.GET.get('model')
     str_module = request.GET.get('module')    
+    str_parent = request.GET.get('parent_model')    
+    str_parent_module = request.GET.get('parent_module')
+    parent_id = request.GET.get('parent_id')
+    
+    parent_model = None
+    if(str_parent_module and str_parent):
+        parent_model = get_model_by_string(str_parent_module, str_parent)
     
     page = request.GET.get('page')    
     order_by = request.GET.get('order_by')
@@ -321,6 +328,7 @@ def GetGridConfiguration(request):
     except LookupError:
         return HttpResponse("An error ocurred. The model or module don't exists")
 
+
     dict_filter = {}
     field_name = str()
     
@@ -346,7 +354,8 @@ def GetGridConfiguration(request):
                         else:    
                             dict_filter.update({field_name + "__icontains": field["value"]})
     
-    return {"model" : model, "filter" : dict_filter, "fields" : fields_display, "page" : page, "order" : order_by}
+    return {"model" : model, "filter" : dict_filter, "fields" : fields_display, "page" : page, "order" : order_by,
+       "parent":parent_model, "parent_id":parent_id}
 
 def GetGridCrud(request):
     try:
@@ -360,6 +369,19 @@ def GetGridCrud(request):
         print(e)
     return HttpResponse(grid_js)    
 
+def GetGridEditable(request):
+    try:
+        conf = GetGridConfiguration(request = request)    
+        
+        GridData = Grid(conf["model"], parent_model = conf["parent"], parent_pk_value = conf["parent_id"])
+
+        grid_js = GridData.get_js_grid(use_crud = False, read_only = False, dict_filter = conf["filter"])
+
+
+    except Exception as e:
+        print(e)
+
+    return HttpResponse(grid_js)    
 
 
 
@@ -372,7 +394,7 @@ def PrintGrid(request):
     
     model = conf["model"]
     fields = conf["fields"]    
-    columns_size = 800 / (len(fields));
+    columns_size = 765 / (len(fields));
 
     try:    
         header = PageHeader()
@@ -430,7 +452,7 @@ def PrintGrid(request):
         
         report = Report(page_header = header, master_band = master, page_footer = footer,
             template="", page_title = request.GET.get("title"))
-        return HttpResponse(report.get_rel_configuration())
+        return HttpResponse(report.get_rel_configuration() ) #get_rel_configuration()
     except Exception as e:
         print(e)
         return HttpResponse(e)

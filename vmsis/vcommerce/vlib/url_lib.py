@@ -3,19 +3,19 @@ class urlsCrud:
         self.model = model
 
     def BaseUrlUpdate(self, CountPageBack = 0):
-        return self.GetBack(CountPageBack) + self.model.__name__ + '/update/'
+        return self.GetBack(CountPageBack) + self.model.__name__.lower() + '/update/'
 
     def BaseUrlDelete(self, CountPageBack = 0):
-        return self.GetBack(CountPageBack) + self.model.__name__ + '/delete/'
+        return self.GetBack(CountPageBack) + self.model.__name__.lower() + '/delete/'
 
     def BaseUrlList(self, CountPageBack = 0):
-        return self.GetBack(CountPageBack) + self.model.__name__ + '/list'
+        return self.GetBack(CountPageBack) + self.model.__name__.lower() + '/list'
 
     def BaseUrlInsert(self, CountPageBack = 0):
-        return self.GetBack(CountPageBack) + self.model.__name__ + '/insert'
+        return self.GetBack(CountPageBack) + self.model.__name__.lower() + '/insert'
 
     def UrlInsert(self):
-        return r'^' + self.model.__name__ + '/insert'
+        return r'^' + self.model.__name__.lower() + '/insert'
   
     def UrlUpdate(self):
         return r'^' + self.BaseUrlUpdate(-1) + '(?P<pk>\d+)/$'
@@ -31,4 +31,3 @@ class urlsCrud:
         for a in range(0, countBack + 1):
             back = back + '../'
         return back
-

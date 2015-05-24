@@ -66,7 +66,7 @@ class Estoque(object):
 		if not p_produto:
 			return 'Erro: Produto não foi informado.'
 		if not p_almoxa:
-			return 'Erro: Almoxarifado não foi informado.'
+			return 'Erro: Almoxarifado não foi informado.' 
 
 		try:
 			produto = Produto.objects.get(pk=p_produto)
@@ -101,7 +101,7 @@ class Estoque(object):
 					qtdeproduto=p_qtde*qtfatorconv
 					)
 
-	def said_prod_est(self, p_produto, p_almoxa, p_lote, p_qtde, p_vrprod):
+	def said_prod_est(self, p_produto, p_almoxa, p_lote, p_qtde, p_vrprod=0):
 		"""
 		Objetivo: 
 			Realiza saída de produto no estoque.
@@ -111,8 +111,41 @@ class Estoque(object):
 		-	p_lote => Lote do produto, caso esteja vazio será ignorado o lote.
 		-	p_qtde => Quantidade do produto (Deve ser maior que zero).
 		-	p_vrprod => Valor do produto.
-		"""	
-		return "Testando"
+		"""
+		if not p_produto:
+			return 'Erro: Produto não foi informado.'
+		if not p_almoxa:
+			return 'Erro: Almoxarifado não foi informado.'
+		if not p_qtde:
+			return 'Erro: Quantidade não foi informada.'
+
+		try:
+			produto = Produto.objects.get(pk=p_produto)
+			medida = Unimedida.objects.get(pk=produto.unimedida_id)
+			qtfatorconv = medida.qtfatorconv
+		except Unimedida.DoesNotExist:
+			return 'Erro: Unidade de medida não existe.'
+		except Produto.DoesNotExist:
+			return 'Erro: Produto não existe.'
+
+		try:
+			if p_lote:
+				posicao = Posestoque.objects.get(empresa_id=self.empresa, produto_id=p_produto, almoxarifado=p_almoxa, lote=p_lote)
+			else:
+				posicao = Posestoque.objects.get(empresa_id=self.empresa, produto_id=p_produto, almoxarifado=p_almoxa)
+
+			if (posicao.qtdeproduto - (p_qtde*qtfatorconv)) > 0:
+				posicao.qtdeproduto -= (p_qtde*qtfatorconv)
+				posicao.save()
+			elif (posicao.qtdeproduto - (p_qtde*qtfatorconv)) == 0:
+				if p_lote:
+					Posestoque.objects.get(empresa_id=self.empresa, produto_id=p_produto, almoxarifado=p_almoxa, lote=p_lote).delete()
+				else:
+					Posestoque.objects.get(empresa_id=self.empresa, produto_id=p_produto, almoxarifado=p_almoxa).delete()
+			else:
+				return 'Erro: Posição de estoque ficaria negativa.'
+		except Posestoque.DoesNotExist:
+				return 'Erro: Produto não possui quantidade em estoque.'
 
 	def cust_prod_est(self, p_produto, p_almoxa, p_lote):
 		"""
