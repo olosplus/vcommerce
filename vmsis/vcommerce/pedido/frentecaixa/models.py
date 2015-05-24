@@ -26,7 +26,7 @@ class Pedido(models.Model):
 	nmcliente = models.CharField(max_length=250,verbose_name="Nome",blank=True,null=True)
 	mesa = models.ForeignKey(Mesa, verbose_name="Mesa",blank=True,null=True)
 	#vrpedido = models.FloatField(verbose_name="Valor Total" , editable = False)
-	vrpedido = models.FloatField(default=0,editable = False)
+	vrpedido = models.FloatField(verbose_name='Valor total',default=0,editable = False)
 	#idstatusped = models.CharField(max_length=1, verbose_name="Status",choices=choice_status_pedido,default='P' , editable = False)
 	idstatusped = models.CharField(max_length=1, default='P' , editable = False)
 
@@ -46,7 +46,7 @@ class ItemPedido(models.Model):
 	vrvenda = models.FloatField(default=0,editable=False)
 	#vrtotal = models.FloatField(verbose_name="Valor Total")
 	vrtotal = models.FloatField(default=0,editable = False)
-	#idadicional = models.CharField(max_length=1,verbose_name="Adicional?",choices=choice_SN,default='N')
+	idadicional = models.BooleanField(verbose_name='Adicional',default=False,blank=True)
 
 class ItAdicional(models.Model):
 	class Meta:
@@ -57,5 +57,5 @@ class ItAdicional(models.Model):
 	#adicional = models.ForeignKey(Adicionais, verbose_name="Adicional")
 #	pedido = models.ForeignKey(Pedido)
 	itempedido = models.ForeignKey(ItemPedido)
-	produto = models.ForeignKey(Produto, verbose_name="Produto")
+	item = models.ForeignKey(Adicionais, verbose_name="Produto")
 	qtitem = models.FloatField(verbose_name="Quantidade")

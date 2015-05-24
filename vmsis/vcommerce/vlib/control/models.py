@@ -25,5 +25,5 @@ class Master_empresa(models.Model):
 	class Meta:
 		abstract = True
 
-	empresa = models.ForeignKey(Empresa,verbose_name="Empresa", null=True, blank=True)
+	empresa = models.ForeignKey(Empresa,verbose_name="Empresa")
 	dtcadastro = models.DateField(auto_now_add=True, verbose_name='Data de cadastro', null=True, editable=False)
