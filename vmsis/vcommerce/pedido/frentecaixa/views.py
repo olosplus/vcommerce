@@ -25,8 +25,9 @@ class FormFrentecaixa(StandardFormGrid):
             itempedido.vrvenda = cardapio.vrvenda 
             adicionais = Adicionais.objects.get(pk=instance.item.id)
             agrupadicional = AgrupAdicional.objects.get(pk=adicionais.agrupadicional.id)
-            itempedido.vrtotal = (itempedido.qtitem * cardapio.vrvenda) + (agrupadicional.vragrupadic*instance.qtitem)
-            itempedido.save();
+            itempedido.vrtotal = (itempedido.qtitem * cardapio.vrvenda) + (itempedido.qtitem *(agrupadicional.vragrupadic*instance.qtitem))
+            itempedido.idacional = True
+            itempedido.save()
         return str()
 
     def save(self, commit=True):
@@ -34,11 +35,16 @@ class FormFrentecaixa(StandardFormGrid):
         itempedido = ItemPedido.objects.filter(pedido=instance)
         vrtotal = 0
         for item in itempedido:
-        	vrtotal += item.vrtotal
+            vrtotal += item.vrtotal
         instance.vrpedido = vrtotal
+        instance.idstatusped = 'C'
         instance.save() 
         return instance
-    	
+
     	
 class ViewFrentecaixaCreate(ViewCreate):
     form_class = FormFrentecaixa
+
+class ViewFrentecaixaUpdate(ViewUpdate):
+    form_class = FormFrentecaixa
+    
