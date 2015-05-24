@@ -7,4 +7,5 @@ from pedido.frentecaixa.views import ViewFrentecaixaCreate
 
 Crud = CrudView(Pedido)
 
-urlpatterns = Crud.AsUrl(MediaFilesInsert = ['js/pedido.js'],ClassCreate = ViewFrentecaixaCreate,GridFields  = ('idtipopedido','vrpedido'))
+urlpatterns = Crud.AsUrl(MediaFilesInsert = ['js/pedido.js'], ClassCreate = ViewFrentecaixaCreate, 
+    GridFields  = ('idtipopedido','vrpedido'))

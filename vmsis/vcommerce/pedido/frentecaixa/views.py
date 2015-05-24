@@ -12,34 +12,33 @@ class FormFrentecaixa(StandardFormGrid):
         model = Pedido
     
     def before_insert_grid_row(self, instance):
-    	print('passou')
-    	#if instance.__class__.__name__ = 'ItemPedido'
-    	if isinstance(instance, ItemPedido):
+        if isinstance(instance, ItemPedido):
     	    cardapio = Cardapio.objects.get(pk=instance.cardapio.id)
     	    instance.vrvenda = cardapio.vrvenda
     	    instance.vrtotal = instance.qtitem * instance.vrvenda
+        return str()
     	    
     def after_insert_grid_row(self, instance):
-    	if isinstance(instance,ItAdicional):
-    		itempedido = ItemPedido.objects.get(pk=instance.itempedido.id)
-    		cardapio = Cardapio.objects.get(pk=itempedido.cardapio.id)
-    		itempedido.vrvenda = cardapio.vrvenda 
-    		adicionais = Adicionais.objects.get(pk=instance.item.id)
-    		agrupadicional = AgrupAdicional.objects.get(pk=adicionais.agrupadicional.id)
-    		itempedido.vrtotal = (itempedido.qtitem * cardapio.vrvenda) + (agrupadicional.vragrupadic*instance.qtitem)
-    		itempedido.save();
+        if isinstance(instance,ItAdicional):
+            itempedido = ItemPedido.objects.get(pk=instance.itempedido.id)
+            cardapio = Cardapio.objects.get(pk=itempedido.cardapio.id)
+            itempedido.vrvenda = cardapio.vrvenda 
+            adicionais = Adicionais.objects.get(pk=instance.item.id)
+            agrupadicional = AgrupAdicional.objects.get(pk=adicionais.agrupadicional.id)
+            itempedido.vrtotal = (itempedido.qtitem * cardapio.vrvenda) + (agrupadicional.vragrupadic*instance.qtitem)
+            itempedido.save();
+        return str()
 
     def save(self, commit=True):
-    	instance = super(FormFrentecaixa, self).save(commit=True)
-    	itempedido = ItemPedido.objects.filter(pedido=instance)
-    	vrtotal = 0
-    	for item in itempedido:
-    		vrtotal += item.vrtotal
-    	instance.vrpedido = vrtotal
-    	instance.save() 
+        instance = super(FormFrentecaixa, self).save(commit=True)
+        itempedido = ItemPedido.objects.filter(pedido=instance)
+        vrtotal = 0
+        for item in itempedido:
+        	vrtotal += item.vrtotal
+        instance.vrpedido = vrtotal
+        instance.save() 
+        return instance
     	
     	
-
-
 class ViewFrentecaixaCreate(ViewCreate):
     form_class = FormFrentecaixa

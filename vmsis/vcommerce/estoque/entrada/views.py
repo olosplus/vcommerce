@@ -14,7 +14,7 @@ class FormEntrada(StandardFormGrid):
         msgErro = FunEstoque.entr_prod_est(instance.produto_id, instance.almoxarifado, instance.lote_id, instance.qtdeprod)
         if msgErro:
         	Entrada.objects.get(pk=instance.master_moviest_id).delete()
-        return 'teste'#msgErro
+        return msgErro
 
     def after_update_grid_row(self, instance, old_instance):
         lote_ok = True

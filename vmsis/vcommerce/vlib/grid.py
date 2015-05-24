@@ -7,7 +7,7 @@ from django.apps import apps
 import math
 
 
-class Grid:
+class Grid(object):
     def __init__(self, model, parent_model = None, parent_pk_value = -1, title = str()):
         self.model = model
         self.parent_model = parent_model
@@ -120,7 +120,6 @@ class Grid:
 
         if column_model != None:            
             query = self.get_field_query_set(model_rel_to = column_model, field_name = field_name)
-            #column_model.objects.all()
             str_objects, id_values = ["--------"], [""]            
             for q in query:
                 str_objects.append(str(q));

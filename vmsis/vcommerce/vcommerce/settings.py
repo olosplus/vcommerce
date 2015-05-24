@@ -52,7 +52,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-#    'django.middleware.transaction.TransactionMiddleware',
+    'django.middleware.transaction.TransactionMiddleware',
 )
 
 STATICFILES_FINDERS = (
@@ -84,7 +84,7 @@ DATABASES = {
 #        'PORT': '',
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-    }
+   }
 }
 
 #DATABASES = {

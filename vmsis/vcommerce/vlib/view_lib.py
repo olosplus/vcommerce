@@ -20,10 +20,12 @@ from vlib.grid import Grid
 from django.forms import ModelForm, Form
 from vlib import views as vlib_views
 from django.forms.utils import ErrorList
-from django.db import models
+from django.db import models, transaction
 from importlib import import_module
 from django.conf import settings
 from copy import deepcopy
+
+
 #CONSTS
 TEMPLATE_INSERT = '_insert_form.html'
 TEMPLATE_UPDATE = '_update_form.html'
@@ -432,7 +434,7 @@ class CreateForm(object):
 
         return vmsisForm
    
-class ViewCreate(CreateView, AjaxableResponseMixin):  
+class ViewCreate(CreateView):  
     template_name = TEMPLATE_INSERT
     MediaFiles = []   
     nome_campo_empresa = str()
@@ -512,9 +514,15 @@ class ViewCreate(CreateView, AjaxableResponseMixin):
             error = form.get_grids_erros(instance)
             
             if error:
+                transaction.rollback()
                 return HttpResponse(error)
             else:
-                return self.form_valid(form)
+                f = self.form_valid(form)
+                if form.grid_erros:
+                    transaction.rollback()
+                    return HttpResponse(form.grid_erros)
+                else:
+                    return f
         else:
             return self.form_invalid(form)
 
@@ -529,7 +537,7 @@ class ViewCreate(CreateView, AjaxableResponseMixin):
 
         Urls = urlsCrud(self.model);
         grid = self.get_grid_instance()
-
+        
         context = super(ViewCreate, self).get_context_data(**kwargs)   
 
         context['JsFiles'] = StaticFiles.GetJs(self.MediaFiles)
@@ -638,18 +646,29 @@ class ViewUpdate(UpdateView):
         self.form_class = CreateForm(self.model).create_form(GridsData = grids_data, class_form = self.form_class, \
             user = request.user, colaborador = request.session['funcionario'], \
             campo_empresa = self.nome_campo_empresa, campo_unidade = self.nome_campo_unidade)
-
+        
+        self.object = self.get_object()
         form_class = self.get_form_class()
         form = self.get_form(form_class)
-        self.object = self.model        
         
-        grid_erros = form.get_grids_erros(None)
-        
-        if grid_erros:
-            return HttpResponse(grid_erros)
-
-        return super(ViewUpdate, self).post(request, *args, **kwargs)
-#        self.form_class.erros
+        if form.is_valid():
+           
+            instance = form.get_instace()            
+            
+            error = form.get_grids_erros(instance)
+            
+            if error:
+                transaction.rollback()
+                return HttpResponse(error)
+            else:
+                f = self.form_valid(form)
+                if form.grid_erros:
+                    transaction.rollback()
+                    return HttpResponse(form.grid_erros)
+                else:
+                    return f
+        else:
+            return self.form_invalid(form)
 
                 
 class ViewDelete(DeleteView):
