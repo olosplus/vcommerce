@@ -52,7 +52,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'django.middleware.transaction.TransactionMiddleware',
+    #'django.middleware.transaction.TransactionMiddleware',
 )
 
 STATICFILES_FINDERS = (
@@ -74,29 +74,23 @@ WSGI_APPLICATION = 'vcommerce.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/1.7/ref/settings/#databases
 
-# DATABASES = {
-#    'default': {
-#        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-#        'NAME': 'vcommerce',
-#        'HOST': 'postgres48797-vcommerce.jelasticlw.com.br\\vcommerce',
-#        'USER': 'webadmin',
-#        'PASSWORD': 'OhuIlj6NDR',
-#        'PORT': '',
-#        'ENGINE': 'django.db.backends.sqlite3',
-#        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-#   }
-# }
-
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'vmsis1',
-        'USER': 'vmsis1',
-        'PASSWORD': 'vmsis123v',
-        'HOST': 'pgsql.vmsis.com.br',
-        'PORT': '5432',
-    }
+   'default': {
+       'ENGINE': 'django.db.backends.sqlite3',
+       'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+  }
 }
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql_psycopg2',
+#         'NAME': 'vmsis1',
+#         'USER': 'vmsis1',
+#         'PASSWORD': 'vmsis123v',
+#         'HOST': 'pgsql.vmsis.com.br',
+#         'PORT': '5432',
+#     }
+# }
 
 
 # Internationalization
