@@ -6,7 +6,8 @@ from cadastro.funcionario.models import Funcionario
 class FormFuncionario(StandardFormGrid):
     class Meta:
         model = Funcionario
-    senha = forms.CharField(max_length=30, widget=forms.PasswordInput())
+    senha = forms.CharField(max_length=30, widget=forms.PasswordInput(), label='Senha')
+    confsenha = forms.CharField(max_length=30, widget=forms.PasswordInput(), label='Confirma Senha')
 
 class ViewFuncionario(ViewCreate):
     form_class = FormFuncionario
