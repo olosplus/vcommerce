@@ -76,7 +76,7 @@ class Grid(object):
             for f in self.model._meta.fields if only_this_attribute == f.name or only_this_attribute == ""}
 
     def get_model_attribute(self, attribute):
-        return  self.get_model_attributes(attribute)        
+        return self.get_model_attributes(attribute)        
 
     def get_grid_column_model(self, field_name):
         attr = self.get_model_attribute(field_name)
@@ -85,9 +85,9 @@ class Grid(object):
     def get_grid_column_type(self, field_name):
         attr = self.get_model_attribute(field_name)
         return attr[field_name]['grid-type']
-
+    
     def get_field_query_set(self, model_rel_to, field_name):
-        return model_rel_to.objects.all()
+        return model_rel_to.objects.all()        
 
     def get_grid_columns_config(self, field_name, read_only = True, check_link_to_form = True):
         
@@ -331,6 +331,9 @@ class Grid(object):
         script += '</script>'
         return script
 
+    def get_child_class_grid(self):
+        return self.__class__
+
     def grid_as_text(self, read_only = True, use_crud = False, display_fields = (), dict_filter = {}):   
         if read_only:
             return self.grid_script(self.get_js_grid(use_crud = use_crud, read_only = read_only, 
@@ -353,7 +356,9 @@ class Grid(object):
                     
                     mod = get_model(app_label = app_label, model_name = child_model_name)
                     
-                    GridDetalhe = Grid(mod, self.model, self.parent_pk_value)
+                    class_grid = self.get_child_class_grid()
+                    
+                    GridDetalhe = class_grid(mod, self.model, self.parent_pk_value)
                     
                     script_grid += self.grid_script(data = GridDetalhe.get_js_grid(use_crud = use_crud,
                         read_only = read_only, display_fields = display_fields, dict_filter = dict_filter),
