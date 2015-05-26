@@ -7,7 +7,7 @@ class Master_endereco(models.Model):
 		db_table = "master_endereco"
 
 	id = models.AutoField(primary_key=True, verbose_name="Código", editable=False)
-	empresa = models.ForeignKey(Empresa, verbose_name="Empresa")
+	empresa = models.ForeignKey(Empresa, verbose_name="Empresa", null=True)
 	dtcadastro = models.DateField(auto_now_add=True,null=True, verbose_name='Data de cadastro', editable=False)
 
 from cadastro.unidade.models import Unidade
@@ -25,5 +25,5 @@ class Master_empresa(models.Model):
 	class Meta:
 		abstract = True
 
-	empresa = models.ForeignKey(Empresa,verbose_name="Empresa")
+	empresa = models.ForeignKey(Empresa,verbose_name="Empresa", null=True)
 	dtcadastro = models.DateField(auto_now_add=True, verbose_name='Data de cadastro', null=True, editable=False)

@@ -9,6 +9,7 @@ class Conta(Master_unidade):
 		db_table = "conta"
 		verbose_name = "Conta"
 		verbose_name_plural = "Contas"
+		ordering = ['banco','nragencia','nrconta']
 
 	banco = models.ForeignKey(Banco,verbose_name="Banco")
 	nragencia = models.CharField(max_length=30,verbose_name="Agencia")

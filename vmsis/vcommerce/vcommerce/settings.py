@@ -74,18 +74,12 @@ WSGI_APPLICATION = 'vcommerce.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/1.7/ref/settings/#databases
 
-#DATABASES = {
+# DATABASES = {
 #    'default': {
-#        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-#        'NAME': 'vcommerce',
-#        'HOST': 'postgres48797-vcommerce.jelasticlw.com.br\\vcommerce',
-#        'USER': 'webadmin',
-#        'PASSWORD': 'OhuIlj6NDR',
-#        'PORT': '',
 #        'ENGINE': 'django.db.backends.sqlite3',
 #        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
 #   }
-#}
+# }
 
 DATABASES = {
     'default': {
@@ -98,6 +92,16 @@ DATABASES = {
     }
 }
 
+#Jefferson
+#DATABASES = {
+#    'default': {
+#        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+#        'NAME': 'vmsis_db',
+#        'HOST': 'localhost',
+#        'USER': 'postgres',
+#        'PASSWORD': 'x66gx407',
+#    }
+#}
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.7/topics/i18n/

@@ -22,23 +22,19 @@ apps_on_menu = (
     {'app': 'vatualiza', 'verbose_name' : 'Atualização', 'visible': False},
     {'app': 'cadastro.centro_custo', 'verbose_name' : 'Centro de Custos'},    
     
-    # TELAS DO FLUXO DE CAIXA
-    {'app': 'fluxocaixa', 'verbose_name' : 'Fluxo de Caixa', 'imgmenu':'fa fa-money'},
-    {'app': 'fluxocaixa.contapagar', 'verbose_name' : 'Conta a Pagar'},
-    {'app': 'fluxocaixa.contareceber', 'verbose_name' : 'Conta a Receber'},
 
     # TELAS DA CONTABILIDADE
-    {'app': 'contabilidade', 'verbose_name' : 'Contabilidade', 'imgmenu' : 'glyphicon glyphicon-book'},
-    {'app': 'contabilidade.cadastro_contabil', 'verbose_name' : 'Cadastros Contábeis'},
-    {'app': 'contabilidade.cadastro_contabil.grupo_conta_contabil', 'verbose_name' : 'Contas contábeis - grupos',
-        'visible' : True}, 
-    {'app': 'contabilidade.cadastro_contabil.tipo_escrituracao', 'verbose_name' : 'Tipos de escrituração', 'visible' : True},    
-    {'app': 'contabilidade.cadastro_contabil.historico_padrao', 'verbose_name' : 'Históricos padrões'},     
-    {'app': 'contabilidade.cadastro_contabil.plano_conta', 'verbose_name' : 'Plano de contas'},  
-    {'app': 'contabilidade.movimentacao_contabil', 'verbose_name' : 'Movimentações Contábeis'},
-    {'app': 'contabilidade.movimentacao_contabil.lancamento_contabil', 'verbose_name' : 'Lançamentos contábeis'},
-    {'app': 'contabilidade.movimentacao_contabil.lancamento_contabil_detalhe', 'verbose_name' : 'Partidas dos lançamentos', 
-        'visible' : False},        
+    # {'app': 'contabilidade', 'verbose_name' : 'Contabilidade', 'imgmenu' : 'glyphicon glyphicon-book'},
+    # {'app': 'contabilidade.cadastro_contabil', 'verbose_name' : 'Cadastros Contábeis'},
+    # {'app': 'contabilidade.cadastro_contabil.grupo_conta_contabil', 'verbose_name' : 'Contas contábeis - grupos',
+    #     'visible' : True}, 
+    # {'app': 'contabilidade.cadastro_contabil.tipo_escrituracao', 'verbose_name' : 'Tipos de escrituração', 'visible' : True},    
+    # {'app': 'contabilidade.cadastro_contabil.historico_padrao', 'verbose_name' : 'Históricos padrões'},     
+    # {'app': 'contabilidade.cadastro_contabil.plano_conta', 'verbose_name' : 'Plano de contas'},  
+    # {'app': 'contabilidade.movimentacao_contabil', 'verbose_name' : 'Movimentações Contábeis'},
+    # {'app': 'contabilidade.movimentacao_contabil.lancamento_contabil', 'verbose_name' : 'Lançamentos contábeis'},
+    # {'app': 'contabilidade.movimentacao_contabil.lancamento_contabil_detalhe', 'verbose_name' : 'Partidas dos lançamentos', 
+    #     'visible' : False},        
 
     # TELAS DO ESTOQUE
     {'app': 'estoque', 'verbose_name' : 'Estoque', 'imgmenu' : 'fa fa-th'},
@@ -57,15 +53,17 @@ apps_on_menu = (
     {'app': 'pedido.frentecaixa', 'verbose_name' : 'Pedido'},
     {'app': 'pedido.cadastro_pedido', 'verbose_name' : 'Cadastros Pedido'},
     {'app': 'pedido.cadastro_pedido.mesa', 'verbose_name' : 'Mesa'},
-    {'app': 'pedido.cadastro_pedido.categoria', 'verbose_name' : 'Categoria'},
+    #{'app': 'pedido.cadastro_pedido.categoria', 'verbose_name' : 'Categoria'},
     {'app': 'pedido.cadastro_pedido.agrupadicional', 'verbose_name' : 'Agrupamento de Adicionais'},
     {'app': 'pedido.cadastro_pedido.cardapio', 'verbose_name' : 'Cardápio'},
     {'app': 'pedido.cadastro_pedido.composicaoproduto', 'verbose_name' : 'Composição do Produto', 'visible' : False},
 
     #TELAS DO FINANCEIRO
-    {'app': 'financeiro', 'verbose_name':'Financeiro', 'imgmenu':'fa fa-dollar'},
-    {'app': 'financeiro.banco', 'verbose_name': 'Banco', 'visible': False},
-    {'app': 'financeiro.conta', 'verbose_name': 'Conta'},
-    {'app': 'financeiro.mov_financeira','verbose_name': 'Transferencia Financeira'},
+    # {'app': 'financeiro', 'verbose_name':'Financeiro', 'imgmenu':'fa fa-dollar'},
+    # {'app': 'financeiro.banco', 'verbose_name': 'Banco', 'visible': False},
+    # {'app': 'financeiro.conta', 'verbose_name': 'Conta'},
+    # {'app': 'financeiro.mov_financeira','verbose_name': 'Transferencia Financeira'},
+    # {'app': 'financeiro.contapagar', 'verbose_name' : 'Conta a Pagar'},
+    # {'app': 'financeiro.contareceber', 'verbose_name' : 'Conta a Receber'},
 
 )

@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from django.db import models
+from vlib.vmodels import widgets
 from estoque.control.models import Master_moviest
 from cadastro.cliente.models import Cliente
 from estoque.cadastro_estoque.finalidade.models import Finalidade
@@ -16,7 +17,7 @@ class Saida(Master_moviest):
         child_models = ['estoque.itemproduto.models.Itemproduto']
         ordering = ['-id']
 
-    dtsaida = models.DateTimeField(verbose_name='Data de saída')
+    dtsaida = widgets.VDateField(verbose_name='Data de saída')
     cliente = models.ForeignKey(Cliente,verbose_name='Cliente')
     finalidade = models.ForeignKey(Finalidade,verbose_name='Finalidade',null=True,blank=True)
     idtipo = models.CharField(max_length=1,verbose_name="Tipo de Saída",choices=choice_tipo)
