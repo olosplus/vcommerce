@@ -90,10 +90,10 @@ WSGI_APPLICATION = 'vcommerce.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'vmsis1',
-        'USER': 'vmsis1',
-        'PASSWORD': 'vmsis123v',
-        'HOST': 'pgsql.vmsis.com.br',
+        'NAME': 'postgres',
+        'USER': 'postgres',
+        'PASSWORD': 'ivan',
+        'HOST': 'localhost',
         'PORT': '5432',
     }
 }

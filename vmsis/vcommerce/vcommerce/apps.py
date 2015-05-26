@@ -12,7 +12,7 @@ apps_on_menu = (
     {'app': 'cadastro.localidade.endereco', 'verbose_name' : 'Endereço', 'visible': False},
     {'app': 'cadastro.localidade.estado', 'verbose_name' : 'Estado'},
     {'app': 'cadastro.localidade.pais', 'verbose_name' : 'País'},
-    {'app': 'cadastro.unimedida', 'verbose_name' : 'Unidade de Medida', 'visible': False},
+    {'app': 'cadastro.unimedida', 'verbose_name' : 'Unidade de Medida', 'visible': True},
     {'app': 'cadastro.produto', 'verbose_name' : 'Produto'},
     {'app': 'cadastro.unidade', 'verbose_name' : 'Unidade'},
     {'app': 'cadastro.funcionario', 'verbose_name' : 'Funcionário'},
