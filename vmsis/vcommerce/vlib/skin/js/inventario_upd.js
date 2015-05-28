@@ -1,6 +1,10 @@
  function InicInventario() {
-  $("button.btn-primary").html('Confirmar');
-  $("button.btn-danger").html('Cancela');
+
+  $("#btn-salvar-listar").css('display', 'none');
+  $("#btn-salvar-inserir").css('display', 'none');
+
+  $("#btn-salvar-editar").html('Confirmar');
+  $("#btn-cancelar").html('Cancela');
 
   $("a.fa-trash-o").attr('onclick', '');
   $("a.fa-file-o").attr('onclick', '');
@@ -13,9 +17,9 @@
   $("[name='empresa_id']").attr('disabled','');
 
   var alm = $("#id_almoxarifado");
-  alm.addClass("invisible");
-  alm.css({'display':'none'});
-  alm.parent().append("<input type='text' class='form-control' disabled value='" + alm.find("[selected='selected']")[0].text + "'>");
+  alm.css('display', 'none')
+  alm.parent().append("<input type='text' class='form-control' disabled value='" + 
+    alm.find("[selected='selected']")[0].text + "'>");
 };
 
 $(document).ajaxComplete(function() {
@@ -25,3 +29,4 @@ $(document).ajaxComplete(function() {
 $(document).ready(function() {
   InicInventario();  
 });
+

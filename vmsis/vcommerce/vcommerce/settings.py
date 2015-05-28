@@ -82,16 +82,16 @@ WSGI_APPLICATION = 'vcommerce.wsgi.application'
 # }
 
 #ivan
-#DATABASES = {
-#    'default': {
-#        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-#        'NAME': 'postgres',
-#        'USER': 'postgres',
-#        'PASSWORD': 'ivan',
-#        'HOST': 'localhost',
-#        'PORT': '5432',
-#    }
-#}
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'postgres',
+        'USER': 'postgres',
+        'PASSWORD': 'ivan',
+        'HOST': 'localhost',
+        'PORT': '5432',
+    }
+}
 
 #Jefferson
 #DATABASES = {
