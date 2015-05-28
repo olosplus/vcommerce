@@ -111,14 +111,20 @@ def get_apps_html(path, hab_UL=False, nivel=1, empresa=None):
                     html += TAG_LI
 
                 url_app = load_url_app(path + "/" + directory)
+                
                 if app_name == 'parametro.paramgeral':
                     url_app = url_app.replace('(?P<pk>\d+)/$',str(empresa))
+                
                 html += "%s %s '%s' %s" % (TAG_A_PARTIAL, ATTR_HREF, url_app, CLOSE_TAG)
+                
                 if menu_apps.MenuApps.ImgMenuApp(app_name):
                     html += "%s class='%s'> %s" % (TAG_I, menu_apps.MenuApps.ImgMenuApp(app_name),CLOSE_TAG_I)
+                
                 html += ' '+menu_apps.MenuApps.GetAppVerboseName(app_name)
+                
                 if bool_apps_filho(path + "/" + directory):
                     html += TAG_DROP
+                
                 html += CLOSE_TAG_A
                 html += get_apps_html(path=path + "/" + directory, hab_UL=True, nivel=nivel, empresa=empresa)
                 
@@ -129,7 +135,7 @@ def get_apps_html(path, hab_UL=False, nivel=1, empresa=None):
             nivel-=1
     return html  
 
-LIST_APPS_MENUS = menu_apps.MenuApps.GetAppsOnMenu()
+LIST_APPS_MENUS = menu_apps.MenuApps.GetAppsOnMenu(only_visible=True)
 
 def bool_apps_filho(path_app):
     """ verifica se aplicacao tem filho"""
@@ -139,8 +145,8 @@ def bool_apps_filho(path_app):
         tree_app = get_app_name_on_path(path_app + "/"+ directory)
 
         if tree_app in LIST_APPS_MENUS:
-#            if menu_apps.MenuApps.AppIsVisible(tree_app):
             return True
+
     return False
 
 register = template.Library()

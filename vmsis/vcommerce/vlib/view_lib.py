@@ -472,8 +472,15 @@ class ViewCreate(CreateView):
                     self.fields.append(field.name)
 
     def get_success_url(self):
-        return self.success_url
-
+        URL = urlsCrud(self.model)
+        try:
+           id = self.object.id
+           return URL.BaseUrlUpdate(CountPageBack = 1) + str(id)
+        except Exception as e:
+            print(e)
+            return self.success_url
+            
+    
     @method_decorator(login_required)  
     def dispatch(self, *args, **kwargs):
         return super(ViewCreate, self).dispatch(*args, **kwargs)
@@ -622,7 +629,8 @@ class ViewUpdate(UpdateView):
         context['JsFiles'] = StaticFiles.GetJs(self.MediaFiles)
         context['CssFiles'] = StaticFiles.GetCss(self.MediaFiles)    
         context['url_list'] =  Urls.BaseUrlList(CountPageBack = 2)
-        context['url_update'] = Urls.BaseUrlUpdate(CountPageBack = 2)        
+        context['url_update'] = Urls.BaseUrlUpdate(CountPageBack = 2)
+        context['url_insert'] = Urls.BaseUrlInsert(CountPageBack = 2)
         context['titulo'] = page_caption                        
         context['funcionario'] = self.request.session['funcionario']        
         return context

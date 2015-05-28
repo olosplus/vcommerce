@@ -29,14 +29,17 @@
           </div>
         </div>
         <div class="panel-footer">
-              <button type="buttom" class="btn btn-outline btn-success" 
+              <button type="buttom" class="btn btn-outline btn-primary" id="btn-salvar-inserir"
                 onClick="doPostForm('{{url_insert}}', '{{form_id}}', '{{url_insert}}', false, '')">Salvar e inserir</button>
 
+              <button type="buttom"  onclick="doPostForm('{{url_insert}}', '{{form_id}}', '', false, '')" 
+              class="btn btn-outline btn-primary" id="btn-salvar-editar">Salvar e editar</button>
+
               <button type="buttom"  onclick="doPostForm('{{url_insert}}', '{{form_id}}', '{{url_list}}', false, '')" 
-              class="btn btn-outline btn-primary">Salvar e listar</button>
+              class="btn btn-outline btn-primary" id="btn-salvar-listar">Salvar e listar</button>
               
               <button type="reset" class="btn btn-outline btn-danger" 
-                onClick="window.location.assign('{{url_list}}')">Cancelar</button> 
+                onClick="window.location.assign('{{url_list}}')" id="btn-cancelar">Cancelar</button> 
 
             <input type="hidden" value="{{url_insert}}/" id="ownurl">
             <input type="hidden" value="{{url_list}}" id="listurl">

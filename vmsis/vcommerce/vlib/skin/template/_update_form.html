@@ -31,11 +31,21 @@
           </div>
         </div>
         <div class="panel-footer">        
+
+          <button type="buttom"  onclick="doPostForm('{{url_update}}{{object.pk}}/', '{{form_id}}',
+            '{{url_update}}{{object.pk}}', false, '')" 
+            class="btn btn-outline btn-primary" id="btn-salvar-editar">Salvar e editar</button>
+
+          <button type="buttom"  onclick="doPostForm('{{url_update}}{{object.pk}}/', '{{form_id}}',
+            '{{url_insert}}', false, '')" 
+            class="btn btn-outline btn-primary" id="btn-salvar-inserir">Salvar e inserir</button>
+
           <button type="buttom"  onclick="doPostForm('{{url_update}}{{object.pk}}/', '{{form_id}}',
             '{{url_list}}', false, '')" 
-            class="btn btn-outline btn-primary">Salvar e listar</button>
-          <button type="reset" class="btn btn-outline btn-danger" 
-              onClick="window.location.assign('{{url_list}}')">Cancelar</button>
+            class="btn btn-outline btn-primary" id="btn-salvar-listar">Salvar e listar</button>
+            
+          <button type="reset" class="btn btn-outline btn-danger"  id="btn-cancelar"
+              onClick="window.location.assign('{{url_list}}')" >Cancelar</button>
         </div>
       </div>    
     </div> 

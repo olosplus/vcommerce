@@ -16,9 +16,14 @@ apps_on_menu = apps.apps_on_menu
 
 class MenuApps:       
     @staticmethod
-    def GetAppsOnMenu():
+    def GetAppsOnMenu(only_visible = False):
         apps = ()
+        
         for app in apps_on_menu:
+            if only_visible and 'visible' in app:
+                if not app['visible']:
+                    continue                
+
             apps += (app['app'], )
         return apps
 

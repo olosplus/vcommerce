@@ -48,6 +48,8 @@ class FormEmpresa(view_lib.StandardFormGrid):
         else:
             paramgeral.save()
 
+        return instance
+
 # Create your views here.
 class ViewEmpresa(view_lib.ViewCreate):
     form_class = FormEmpresa

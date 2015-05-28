@@ -1,12 +1,9 @@
  function InicParamGeral() {
-  $("button.btn-primary").html('Confirmar');
-  $("button.btn-primary").attr('onclick', '');
-  $("button.btn-primary").click(function(){
-  	$("#Paramgeral").submit();  	
-  })
-
-  $("button.btn-danger").html('Desfazer');
-  $("button.btn-danger").attr('onclick', 'window.location.reload()');
+  $("#btn-salvar-listar").css('display', 'none');
+  $("#btn-salvar-inserir").css('display', 'none'); 
+  $("#btn-salvar-editar").html('Confirmar');
+  $("#btn-cancelar").html('Desfazer');
+  $("#btn-cancelar").attr('onclick', 'window.location.reload()');
 }
 
 $(document).ajaxComplete(function() {
