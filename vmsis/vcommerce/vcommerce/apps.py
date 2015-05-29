@@ -39,7 +39,6 @@ apps_on_menu = (
     # TELAS DO ESTOQUE
     {'app': 'estoque', 'verbose_name' : 'Estoque', 'imgmenu' : 'fa fa-th'},
     {'app': 'estoque.itemproduto', 'verbose_name' : 'Item', 'visible' : False},
-    {'app': 'estoque.iteminvent', 'verbose_name' : 'Item', 'visible' : False},
     {'app': 'estoque.cadastro_estoque', 'verbose_name' : 'Cadastros Estoque'},
     {'app': 'estoque.cadastro_estoque.finalidade', 'verbose_name' : 'Finalidade'},      
     {'app': 'estoque.entrada', 'verbose_name' : 'Entrada'},
@@ -47,6 +46,9 @@ apps_on_menu = (
     {'app': 'estoque.posestoque', 'verbose_name' : 'Posição de Estoque', 'visible' : False},
     {'app': 'estoque.lote', 'verbose_name' : 'Lote', 'visible' : False},
     {'app': 'estoque.inventario', 'verbose_name' : 'Inventário'},
+    {'app': 'estoque.inventario.iteminvent', 'verbose_name' : 'Item', 'visible' : False},
+    {'app': 'estoque.transferencia', 'verbose_name' : 'Transferência'},
+    {'app': 'estoque.transferencia.itemtransf', 'verbose_name' : 'Item', 'visible' : False},
 
    # TELAS DO PEDIDO
     {'app': 'pedido', 'verbose_name' : 'Pedido', 'imgmenu' : 'fa fa-building-o'},

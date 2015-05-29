@@ -3,7 +3,7 @@ from vlib.view_lib import ViewCreate, StandardFormGrid, ViewUpdate, ConvertView
 from vlib.url_lib import urlsCrud
 from estoque.inventario.models import Inventario
 from estoque.posestoque.models import Posestoque
-from estoque.iteminvent.models import Iteminvent
+from estoque.inventario.iteminvent.models import Iteminvent
 from estoque.lib_est.estoque import Estoque
 from django.shortcuts import redirect
 from django import forms
