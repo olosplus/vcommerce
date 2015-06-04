@@ -692,7 +692,11 @@ function doPostForm(send_to, form_id, url_redirect, is_delete, id_grid_delete) {
           var ownurl = doc_received.getElementById('ownurl');
           var errorList = doc_received.getElementsByClassName('errorlist');
           if(ownurl != undefined && ownurl != null && errorList.length ==0){
-             window.location.href = ownurl.value;   
+            if(url_redirect != undefined && url_redirect != ""){
+              window.location.href = url_redirect;
+            }else{
+              window.location.href = ownurl.value;   
+            }
           }else{
             frm.innerHTML = frm_received.innerHTML;
           };

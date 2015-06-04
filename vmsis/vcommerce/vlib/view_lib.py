@@ -55,29 +55,6 @@ class StaticFiles:
         return StaticFiles.GetSameTypeFiles(ListOfFiles = ListOfFiles, Extension = DOT_JAVA_SCRIPT)
 
 
-class AjaxableResponseMixin(object):
-    """
-    Mixin to add AJAX support to a form.
-    Must be used with an object-based FormView (e.g. CreateView)
-    """
-    def form_invalid(self, form):
-        response = super(AjaxableResponseMixin, self).form_invalid(form)
-        if self.request.is_ajax():
-            return JsonResponse(form.errors, status=400)
-        else:
-            return response
-
-    def form_valid(self, form):
-        response = super(AjaxableResponseMixin, self).form_valid(form)
-        if self.request.is_ajax():
-            data = {
-                'pk': self.object.pk,
-            }
-
-            return JsonResponse(data)
-        else:
-            return response
-
 class StandardFormGrid(ModelForm):
     child_models = str()
     current_user = None
@@ -433,43 +410,64 @@ class CreateForm(object):
             nome_campo_empresa = campo_empresa
 
         return vmsisForm
+
+class StandardCrudView(object):
+    
+    fks_fields = {}
+    show_fields = []
+
+    @method_decorator(login_required)
+    def dispatch(self, *args, **kwargs):
+        return super(StandardCrudView, self).dispatch(*args, **kwargs)
+
+    def set_fields_list(self):        
+        rel_to = None
+        self.fks_fields = {}
+        self.show_fields = []
+
+        for field in self.model._meta.fields:                
+            try:
+                rel_to = field.rel.to
+            except Exception as e:
+                rel_to = None
+                
+            if not rel_to is None:
+                self.fks_fields.update({ field.name:{'module': rel_to.__module__, 
+                    'model': rel_to.__name__} })
+            
+            if field.name.lower() == 'empresa':
+                self.nome_campo_empresa = field.name
+                if self.request.user.is_superuser:
+                    self.show_fields.append(field.name)
+                continue
+            elif field.name.lower() == 'unidade':
+                self.nome_campo_unidade = field.name
+                if self.request.user.is_superuser:
+                    self.show_fields.append(field.name)
+                continue
+            elif field.editable:
+                self.show_fields.append(field.name)
+    
+        for field in self.model._meta.many_to_many:
+            if field.name.lower() == 'empresa':
+                self.nome_campo_empresa = field.name
+                if self.request.user.is_superuser:
+                    self.show_fields.append(field.name)
+                continue
+            elif field.name.lower() == 'unidade':
+                self.nome_campo_unidade = field.name
+                if self.request.user.is_superuser:
+                    self.show_fields.append(field.name)
+                continue
+            elif field.editable:
+                self.show_fields.append(field.name)
+        self.fields = self.show_fields
    
-class ViewCreate(CreateView):  
+class ViewCreate(StandardCrudView, CreateView):  
     template_name = TEMPLATE_INSERT
     MediaFiles = []   
     nome_campo_empresa = str()
     nome_campo_unidade = str()
-
-    def set_fields_list(self, request):        
-        if not self.fields: 
-            self.fields = []
-            for field in self.model._meta.fields:
-                if field.name.lower() == 'empresa':
-                    self.nome_campo_empresa = field.name
-                    if request.user.is_superuser:
-                        self.fields.append(field.name)
-                    continue
-                elif field.name.lower() == 'unidade':
-                    self.nome_campo_unidade = field.name
-                    if request.user.is_superuser:
-                        self.fields.append(field.name)
-                    continue
-                elif field.editable:
-                    self.fields.append(field.name)
-        
-            for field in self.model._meta.many_to_many:
-                if field.name.lower() == 'empresa':
-                    self.nome_campo_empresa = field.name
-                    if request.user.is_superuser:
-                        self.fields.append(field.name)
-                    continue
-                elif field.name.lower() == 'unidade':
-                    self.nome_campo_unidade = field.name
-                    if request.user.is_superuser:
-                        self.fields.append(field.name)
-                    continue
-                elif field.editable:
-                    self.fields.append(field.name)
 
     def get_success_url(self):
         URL = urlsCrud(self.model)
@@ -479,28 +477,23 @@ class ViewCreate(CreateView):
         except Exception as e:
             print(e)
             return self.success_url
-            
-    
-    @method_decorator(login_required)  
-    def dispatch(self, *args, **kwargs):
-        return super(ViewCreate, self).dispatch(*args, **kwargs)
-
+                
     def __init__(self, **kwargs):
         if 'MediaFiles' in kwargs :
             self.MediaFiles = kwargs.get('MediaFiles')
         if 'nome_campo_empresa' in kwargs :
             self.nome_campo_empresa = kwargs.get('nome_campo_empresa')
         if 'nome_campo_unidade' in kwargs :
-            self.nome_campo_unidade = kwargs.get('nome_campo_unidade')
+            self.nome_campo_unidade = kwargs.get('nome_campo_unidade')        
 
         super(ViewCreate, self).__init__(**kwargs)        
 
     def get(self, request, *args, **kwargs):
-        self.set_fields_list(request)
+        self.set_fields_list()
         return super(ViewCreate, self).get(request, *args, **kwargs)
 
     def post(self, request, *args, **kwargs):        
-        self.set_fields_list(request)
+        self.set_fields_list()
         grids_data = request.POST.get('child_models', {})
 
         if self.form_class == None:
@@ -545,6 +538,8 @@ class ViewCreate(CreateView):
         Urls = urlsCrud(self.model);
         grid = self.get_grid_instance()
         
+        self.set_fields_list()
+        
         context = super(ViewCreate, self).get_context_data(**kwargs)   
 
         context['JsFiles'] = StaticFiles.GetJs(self.MediaFiles)
@@ -555,9 +550,11 @@ class ViewCreate(CreateView):
         context['grid'] = grid.grid_as_text(use_crud = False, read_only = False, dict_filter = {'id':-1});        
         context['titulo'] = page_caption        
         context['funcionario'] = self.request.session['funcionario']
+        context['fks'] = self.fks_fields
+        context['show_fields'] = self.show_fields
         return context
  
-class ViewUpdate(UpdateView):
+class ViewUpdate(StandardCrudView, UpdateView):
     template_name = TEMPLATE_UPDATE
     MediaFiles = []
     nome_campo_empresa = str()
@@ -572,37 +569,6 @@ class ViewUpdate(UpdateView):
             self.nome_campo_unidade = kwargs.get('nome_campo_unidade')
 
         super(ViewUpdate, self).__init__(**kwargs)
-
-    def set_fields_list(self, request):
-        if not self.fields: 
-            self.fields = []
-            for field in self.model._meta.fields:
-                if field.name.lower() == 'empresa':
-                    self.nome_campo_empresa = field.name
-                    if request.user.is_superuser:
-                        self.fields.append(field.name)
-                    continue
-                elif field.name.lower() == 'unidade':
-                    self.nome_campo_unidade = field.name
-                    if request.user.is_superuser:
-                        self.fields.append(field.name)
-                    continue
-                elif field.editable:
-                    self.fields.append(field.name)
-
-            for field in self.model._meta.many_to_many:
-                if field.name.lower() == 'empresa':
-                    self.nome_campo_empresa = field.name
-                    if request.user.is_superuser:
-                        self.fields.append(field.name)
-                    continue
-                elif field.name.lower() == 'unidade':
-                    self.nome_campo_unidade = field.name
-                    if request.user.is_superuser:
-                        self.fields.append(field.name)
-                    continue
-                elif field.editable:
-                    self.fields.append(field.name)
     
     def get_success_url(self):
         return self.success_url
@@ -617,6 +583,9 @@ class ViewUpdate(UpdateView):
         page_caption = apps[module]
 
         Urls = urlsCrud(self.model);            
+        
+        self.set_fields_list()
+
         context = super(UpdateView, self).get_context_data(**kwargs)   
         context['form_id'] = self.model.__name__        
         objeto =  context['object']
@@ -633,18 +602,16 @@ class ViewUpdate(UpdateView):
         context['url_insert'] = Urls.BaseUrlInsert(CountPageBack = 2)
         context['titulo'] = page_caption                        
         context['funcionario'] = self.request.session['funcionario']        
+        context['fks'] = self.fks_fields
+        context['show_fields'] = self.show_fields
         return context
 
-    @method_decorator(login_required)
-    def dispatch(self, *args, **kwargs):
-        return super(ViewUpdate, self).dispatch(*args, **kwargs)
-
     def get(self, request, *args, **kwargs):
-        self.set_fields_list(request)
+        self.set_fields_list()
         return super(ViewUpdate, self).get(request, *args, **kwargs)
 
     def post(self, request, *args, **kwargs):
-        self.set_fields_list(request)
+        self.set_fields_list()
 
         grids_data = request.POST.get('child_models', {})
 
@@ -679,13 +646,9 @@ class ViewUpdate(UpdateView):
             return self.form_invalid(form)
 
                 
-class ViewDelete(DeleteView):
+class ViewDelete(StandardCrudView, DeleteView):
     template_name = TEMPLATE_DELETE
     MediaFiles = []
-
-    @method_decorator(login_required)  
-    def dispatch(self, *args, **kwargs):
-        return super(ViewDelete, self).dispatch(*args, **kwargs)
 
     def __init__(self, **kwargs):
         if 'MediaFiles' in kwargs :
@@ -701,7 +664,7 @@ class ViewDelete(DeleteView):
         context['funcionario'] = self.request.session['funcionario']        
         return context
 
-class ViewList(ListView):
+class ViewList(StandardCrudView, ListView):
     template_name = TEMPLATE_LIST
     MediaFiles = []
     Grid_Fields =()
@@ -729,10 +692,6 @@ class ViewList(ListView):
         context['titulo'] = page_caption         
         context['funcionario'] = self.request.session['funcionario']        
         return context
-
-    @method_decorator(login_required)
-    def dispatch(self, *args, **kwargs):
-        return super(ViewList, self).dispatch(*args, **kwargs)
 
 class ConvertView:
     def __init__(self, model):

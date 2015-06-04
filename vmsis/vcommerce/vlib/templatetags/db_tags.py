@@ -13,3 +13,16 @@ def get_info_app_name(context, request):
 def get_info(valor, info):
     valor = getattr(config.Config, info)
     return valor
+
+@register.filter(name='get_fk')
+def get_fk(fields, key):
+    if key in fields:
+        return '<a href="javascript:void(0)" class="glyphicon glyphicon-plus inline" \
+            "onclick="insert(\'%s\', \'%s\')"></a>' % (fields[key]['model'], 
+            fields[key]['module'])
+    else:
+        return ''
+
+@register.filter(name='add_class')
+def add_class(field, css):
+   return field.as_widget(attrs={"class":css})

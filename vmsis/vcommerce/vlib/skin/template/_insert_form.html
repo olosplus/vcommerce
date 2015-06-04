@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load staticfiles %}
+{% load db_tags %} 
 
 {% block js %}
   <script src="{% static 'js/base.js' %}"></script>
@@ -15,28 +16,39 @@
     <div class="block"> 
       <div class="panel panel-default panel-customizado">
         <div class="panel-heading">
-          <h3 class="panel-title">{{ titulo }} <i class="glyphicon glyphicon-play"></i> Inserção</h3>
+          <h3 class="panel-title"><a href="{{url_list}}">{{ titulo }}</a> <i class="glyphicon glyphicon-play"></i> Inserção</h3>
         </div>
         <div class="panel-body">
           <div class="block-content collapse in">
             <div class="span12">  
-              <form class="form-horizontal" action="" method="post" id="{{form_id}}" sequence="{{form_pk}}">
+              <form class="form-horizontal" action="" method="post" 
+                id="{{form_id}}" sequence="{{form_pk}}" role="form">
                 {%csrf_token%}     
-                {{ form.as_p }}    
+
+                {% for field in form %}
+                  {% if field.name in show_fields %}
+                    <div class="fieldWrapper">
+                      {{ field.errors }}
+                      {{ field.label_tag }} </br>
+                      {{ field|add_class:"form-control form-control-customizado inline" }}
+                      {{ fks|get_fk:field.name | safe }}  
+                    </div>
+                    {%endif%}                  
+                {% endfor %}                
               </form>    
               <p>{{grid | safe}}</p>              
             </div>  
           </div>
         </div>
         <div class="panel-footer">
+              <button type="buttom"  onclick="doPostForm('{{url_insert}}', '{{form_id}}', '', false, '')" 
+              class="btn btn-outline btn-primary" id="btn-salvar-editar">Salvar</button>
+
               <button type="buttom" class="btn btn-outline btn-primary" id="btn-salvar-inserir"
                 onClick="doPostForm('{{url_insert}}', '{{form_id}}', '{{url_insert}}', false, '')">Salvar e inserir</button>
 
-              <button type="buttom"  onclick="doPostForm('{{url_insert}}', '{{form_id}}', '', false, '')" 
-              class="btn btn-outline btn-primary" id="btn-salvar-editar">Salvar e editar</button>
-
-              <button type="buttom"  onclick="doPostForm('{{url_insert}}', '{{form_id}}', '{{url_list}}', false, '')" 
-              class="btn btn-outline btn-primary" id="btn-salvar-listar">Salvar e listar</button>
+<!--              <button type="buttom"  onclick="doPostForm('{{url_insert}}', '{{form_id}}', '{{url_list}}', false, '')" 
+              class="btn btn-outline btn-primary" id="btn-salvar-listar">Salvar e listar</button> -->
               
               <button type="reset" class="btn btn-outline btn-danger" 
                 onClick="window.location.assign('{{url_list}}')" id="btn-cancelar">Cancelar</button> 
