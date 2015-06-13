@@ -115,7 +115,10 @@ def get_apps_html(path, hab_UL=False, nivel=1, empresa=None):
                 if app_name == 'parametro.paramgeral':
                     url_app = url_app.replace('(?P<pk>\d+)/$',str(empresa))
                 
-                html += "%s %s '%s' %s" % (TAG_A_PARTIAL, ATTR_HREF, url_app, CLOSE_TAG)
+                #html += "%s %s '%s' %s" % (TAG_A_PARTIAL, ATTR_HREF, url_app, CLOSE_TAG)
+                html += "%s href='javascript:void(0)' onclick='openPage(\"%s\", \"%s\", \"%s\")' %s" % \
+                    (TAG_A_PARTIAL, app_name, url_app, menu_apps.MenuApps.GetAppVerboseName(app_name), 
+                        CLOSE_TAG_A)
                 
                 if menu_apps.MenuApps.ImgMenuApp(app_name):
                     html += "%s class='%s'> %s" % (TAG_I, menu_apps.MenuApps.ImgMenuApp(app_name),CLOSE_TAG_I)

@@ -794,7 +794,7 @@ function GetGridEditable(module, model, filter, columns, parent, parent_module, 
 function ControlPagination(total_pages, columns, selected_page, module, model, command){  
   var section_paginate = $("#section_paginate").val();
   
-  var pages_in_section = 15;
+  var pages_in_section = 12;
   var next_section = 0;
   var initial_page = 0;
   var end_page = 0;

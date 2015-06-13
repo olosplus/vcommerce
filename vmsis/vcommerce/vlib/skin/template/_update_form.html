@@ -1,4 +1,4 @@
-{% extends 'base.html' %}
+{% extends 'simple_base.html' %}
 {% load staticfiles %}
 {% load db_tags %}
 
@@ -14,9 +14,9 @@
   <div class="row-fluid"> 
     <!-- block -->
     <div class="block"> 
-      <div class="panel panel-default panel-customizado">
+      <div class="panel panel-default panel-customizado" id="main-panel">
         <div class="panel-heading">
-          <h3 class="panel-title"><a href="{{url_list}}">{{ titulo }}</a> <i class="glyphicon glyphicon-play"></i> Edição</h3>
+          <h3 class="panel-title"><a id="header-title-link" href="{{url_list}}">{{ titulo }}</a> / Edição</h3>
         </div>
         <div class="panel-body">
           <div class="block-content collapse in">

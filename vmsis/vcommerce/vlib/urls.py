@@ -8,4 +8,5 @@ urlpatterns += patterns('', url('getgrid/', 'vlib.views.GetGridCrud'),)
 urlpatterns += patterns('', url('mudarunidade/', 'vlib.views.SetUnidade'),)
 urlpatterns += patterns('', url('printgrid/', 'vlib.views.PrintGrid' ),)
 urlpatterns += patterns('', url('getgrideditable/', 'vlib.views.GetGridEditable' ),)
+urlpatterns += patterns('', url('getdatalookup/', 'vlib.views.GetDataLookup' ),)
 

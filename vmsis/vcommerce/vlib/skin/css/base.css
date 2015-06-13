@@ -2,7 +2,10 @@ a{
   text-decoration: none;
 }
 
-body div div div.container-fluid img{
+a:hover{
+  text-decoration: none;
+}
+/*#main-container img{
   width: 70%;
   height: 10em;
   position: absolute;
@@ -14,6 +17,17 @@ body div div div.container-fluid img{
   opacity:0.10;
    -moz-opacity: 0.10;
    filter: alpha(opacity=10);
+
+}*/
+
+#main-container{
+  background-image: url(../img/vmsis-logo-transparent.png); 
+  
+  min-height: 35em; 
+  min-width: 100%;   
+  background-repeat:no-repeat;
+  background-size: 100% 10em;
+  background-position:center center;
 }
 
 div.navbar-header a.navbar-brand img{
@@ -97,3 +111,60 @@ form ul.alert{
   display: block;
   margin : 10px;
 }
+
+.vmsis_pages{
+  width: 100%;
+  height: 40%;
+  z-index: 100;
+  overflow: hidden;
+
+}
+
+.pages-nav{
+  background-color: #337AB7;
+  color:white;
+  
+  height: 25px; 
+  font-size : 13px;
+  cursor: pointer;
+  /*border-radius: 6px;*/
+  border: none;
+  
+
+}
+
+.div-page-navi{
+   margin-top: 3px;  
+   padding-left: 4px;
+   float: left;
+   display: inline;
+   background-color: #337AB7;
+   border-right: 1px solid white;
+}
+
+.div-page-navi .page-close{
+  padding-right: 5px;
+  padding-left: 5px;
+  color:white;
+  font-size: 17px;
+
+}
+
+.page-close:hover{
+  
+  color:red;
+  text-decoration: none;
+
+}
+
+.pages-nav:hover{
+   color: #FFFF00;  
+}
+
+.page-active{
+  background-color: red;
+}
+
+.page-active > .page-close:hover{
+  color: black !important;
+};

@@ -60,20 +60,32 @@
   </head>
 <body {% block tagbody %} {% endblock %}>
   <div id="dialog" title="Filtro"></div>
+
   {% block corpo %}
     <div id="wrapper">
       <!-- Navigation -->
-      <nav class="navbar navbar-default navbar-static-top" role="navigation" style="margin-bottom: 0">   
+      <nav class="navbar navbar-default navbar-static-top" role="navigation" style="margin-bottom: 0"
+        id="main-top-navigator">   
         {% include 'bar_top.html' %}
+      
         <!-- /.navbar-top-links -->
-        {% include 'menu_lat.html' %}
+        {% include 'menu_lat.html' %}        
         <!-- /.navbar-static-side -->
+
       </nav>
+
       <!-- Page Content -->
-      <div id="page-wrapper">
-        <div class="container-fluid">          
+      <div id="page-wrapper" class="main-base">
+<!--        <nav class="navbar navbar-default">
+          <div class="container-fluid"> -->
+            <div id="open-pages-navigation" class="pages-navigation navbar-header"> 
+              <!--<a class="navbar-brand" href="#">Brand</a> -->
+            </div> 
+<!--          </div>          
+        </nav> -->
+        <div class="container-fluid" id="main-container">          
           {% block conteudo %}
-            <img src="{% static 'img/vmsis-logo.png' %}">
+              <!--<img src="{% static 'img/vmsis-logo.png' %}" class="background-logo">  -->
           {% endblock %}
         </div>
         <!-- /.container-fluid -->
@@ -89,6 +101,7 @@
     <script src="{% static 'grid/grid.js' %}"></script>    
     <script src="{% static 'grid/filtro.js' %}"></script>    
 
+    <script src="{% static 'js/base.js' %}"></script>        
     <script src="{% static 'js/base-ajax.js' %}"></script>        
 
     <script src="{% static 'components/raphael/raphael-min.js' %}"></script>

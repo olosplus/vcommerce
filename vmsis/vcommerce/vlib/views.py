@@ -5,7 +5,7 @@ from django.db.models import get_model
 from django.db import models
 from django.apps import apps
 from django.core.exceptions import ValidationError
-from vlib.filtro import Filtro as FormFiltro
+from vlib.dynamic_forms import Dynamic as FormFiltro
 from vlib.grid import Grid
 from vlib.menu_apps import MenuApps
 from collections import OrderedDict
@@ -267,6 +267,7 @@ def delete_grid(request):
  
     return HttpResponse('Dados atualizados com sucesso!');
 
+
 def Filtro(request):
    
     str_model = request.GET.get('model')
@@ -279,7 +280,7 @@ def Filtro(request):
     except LookupError:
         return HttpResponse("An error ocurred. The model or module don't exists")
 
-    Filtrar = FormFiltro(model = model, request = request)    
+    Filtrar = FormFiltro(model = model, request = request, template="filtro.html")    
     return Filtrar.Response()
 
 
@@ -357,6 +358,7 @@ def GetGridConfiguration(request):
     return {"model" : model, "filter" : dict_filter, "fields" : fields_display, "page" : page, "order" : order_by,
        "parent":parent_model, "parent_id":parent_id}
 
+
 def GetGridCrud(request):
     try:
         conf = GetGridConfiguration(request = request)    
@@ -369,6 +371,7 @@ def GetGridCrud(request):
         print(e)
     return HttpResponse(grid_js)    
 
+
 def GetGridEditable(request):
     try:
         conf = GetGridConfiguration(request = request)    
@@ -376,7 +379,6 @@ def GetGridEditable(request):
         GridData = Grid(conf["model"], parent_model = conf["parent"], parent_pk_value = conf["parent_id"])
 
         grid_js = GridData.get_js_grid(use_crud = False, read_only = False, dict_filter = conf["filter"])
-
 
     except Exception as e:
         print(e)
@@ -456,4 +458,25 @@ def PrintGrid(request):
     except Exception as e:
         print(e)
         return HttpResponse(e)
-        
+
+def GetDataLookup(request):
+    str_model = request.GET.get('model')
+    str_module = request.GET.get('module')
+    
+    list_module = str_module.split('.')    
+
+    try:
+        model = apps.get_app_config(list_module[len(list_module)-2]).get_model(str_model)
+    except LookupError:
+        return HttpResponse("An error ocurred. The model or module don't exists")
+    
+    query = model.objects.all()
+    str_objects = []
+    id_values = []
+    data = []
+
+    for q in query:
+        data.append({"object":str(q), "value":str(q.id)})
+    
+    return HttpResponse(str(data))
+    

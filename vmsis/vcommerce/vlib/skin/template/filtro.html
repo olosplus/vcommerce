@@ -1,7 +1,15 @@
 {% extends 'simple_base.html' %}
+{% load db_tags %} 
 {% block corpo %}
     <input type="checkbox" name="palavras_inteiras" id="palavras_inteiras" value="N"> Apenas palavras inteiras
     <form class="form-horizontal" action="" method="post" id="{{form_id}}">{% csrf_token %} 
-      {{ form.as_p }}                      
+        {% for field in form %}
+            <div class="fieldWrapper">
+                    {{ field.errors }}
+                    {{ field.label_tag }} </br>
+                    {{ field|add_class:"form-control form-control-customizado inline" }}
+                    {{ fks|get_fk:field.name | safe }}  
+                </div>
+        {% endfor %}                
     </form>
 {% endblock %}

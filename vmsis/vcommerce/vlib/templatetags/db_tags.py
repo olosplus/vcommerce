@@ -18,8 +18,8 @@ def get_info(valor, info):
 def get_fk(fields, key):
     if key in fields:
         return '<a href="javascript:void(0)" class="glyphicon glyphicon-plus inline" \
-            "onclick="insert(\'%s\', \'%s\')"></a>' % (fields[key]['model'], 
-            fields[key]['module'])
+            onclick="insert(\'%s\', \'%s\', \'%s\', \'%s\')"></a>' % (fields[key]['model'], 
+            fields[key]['module'], fields[key]['url'], fields[key]['field_name'])
     else:
         return ''
 

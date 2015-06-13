@@ -168,7 +168,7 @@ class Grid(object):
 
 
     def get_js_grid(self, read_only = True, use_crud = False, display_fields = (),
-        dict_filter = {}, page = 1, limit_data = 15, order_by = 'id'): 
+        dict_filter = {}, page = 1, limit_data = 12, order_by = 'id', display_exclude = ()): 
         ''' transform the values of a model to javascript object ''' 
 
         # strings to save columns and rows 
@@ -180,7 +180,7 @@ class Grid(object):
         # get the fields declared on model
         fields_model = self.model._meta.fields
         
-        fields_to_display = list(display_fields)
+        fields_to_display = list(display_fields)       
 
         if self.parent_model:
             parent_model_str = self.parent_model.__name__
@@ -208,6 +208,10 @@ class Grid(object):
 
         #makes the loop on fields model's, creating the columns list's. if the field is "id", dont show
         for field in fields_model:            
+
+            if field.name.lower() in display_exclude:
+                continue
+
             if link_to_form:
                 grid_conf = self.get_grid_columns_config(field.name, read_only, check_link_to_form = False)
             else:
@@ -334,7 +338,8 @@ class Grid(object):
     def get_child_class_grid(self):
         return self.__class__
 
-    def grid_as_text(self, read_only = True, use_crud = False, display_fields = (), dict_filter = {}):   
+    def grid_as_text(self, read_only = True, use_crud = False, display_fields = (), dict_filter = {}, 
+        exclude_fields = ()):   
         if read_only:
             return self.grid_script(self.get_js_grid(use_crud = use_crud, read_only = read_only, 
                 display_fields = display_fields, dict_filter = dict_filter), self.model)
@@ -345,6 +350,7 @@ class Grid(object):
                 script_grid = str()
                 app_label = ""
                 child_model_name = ""
+              
                 for child_model in child_models:                    
                     
                     if child_model.count(".") > 0:
@@ -361,7 +367,8 @@ class Grid(object):
                     GridDetalhe = class_grid(mod, self.model, self.parent_pk_value)
                     
                     script_grid += self.grid_script(data = GridDetalhe.get_js_grid(use_crud = use_crud,
-                        read_only = read_only, display_fields = display_fields, dict_filter = dict_filter),
+                        read_only = read_only, display_fields = display_fields, dict_filter = dict_filter, 
+                        display_exclude = exclude_fields),
                         model = mod)
                     
                     GridDetalhe.parent_pk_value = -1 

@@ -108,7 +108,7 @@ class StandardFormGrid(ModelForm):
             
             is_fk_to_parent = False
             model_field_rel_to = None
-            link_to_form_alreay_found = False
+            link_to_form_already_found = False
             exclude_validations = []
 
             row_json = dict(json.loads(row))
@@ -119,10 +119,17 @@ class StandardFormGrid(ModelForm):
 
                 if field.name == 'id':
                     continue
-    
-                if field.name == link_to_form and not link_to_form_alreay_found:
-                    if commit:                    
+                
+                if field.name == self.nome_campo_empresa:
+                    setattr(mod, field.get_attname_column()[0], self.funcionario['empresa'])
+                    continue
 
+                if field.name == self.nome_campo_unidade:
+                    setattr(mod, field.get_attname_column()[0], self.funcionario['unidade'])
+                    continue
+
+                if field.name == link_to_form and not link_to_form_already_found:
+                    if commit:                    
                         if parent_model in self.grids_child_map:
                             if row_json['data-parent-indexrow'] in self.grids_child_map[parent_model]:
                                 setattr(mod, field.get_attname_column()[0], self.grids_child_map[parent_model]\
@@ -133,9 +140,9 @@ class StandardFormGrid(ModelForm):
                             setattr(mod, field.name, parent_instance)
                     
                     exclude_validations.append(field.name)
-                    link_to_form_alreay_found = True
+                    link_to_form_already_found = True
                     continue
-                elif not link_to_form_alreay_found: 
+                elif not link_to_form_already_found: 
                     if field.__class__ == models.ForeignKey:
                         model_field_rel_to = mod._meta.get_field(field.name).rel.to
                         is_fk_to_parent = (model_field_rel_to == parent_instance.__class__ or \
@@ -143,7 +150,7 @@ class StandardFormGrid(ModelForm):
         
                     if is_fk_to_parent:
                         setattr(mod, field.name, parent_instance)  
-                        link_to_form_alreay_found = True
+                        link_to_form_already_found = True
                         exclude_validations.append(field.name)
                         continue 
     
@@ -203,6 +210,15 @@ class StandardFormGrid(ModelForm):
             for field in model._meta.fields:
                 if field.name == 'id':
                     continue
+
+                if field.name == self.nome_campo_empresa:
+                    setattr(mod, field.get_attname_column()[0], self.funcionario['empresa'])
+                    continue
+
+                if field.name == self.nome_campo_unidade:
+                    setattr(mod, field.get_attname_column()[0], self.funcionario['unidade'])
+                    continue
+
                 if field.name in row_json:
                     setattr(mod, field.name, row_json[field.name])
                 else:
@@ -424,7 +440,7 @@ class StandardCrudView(object):
         rel_to = None
         self.fks_fields = {}
         self.show_fields = []
-
+        
         for field in self.model._meta.fields:                
             try:
                 rel_to = field.rel.to
@@ -432,8 +448,9 @@ class StandardCrudView(object):
                 rel_to = None
                 
             if not rel_to is None:
+                url = urlsCrud(rel_to)
                 self.fks_fields.update({ field.name:{'module': rel_to.__module__, 
-                    'model': rel_to.__name__} })
+                    'model': rel_to.__name__, 'url':url.BaseUrlInsert(CountPageBack=2), 'field_name':field.name} })
             
             if field.name.lower() == 'empresa':
                 self.nome_campo_empresa = field.name
@@ -547,7 +564,8 @@ class ViewCreate(StandardCrudView, CreateView):
         context['url_list'] = Urls.BaseUrlList(CountPageBack = 1)
         context['url_insert'] = Urls.BaseUrlInsert(1)
         context['form_id'] = self.model.__name__
-        context['grid'] = grid.grid_as_text(use_crud = False, read_only = False, dict_filter = {'id':-1});        
+        context['grid'] = grid.grid_as_text(use_crud = False, read_only = False, dict_filter = {'id':-1},
+            exclude_fields = ('empresa', 'unidade'));
         context['titulo'] = page_caption        
         context['funcionario'] = self.request.session['funcionario']
         context['fks'] = self.fks_fields
@@ -592,7 +610,8 @@ class ViewUpdate(StandardCrudView, UpdateView):
 
         grid = self.get_grid_instance(parent_pk_value = objeto.pk)
         
-        context['grid'] = grid.grid_as_text(use_crud = False, read_only = False);
+        context['grid'] = grid.grid_as_text(use_crud = False, read_only = False,
+            exclude_fields = ('empresa', 'unidade'));
 
         context['form_pk'] = objeto.pk
         context['JsFiles'] = StaticFiles.GetJs(self.MediaFiles)
