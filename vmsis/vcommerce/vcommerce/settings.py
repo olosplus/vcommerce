@@ -82,27 +82,27 @@ WSGI_APPLICATION = 'vcommerce.wsgi.application'
 # }
 
 #ivan
-#DATABASES = {
-#    'default': {
-#        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-#        'NAME': 'postgres',
-#        'USER': 'postgres',
-#        'PASSWORD': 'ivan',
-#        'HOST': 'localhost',
-#        'PORT': '5432',
-#    }
-#}
-
-#Jefferson
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'vmsis_db',
-        'HOST': 'localhost',
+        'NAME': 'postgres',
         'USER': 'postgres',
-        'PASSWORD': 'x66gx407',
+        'PASSWORD': 'ivan',
+        'HOST': 'localhost',
+        'PORT': '5432',
     }
 }
+
+#Jefferson
+#DATABASES = {
+#    'default': {
+#        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+#        'NAME': 'vmsis_db',
+#        'HOST': 'localhost',
+#        'USER': 'postgres',
+#        'PASSWORD': 'x66gx407',
+#    }
+#}
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.7/topics/i18n/
