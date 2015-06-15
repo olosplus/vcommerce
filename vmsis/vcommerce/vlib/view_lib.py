@@ -120,11 +120,11 @@ class StandardFormGrid(ModelForm):
                 if field.name == 'id':
                     continue
                 
-                if field.name == self.nome_campo_empresa:
+                if field.name.lower() == 'empresa':
                     setattr(mod, field.get_attname_column()[0], self.funcionario['empresa'])
                     continue
 
-                if field.name == self.nome_campo_unidade:
+                if field.name.lower() == 'unidade':
                     setattr(mod, field.get_attname_column()[0], self.funcionario['unidade'])
                     continue
 
@@ -210,12 +210,12 @@ class StandardFormGrid(ModelForm):
             for field in model._meta.fields:
                 if field.name == 'id':
                     continue
-
-                if field.name == self.nome_campo_empresa:
+                
+                if field.name.lower() == 'empresa':                    
                     setattr(mod, field.get_attname_column()[0], self.funcionario['empresa'])
                     continue
 
-                if field.name == self.nome_campo_unidade:
+                if field.name.lower() == 'unidade':
                     setattr(mod, field.get_attname_column()[0], self.funcionario['unidade'])
                     continue
 
