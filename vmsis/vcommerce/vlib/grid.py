@@ -106,9 +106,11 @@ class Grid(object):
         if read_only:
             if field_choices:
                 return {"type":"select-readonly", "objects":str(str_objects).replace("'",""), \
-                   "values":str(id_values).replace("'",""), "is_link_to_form" : False }
+                   "values":str(id_values).replace("'",""), "is_link_to_form" : False, 
+                   "model":"", "url":"", "module":"" }
             else :    
-                return {"type":"", "objects":"", "values":"", "is_link_to_form" : False } 
+                return {"type":"", "objects":"", "values":"", "is_link_to_form" : False,
+                    "model":"", "url":"", "module":"" } 
 
         attr = self.get_model_attributes(field_name)
         column_type = attr[field_name]['grid-type']
@@ -116,7 +118,8 @@ class Grid(object):
 
         if self.parent_model and check_link_to_form and ((column_model == self.parent_model) or \
            (self.parent_model.__base__ == column_model)):
-                return {"type":"", "objects":"", "values":"", "is_link_to_form" : True }
+                return {"type":"", "objects":"", "values":"", "is_link_to_form" : True, 
+                    "model":"", "url":"", "module":""}
 
         if column_model != None:            
             query = self.get_field_query_set(model_rel_to = column_model, field_name = field_name)
@@ -125,17 +128,34 @@ class Grid(object):
                 str_objects.append(str(q));
                 id_values.append(str(q.id))
             
+            show_plus = True
+
+            url = ""
+            module = ""
+            model_name = ""
+
+            if hasattr(self.model._meta, "exclude_fk_plus"):
+                if field_name in self.model._meta.exclude_fk_plus:
+                    show_plus = False
+            
+            if show_plus:
+                Urls = urlsCrud(column_model);        
+                url = Urls.BaseUrlInsert(CountPageBack = 2)
+                module = column_model.__module__
+                model_name = column_model.__name__
+            
             return {"type":column_type, "objects":str(str_objects).replace("'", '"'), 
                 "values":str(id_values).replace("'", '"'), 
-                "is_link_to_form" : False}
+                "is_link_to_form" : False, "model":model_name, "url":url, 
+                "module":module}
 
         else:
             if field_choices:
                 return {"type":"select", "objects":str_objects, "values":id_values, 
-                    "is_link_to_form" : False}
+                    "is_link_to_form" : False, "model":"", "url":"", "module":""}
             else:
                 return {"type":column_type, "objects":"", "values":"", 
-                    "is_link_to_form" : False}
+                    "is_link_to_form" : False, "model":"", "url":"", "module":""}
 
     def get_model_field_config(self, field_name, field_config):
         return getattr(self.model._meta.get_field(field_name), field_config)            
@@ -232,10 +252,10 @@ class Grid(object):
                       field.verbose_name, grid_conf["type"], field.name)
                 else:                    
                     columns += '"%s":{"name":"%s", "label":"%s", "type":"%s", "options":%s, "values":%s, \
-                    "name_field_display":"%s"},'\
+                    "name_field_display":"%s", model:"%s", module:"%s", url:"%s"},'\
                     % (field.name, self.get_name_column_grid(field.name, type(field)), field.verbose_name, 
                         grid_conf["type"], grid_conf["objects"], grid_conf["values"], 
-                        field.name )  
+                        field.name, grid_conf["model"], grid_conf["module"], grid_conf["url"] )  
 
                 fields_to_display.append(field.name)
             else :
@@ -254,10 +274,11 @@ class Grid(object):
                             grid_conf["type"], temp_display[field.name.upper()]["display_name"] )
                     else:
                         columns += '"%s":{"name":"%s", "label":"%s", "type":"%s", "options":%s, "values":%s, \
-                            "name_field_display":"%s"},' % \
+                            "name_field_display":"%s", model:"%s", module:"%s", url:"%s"},' % \
                             (field.name, self.get_name_column_grid(field.name, type(field)), field.verbose_name,
                             grid_conf["type"], grid_conf["objects"], grid_conf["values"], 
-                            temp_display[field.name.upper()]["display_name"] )
+                            temp_display[field.name.upper()]["display_name"],  grid_conf["model"],
+                            grid_conf["module"], grid_conf["url"])
                         
         if use_crud:
             columns += '"col_update":{"name":"update", "label":"%s", "type":"link"},' % ''#(_('Update'))            

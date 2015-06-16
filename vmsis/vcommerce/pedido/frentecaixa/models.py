@@ -36,6 +36,7 @@ class ItemPedido(models.Model):
 		verbose_name = "Item do Pedido"
 		verbose_name_plural = "Itens dos Pedidos"
 		child_models = ['ItAdicional']
+		
 
 	#categoria = models.ForeignKey(Categoria, verbose_name="Categoria")
 	pedido = models.ForeignKey(Pedido)

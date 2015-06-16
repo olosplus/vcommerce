@@ -448,9 +448,16 @@ class StandardCrudView(object):
                 rel_to = None
                 
             if not rel_to is None:
-                url = urlsCrud(rel_to)
-                self.fks_fields.update({ field.name:{'module': rel_to.__module__, 
-                    'model': rel_to.__name__, 'url':url.BaseUrlInsert(CountPageBack=2), 'field_name':field.name} })
+                to_include_in_fk = True
+
+                if hasattr(self.model._meta, 'exclude_fk_plus'):                
+                    if(field.name in self.model._meta.exclude_fk_plus):
+                        to_include_in_fk = False
+
+                if to_include_in_fk:
+                    url = urlsCrud(rel_to)
+                    self.fks_fields.update({ field.name:{'module': rel_to.__module__, 
+                        'model': rel_to.__name__, 'url':url.BaseUrlInsert(CountPageBack=2), 'field_name':field.name} })
             
             if field.name.lower() == 'empresa':
                 self.nome_campo_empresa = field.name

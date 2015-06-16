@@ -17,6 +17,7 @@ class Cardapio(models.Model):
 		verbose_name = "Cardapio"
 		verbose_name_plural = "Cardapios"
 		child_models = ['ItAgrupAdicional']
+		
 
 	#nmcategoria = models.CharField(max_length=250,verbose_name="Nome",unique=True)
 	#idcardapiotiv = models.CharField(max_length=1,verbose_name="Situação",choices=choice_tipo_ativ,default='A')

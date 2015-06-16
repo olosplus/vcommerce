@@ -212,7 +212,18 @@ function InsertEmptyRow(columns, idGrid, link_to_form) {
           var options = columns[column].options;
           var values = columns[column].values;
           var selected = "selected";
-          html += "<select class = 'gridtag' name='" + columns[column].name + "' onclick='SetChangesLine(this)'>";
+          var model = columns[column].model;
+          var module = columns[column].module;
+          var url = columns[column].url;
+          var name = columns[column].name;
+
+          var popupScript = "";
+          if(url){
+            popupScript += "ondblclick='insert(\""+ model +"\", \""+ module +"\", \""+ url +"\",\""+name +"\")'"
+          }
+
+          html += "<select class = 'gridtag' name='" + columns[column].name + "' onclick='SetChangesLine(this)' "+
+          popupScript + " >";
           for (option in options) {
             if (options.hasOwnProperty(option)) {
               html += "<option value='" + values[option] + "'";
@@ -318,9 +329,18 @@ function InsertLineWithValue(row, columns, readonly, link_to_form, index_row, id
         if (columns[column].options != 'undefined') {
           options = columns[column].options;
           values = columns[column].values;
+          var model = columns[column].model;
+          var module = columns[column].module;
+          var url = columns[column].url;
+          var name = columns[column].name;
+
+          var popupScript = "";
+          if(url){
+            popupScript += "ondblclick='insert(\""+ model +"\", \""+ module +"\", \""+ url +"\",\""+name +"\")'"
+          }
           
           html += "<select  class='gridtag' name='" + columns[column].name + "' " + 
-            " onclick='SetChangesLine(this)' onkeydown='SetChangesLine(this)'>";
+            " onclick='SetChangesLine(this)' onkeydown='SetChangesLine(this)' "+ popupScript +">";
           for (option in options) {
             if (options.hasOwnProperty(option)) {
               html += "<option value='" + values[option] + "'";

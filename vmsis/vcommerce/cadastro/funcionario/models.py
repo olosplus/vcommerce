@@ -39,6 +39,7 @@ class Funcionario(Master_empresa):
 
     class Meta:
         ordering = ['-id']
+        
 
     def save(self):
         if not self.id:

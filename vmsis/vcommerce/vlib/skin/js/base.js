@@ -128,14 +128,28 @@ function getDataLookup(model, module, id_component){
       var dataLk = eval(data);
       
       var lookup = $("#" + id_component);
-      lookup.empty();      
-      var newOption = $('<option value="-1">----------</option>');
-      lookup.append(newOption);
-      for(var i = 0; i <= dataLk.length - 1; i++){
-        newOption = $('<option value="'+ dataLk[i].value +'">'+ dataLk[i].object +'</option>');
-        lookup.append(newOption);
-        lookup.trigger("chosen:updated");         
-      }
+      
+      if(lookup.length <= 0){
+        lookup = $("[name='" + id_component.replace("id_", "") + "']");
+      };
+
+      var lkValue;
+      lookup.each(function(){
+        th = $(this);
+        lkValue = th.val();
+        th.empty();
+
+        var newOption = $('<option value="-1">----------</option>');
+        th.append(newOption);
+
+        for(var i = 0; i <= dataLk.length - 1; i++){
+          newOption = $('<option value="'+ dataLk[i].value +'">'+ dataLk[i].object +'</option>');
+          th.append(newOption);
+          th.trigger("chosen:updated");         
+        }
+        th.val(lkValue);
+      });
+
     },
     error: function (data) {
       alert(data.responseText);
