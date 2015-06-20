@@ -15,8 +15,6 @@ class Itemtransf(Master_empresa):
 		ordering = ['produto__nmproduto']
 	
 	produto = models.ForeignKey(Produto,verbose_name='Produto')
-	lote_old = models.ForeignKey(Lote,related_name='lote_origem',verbose_name='Lote Anterior', null=True, blank=True)
-	qtdeprod_old = models.FloatField(verbose_name="Qdte Anterior")
-	lote = models.ForeignKey(Lote,related_name='lote_destino',verbose_name='Lote', null=True, blank=True)
+	lote = models.ForeignKey(Lote,related_name='lote',verbose_name='Lote', null=True, blank=True)
 	qtdeprod = models.FloatField(verbose_name="Quantidade")
 	master_moviest = models.ForeignKey(Master_moviest,null=True)

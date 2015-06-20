@@ -31,7 +31,7 @@
                       {{ field.errors }}
                       {{ field.label_tag }} </br>
                       {{ field|add_class:"form-control form-control-customizado inline" }}
-                      {{ fks|get_fk:field.name | safe }}  
+                      {{ fks|get_fk:field.name | safe }}
                     </div>
                   {%endif%}                  
                 {% endfor %}                

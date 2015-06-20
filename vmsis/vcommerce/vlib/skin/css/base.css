@@ -121,16 +121,14 @@ form ul.alert{
 }
 
 .pages-nav{
-  background-color: #337AB7;
+  background-color: #e7e7e7;
   color:white;
   
   height: 25px; 
   font-size : 13px;
   cursor: pointer;
-  /*border-radius: 6px;*/
-  border: none;
-  
-
+  border: 1px;
+  border-color: #286090;
 }
 
 .div-page-navi{
@@ -138,8 +136,10 @@ form ul.alert{
    padding-left: 4px;
    float: left;
    display: inline;
-   background-color: #337AB7;
-   border-right: 1px solid white;
+   background-color: #e7e7e7;
+   border-right: 1px solid #2e6da4;
+   border-top-left-radius: 8px;
+   border-top-right-radius: 8px;
 }
 
 .div-page-navi .page-close{
@@ -151,20 +151,15 @@ form ul.alert{
 }
 
 .page-close:hover{
-  
   color:red;
   text-decoration: none;
-
 }
 
 .pages-nav:hover{
-   color: #FFFF00;  
+  color:white;
+  font-size : 15px;
 }
 
 .page-active{
-  background-color: red;
+  background-color: #337ab7;
 }
-
-.page-active > .page-close:hover{
-  color: black !important;
-};
