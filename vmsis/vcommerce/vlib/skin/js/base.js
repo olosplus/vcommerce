@@ -95,7 +95,6 @@ function openPage(app, url, title){
 }
 
 function insert(model, module, url, name){
-
     var w = $(window).width();
     var h = $(window).height();
     var left = (screen.width/2)-(w/2);
@@ -113,10 +112,10 @@ function insert(model, module, url, name){
        this.document.getElementById("header-title-link").setAttribute("href", "javascript:void(0)");
     }
 
-    myWindow.onbeforeunload = function(){
+    /*myWindow.onbeforeunload = function(){
       getDataLookup(model, module, 'id_' + name);
-      this.close();
-    }
+      myWindow.close();      
+    }*/
 }
 
 function getDataLookup(model, module, id_component){
@@ -149,14 +148,13 @@ function getDataLookup(model, module, id_component){
         }
         th.val(lkValue);
       });
-
+      return true;
     },
     error: function (data) {
       alert(data.responseText);
       return false;
     }
   });
-
 }
 
 $(document).ajaxComplete(function() {

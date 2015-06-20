@@ -104,7 +104,8 @@ form ul.alert{
 }
 
 .form-control-customizado{
-  width: 98% !important;
+  /*width: 98% !important;*/
+  width: 98%;
 }
 
 .fieldWrapper{

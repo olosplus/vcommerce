@@ -8,6 +8,7 @@ try:
     return_code = subprocess.call('find -iname "__pycache__" -exec rm -rfv {} \\;', shell=True)
     return_code = subprocess.call('find -type f -name "*.py~" -exec rm -rfv {} \\;', shell=True)
     return_code = subprocess.call('find vmsis/vcommerce/ -iname "migrations" -exec rm -rfv {} \\;', shell=True)
+    return_code = subprocess.call('find vmsis/vcommerce/ -type f -name "*.pyc" -exec rm -rfv {} \\;', shell=True)
     print("\nApagando banco de dados...")
     if (os.path.exists('vmsis/vcommerce/db.sqlite3')):
         return_code = subprocess.call('rm vmsis/vcommerce/db.sqlite3', shell=True)    

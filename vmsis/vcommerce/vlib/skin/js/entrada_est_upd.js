@@ -13,7 +13,7 @@ function InicEntrada() {
 
   var dtentr = $("#id_dtentrada");
   dtentr.css('display', 'none');
-  dtentr.parent().append("<input class='form-control form-control-customizado inline' type='date' "+
+  dtentr.parent().append("<input class='form-control' type='date' "+
     "value='"+ dtentr.val() +"' disabled >");
 };
 
