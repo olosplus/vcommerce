@@ -38,7 +38,7 @@ class FormFrentecaixa(StandardFormGrid):
             itempedido = ItemPedido.objects.get(pk=instance.itempedido.id)
             cardapio = Cardapio.objects.get(pk=itempedido.cardapio.id)
             itempedido.vrvenda = cardapio.vrvenda 
-            agrupadicional = AgrupAdicional.objects.get(pk=adicionais.agrupadicional.id)
+            agrupadicional = AgrupAdicional.objects.get(pk=instance.item.agrupadicional.id)
             itempedido.vrtotal = (itempedido.qtitem * cardapio.vrvenda) + (itempedido.qtitem *(agrupadicional.vragrupadic*instance.qtitem))
             itempedido.idadicional = True
             itempedido.save()
@@ -49,7 +49,7 @@ class FormFrentecaixa(StandardFormGrid):
             cardapio = Cardapio.objects.get(pk=itempedido.cardapio.id)
             itempedido.vrvenda = cardapio.vrvenda 
             adicionais = Adicionais.objects.get(pk=instance.item.id)
-            agrupadicional = AgrupAdicional.objects.get(pk=adicionais.agrupadicional.id)
+            agrupadicional = AgrupAdicional.objects.get(pk=instance.item.agrupadicional.id)
             itempedido.vrtotal = (itempedido.qtitem * cardapio.vrvenda) + (itempedido.qtitem *(agrupadicional.vragrupadic*instance.qtitem))
             itempedido.idadicional = True
             itempedido.save()
@@ -82,20 +82,21 @@ class FormFrentecaixa(StandardFormGrid):
                 for itcomp in itemcomp:
                     setattr(itreti, 'item' , itcomp.prodcomp)
                     setattr(itreti, 'qtreti' , itcomp.qtcomp)
-                    msgErroaux = FunEstoque.said_prod_est(itcomp.prodcomp.id, item.almoxarifado, item.lote_id, itcomp.qtcomp)
+                    print(msgErroaux)
+                    #msgErroaux = FunEstoque.said_prod_est(itcomp.prodcomp.id, item.almoxarifado, item.lote_id, itcomp.qtcomp)
                     if msgErroaux :
                         msgErro =  msgErro + msgErroaux
             else:
                 setattr(itreti, 'item' , item.cardapio.produto)
                 setattr(itreti, 'qtreti' , item.qtitem)
-                msgErroaux = FunEstoque.said_prod_est(item.cardapio.produto.id, item.almoxarifado, item.lote_id, item.qtitem)
+                #msgErroaux = FunEstoque.said_prod_est(item.cardapio.produto.id, item.almoxarifado, item.lote_id, item.qtitem)
                 if msgErroaux :
                     msgErro =  msgErro + msgErroaux
-            
+            """
             itadicional = ItAdicional.objects.filter(itempedido=item)
             for adcional in itadicional:
-                
-                itemcomp = ComposicaoProd.objects.filter(pk=adcional.adicionais.produto_id)
+                print(adcional.item.id)
+                itemcomp = ComposicaoProd.objects.filter(pk=adcional.item.id)
                 if itemcomp:
                     for itcomp in itemcomp:
                         setattr(itreti, 'item' , itcomp.prodcomp)
@@ -104,12 +105,17 @@ class FormFrentecaixa(StandardFormGrid):
                         if msgErroaux :
                             msgErro =  msgErro + msgErroaux
                 else:
-                    setattr(itreti, 'item' , adcional.adicionais.produto)
-                    setattr(itreti, 'qtreti' , adicional.qtitem)
-                    msgErroaux = FunEstoque.said_prod_est(adcional.adicionais.produto_id, item.almoxarifado, item.lote_id, adicional.qtitem)
+                    print('pt')
+                    print(adcional.item.item)
+                    prod = Produto.objects.filter(pk=adcional.item.id)
+                    setattr(itreti, 'item' , adcional.item.item)
+                    print('pt1')
+                    setattr(itreti, 'qtreti' , adcional.qtitem)
+                    msgErroaux = FunEstoque.said_prod_est(adcional.item.id, item.almoxarifado, item.lote_id, adcional.qtitem)
                     if msgErroaux :
                         msgErro =  msgErro + msgErroaux
-        
+            """            
+        print(msgErro)
         if msgErro:   
             Pedido.objects.get(pk=instance.id).delete()
             return msgErro
@@ -123,7 +129,7 @@ class FormFrentecaixa(StandardFormGrid):
                 raise
             else:
                 itreti.save()
-
+            print('pt8') 
             return instance 
     """
     def  delete(self, commit=True):
