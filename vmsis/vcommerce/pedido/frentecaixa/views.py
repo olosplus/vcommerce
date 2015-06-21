@@ -74,6 +74,7 @@ class FormFrentecaixa(StandardFormGrid):
         setattr(itreti, 'lote_id' , item.lote)
         
         msgErro = ''
+        msgErroaux = str()
         FunEstoque = Estoque(self.funcionario["empresa"])
         for item in itempedido:
             itemcomp = ComposicaoProd.objects.filter(pk=item.cardapio.produto_id)
@@ -81,35 +82,41 @@ class FormFrentecaixa(StandardFormGrid):
                 for itcomp in itemcomp:
                     setattr(itreti, 'item' , itcomp.prodcomp)
                     setattr(itreti, 'qtreti' , itcomp.qtcomp)
-                    msgErro =  msgErro + FunEstoque.said_prod_est(itcomp.prodcomp.id, item.almoxarifado, item.lote_id, itcomp.qtcomp)
+                    msgErroaux = FunEstoque.said_prod_est(itcomp.prodcomp.id, item.almoxarifado, item.lote_id, itcomp.qtcomp)
+                    if msgErroaux :
+                        msgErro =  msgErro + msgErroaux
             else:
-                print('pt4')
-                print(item.lote_id)
                 setattr(itreti, 'item' , item.cardapio.produto)
                 setattr(itreti, 'qtreti' , item.qtitem)
-                msgErro =  msgErro + FunEstoque.said_prod_est(item.cardapio.produto.id, item.almoxarifado, item.lote_id, item.qtitem)
-            print('pt7') 
+                msgErroaux = FunEstoque.said_prod_est(item.cardapio.produto.id, item.almoxarifado, item.lote_id, item.qtitem)
+                if msgErroaux :
+                    msgErro =  msgErro + msgErroaux
+            
             itadicional = ItAdicional.objects.filter(itempedido=item)
             for adcional in itadicional:
-                print(adcional.adicionais.produto_id)
+                
                 itemcomp = ComposicaoProd.objects.filter(pk=adcional.adicionais.produto_id)
                 if itemcomp:
                     for itcomp in itemcomp:
                         setattr(itreti, 'item' , itcomp.prodcomp)
                         setattr(itreti, 'qtreti' , itadicional.qtcomp)
-                        msgErro =  msgErro + FunEstoque.said_prod_est(itcomp.prodcomp.id, item.almoxarifado, item.lote_id, itadicional.qtcomp)
+                        msgErroaux = FunEstoque.said_prod_est(itcomp.prodcomp.id, item.almoxarifado, item.lote_id, itadicional.qtcomp)
+                        if msgErroaux :
+                            msgErro =  msgErro + msgErroaux
                 else:
                     setattr(itreti, 'item' , adcional.adicionais.produto)
                     setattr(itreti, 'qtreti' , adicional.qtitem)
-                    msgErro =  msgErro + FunEstoque.said_prod_est(adcional.adicionais.produto_id, item.almoxarifado, item.lote_id, adicional.qtitem)
-        print('pt8')
+                    msgErroaux = FunEstoque.said_prod_est(adcional.adicionais.produto_id, item.almoxarifado, item.lote_id, adicional.qtitem)
+                    if msgErroaux :
+                        msgErro =  msgErro + msgErroaux
+        
         if msgErro:   
             Pedido.objects.get(pk=instance.id).delete()
             return msgErro
             
         else:
             instance.save()
-            print('pt6')
+            
             try:
                 itreti.full_clean()
             except ValidationError as e:
