@@ -6,6 +6,9 @@ from pedido.cadastro_pedido.categoria.models import Categoria, ItemCategoria
 from cadastro.produto.models import Produto
 from pedido.cadastro_pedido.agrupadicional.models import AgrupAdicional, Adicionais
 from pedido.cadastro_pedido.cardapio.models import Cardapio
+from vlib.control.models import Master_empresa
+from cadastro.almoxarifado.models import Almoxarifado
+from estoque.lote.models import Lote
 
 choice_tipo_pedido = (('B','Balcao'),('D','Delivery'),('M','Mesa'))
 
@@ -30,17 +33,18 @@ class Pedido(models.Model):
 	#idstatusped = models.CharField(max_length=1, verbose_name="Status",choices=choice_status_pedido,default='P' , editable = False)
 	idstatusped = models.CharField(max_length=1, default='P' , editable = False)
 
-class ItemPedido(models.Model):
+class ItemPedido(Master_empresa):
 	class Meta:
 		db_table = "itempedido"
 		verbose_name = "Item do Pedido"
 		verbose_name_plural = "Itens dos Pedidos"
 		child_models = ['ItAdicional']
-		
 
 	#categoria = models.ForeignKey(Categoria, verbose_name="Categoria")
 	pedido = models.ForeignKey(Pedido)
 	cardapio = models.ForeignKey(Cardapio, verbose_name="Produto")
+	almoxarifado = models.ForeignKey(Almoxarifado,verbose_name='Almoxarifado', editable=False)
+	lote = models.ForeignKey(Lote,verbose_name='Lote', null=True, blank=True)
 	qtitem = models.FloatField(verbose_name="Quantidade")
 	#vrvenda = models.ForeignKey(Cardapio, related_name='Preço', verbose_name="Valor Item")
 	#vrvenda = models.ForeignKey(Cardapio, related_name='Preço',editable = False)
