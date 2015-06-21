@@ -137,13 +137,13 @@ class Estoque(object):
 			if (posicao.qtdeproduto - (p_qtde*qtfatorconv)) > 0:
 				posicao.qtdeproduto -= (p_qtde*qtfatorconv)
 				posicao.save()
-				return ''
+				
 			elif (posicao.qtdeproduto - (p_qtde*qtfatorconv)) == 0:
 				if p_lote:
 					Posestoque.objects.get(empresa_id=self.empresa, produto_id=p_produto, almoxarifado=p_almoxa, lote=p_lote).delete()
 				else:
 					Posestoque.objects.get(empresa_id=self.empresa, produto_id=p_produto, almoxarifado=p_almoxa).delete()
-				return ''	
+				
 			else:
 				return 'Erro: Posição de estoque ficaria negativa.'
 		except Posestoque.DoesNotExist:
