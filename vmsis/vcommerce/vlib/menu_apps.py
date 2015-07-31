@@ -28,12 +28,16 @@ class MenuApps:
         return apps
 
     @staticmethod
-    def GetAppsVerboseName():
+    def GetAppsVerboseName(only_visible = False):
 
         apps_str = '{'
 
         for app in apps_on_menu:
-            apps_str +=  '"%s":"%s",' % (app['app'], app['verbose_name'] )
+            if(only_visible):
+                if(MenuApps.AppIsVisible(app['app'])):
+                    apps_str +=  '"%s":"%s",' % (app['app'], app['verbose_name'] )
+            else:
+                apps_str +=  '"%s":"%s",' % (app['app'], app['verbose_name'] )
 
         apps_str += ' "end-of-dict":""}'
 
@@ -46,7 +50,7 @@ class MenuApps:
         patt += patterns('', url(r'', include(vlib_urls)  ),)        
         for app in apps_on_menu:
             if os.path.isfile(DIR + "/" + app['app'].replace(".", "/") + "/urls.py"):
-                patt += patterns('', url(r'', include(app['app'] + '.urls')),)
+                patt += patterns('', url(r'', include(app['app'] + '.urls', 'teste')),)
         return patt
    
     @staticmethod
@@ -63,7 +67,20 @@ class MenuApps:
                     return app['visible']
                 else:
                     return True
+        return False
 
+    @staticmethod
+    def AppIsVisibleByAppLabel(app_label):        
+        for app in apps_on_menu:
+            list_module = app['app'].split(".")           
+            if list_module[len(list_module)-1].upper() == app_label.upper():                
+                if 'visible' in app:
+                    return app['visible']
+                else:
+                    return True
+        return False
+    
+    
     @staticmethod
     def ImgMenuApp(app_name):
         for app in apps_on_menu:

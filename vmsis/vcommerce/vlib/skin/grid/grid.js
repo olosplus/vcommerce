@@ -649,7 +649,8 @@ function getJsonChildGrids(id){
     return script;
 }
 
-function doPostForm(send_to, form_id, url_redirect, is_delete, id_grid_delete) {
+function doPostForm(send_to, form_id, url_redirect, is_delete, id_grid_delete, close_window) {
+  close_window = close_window || false;
   var form = $('#' + form_id);
   if(form.attr('tagName') != 'form'){
     form = $('form').first();
@@ -719,9 +720,14 @@ function doPostForm(send_to, form_id, url_redirect, is_delete, id_grid_delete) {
             }
           }else{
             frm.innerHTML = frm_received.innerHTML;
+            return false;
           };
         }
       }
+      if(close_window){
+        window.close();              
+      }
+
     },
     error: function (data) {
       alert(data.responseText);

@@ -24,7 +24,7 @@ from django.db import models, transaction
 from importlib import import_module
 from django.conf import settings
 from copy import deepcopy
-
+from django.contrib.auth.decorators import permission_required
 
 #CONSTS
 TEMPLATE_INSERT = '_insert_form.html'
@@ -433,9 +433,32 @@ class StandardCrudView(object):
     show_fields = []
 
     @method_decorator(login_required)
-    def dispatch(self, *args, **kwargs):
-        return super(StandardCrudView, self).dispatch(*args, **kwargs)
-
+    def dispatch(self, *args, **kwargs):        
+        has_permission = True
+        
+        if not self.request.session["funcionario"] :
+            return HttpResponse(msg_permission_html)
+        else:
+            usr =  self.request.user
+        
+        operation = ''
+        
+        if issubclass(self.__class__, CreateView):
+            operation = '.add_'
+        elif issubclass(self.__class__, UpdateView):
+            operation = '.change_'
+        elif issubclass(self.__class__, DeleteView):
+            operation = '.delete_'
+        
+        if operation:
+            has_permission = usr.has_perm(self.model._meta.app_label + operation +
+                                          self.model.__name__.lower())
+        
+        if has_permission:    
+            return super(StandardCrudView, self).dispatch(*args, **kwargs)
+        else:            
+            return render_to_response('access_danied.html');
+    
     def set_fields_list(self):        
         rel_to = None
         self.fks_fields = {}
@@ -557,7 +580,10 @@ class ViewCreate(StandardCrudView, CreateView):
         apps = dict(self.request.session['apps_label'])
         module = self.model.__module__
         module = module.replace(".models", "")
-        page_caption = apps[module]
+        try:
+            page_caption = apps[module]
+        except Exception:
+            page_caption = ''
 
         Urls = urlsCrud(self.model);
         grid = self.get_grid_instance()
@@ -605,7 +631,11 @@ class ViewUpdate(StandardCrudView, UpdateView):
         apps = dict(self.request.session['apps_label'])
         module = self.model.__module__
         module = module.replace(".models", "")
-        page_caption = apps[module]
+        try:
+            page_caption = apps[module]
+        except Exception:
+            page_caption = ''
+
 
         Urls = urlsCrud(self.model);            
         
@@ -706,7 +736,10 @@ class ViewList(StandardCrudView, ListView):
         apps = dict(self.request.session['apps_label'])
         module = self.model.__module__
         module = module.replace(".models", "")
-        page_caption = apps[module]
+        try:
+            page_caption = apps[module]
+        except Exception:
+            page_caption = ''
 
         context = super(ViewList, self).get_context_data(**kwargs)   
         
@@ -724,27 +757,27 @@ class ConvertView:
         self.model = model
         self.Urls = urlsCrud(model);  
 
-    def Update(self, MediaFiles = [],  ClassView = ViewUpdate):
+    def Update(self, MediaFiles = [],  ClassView = ViewUpdate, TemplateName = TEMPLATE_UPDATE):
 
         return ClassView.as_view(model = self.model, success_url = self.Urls.BaseUrlList(CountPageBack=2), 
-            template_name = TEMPLATE_UPDATE, MediaFiles = MediaFiles)
+            template_name = TemplateName, MediaFiles = MediaFiles)
 
 
-    def Create(self, MediaFiles = [], ClassView = ViewCreate):    
-
-        return ClassView.as_view(model = self.model, success_url = self.Urls.BaseUrlList(CountPageBack=2), 
-            template_name = TEMPLATE_INSERT, MediaFiles = MediaFiles)    
-
-
-    def Delete(self, MediaFiles = [], ClassView = ViewDelete):
+    def Create(self, MediaFiles = [], ClassView = ViewCreate, TemplateName = TEMPLATE_INSERT):    
 
         return ClassView.as_view(model = self.model, success_url = self.Urls.BaseUrlList(CountPageBack=2), 
-            template_name = TEMPLATE_DELETE, MediaFiles = MediaFiles)        
+            template_name = TemplateName, MediaFiles = MediaFiles)    
 
-    def List(self, MediaFiles = [], Grid_Fields = [], ClassView = ViewList):
 
-        return ClassView.as_view(model = self.model, template_name = TEMPLATE_LIST, MediaFiles = MediaFiles,
-        Grid_Fields = Grid_Fields)
+    def Delete(self, MediaFiles = [], ClassView = ViewDelete, TemplateName = TEMPLATE_DELETE):
+
+        return ClassView.as_view(model = self.model, success_url = self.Urls.BaseUrlList(CountPageBack=2), 
+            template_name = TemplateName, MediaFiles = MediaFiles)        
+
+    def List(self, MediaFiles = [], Grid_Fields = [], ClassView = ViewList, TemplateName = TEMPLATE_LIST):
+
+        return ClassView.as_view(model = self.model, template_name = TemplateName, MediaFiles = MediaFiles,
+            Grid_Fields = Grid_Fields)
 
 class CrudView:
     def __init__(self, model):
@@ -754,16 +787,20 @@ class CrudView:
 
     def AsUrl(self, MediaFilesInsert = [], MediaFilesUpdate = [], MediaFilesDelete = [], MediaFilesList = [], 
         GridFields = (), ClassCreate = ViewCreate, ClassUpdate = ViewUpdate, ClassDelete = ViewDelete, 
-        ClassList = ViewList):
+        ClassList = ViewList, TemplateInsert = TEMPLATE_INSERT, TemplateUpdate = TEMPLATE_UPDATE,
+        TemplateDelete = TEMPLATE_DELETE, TemplateList = TEMPLATE_LIST):
 
         urls = patterns('', 
             url(self.UrlCrud.UrlList(), self.view.List(MediaFiles = MediaFilesList, Grid_Fields = GridFields, 
-                ClassView = ClassList)),
+                ClassView = ClassList, TemplateName = TemplateList)),
 
-            url(self.UrlCrud.UrlInsert(), self.view.Create(MediaFiles = MediaFilesInsert, ClassView = ClassCreate)), 
+            url(self.UrlCrud.UrlInsert(), self.view.Create(MediaFiles = MediaFilesInsert, ClassView = ClassCreate,
+                TemplateName = TemplateInsert)), 
 
-            url(self.UrlCrud.UrlUpdate(), self.view.Update(MediaFiles = MediaFilesUpdate, ClassView = ClassUpdate)),
+            url(self.UrlCrud.UrlUpdate(), self.view.Update(MediaFiles = MediaFilesUpdate, ClassView = ClassUpdate,
+                TemplateName = TemplateUpdate)),
 
-            url(self.UrlCrud.UrlDelete(), self.view.Delete(MediaFiles = MediaFilesDelete, ClassView = ClassDelete)))
+            url(self.UrlCrud.UrlDelete(), self.view.Delete(MediaFiles = MediaFilesDelete, ClassView = ClassDelete,
+                TemplateName = TemplateDelete)))
 
         return urls

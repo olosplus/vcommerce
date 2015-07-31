@@ -104,18 +104,28 @@ function insert(model, module, url, name){
    'directories=no, status=no, menubar=no, scrollbars=yes, resizable=yes, copyhistory=no, width='+w+', '+
    'height='+h+', top='+top+', left='+left);
    */
-   var myWindow = window.open(url, '', 'location=no, scrollbars=yes, width='+w+', '+  'height='+h+', top='+top+', left='+left);
+    var myWindow = window.open(url, '', 'location=no, scrollbars=yes, width='+w+', '+  
+        'height='+h+', top='+top+', left='+left);
+    
+    var disableLinks = function(self){
+       self.document.getElementById("btn-salvar-inserir").style.display = "none"
+       self.document.getElementById("btn-cancelar").style.display = "none"
+       self.document.getElementById("header-title-link").setAttribute("href", "javascript:void(0)");   
+       var strBtnSalvarClick = self.document.getElementById("btn-salvar-editar").getAttribute("onclick");
+       strBtnSalvarClick = strBtnSalvarClick.trim().substr(0, strBtnSalvarClick.length - 1) + ', true)';
 
-    myWindow.onload = function(){
-       this.document.getElementById("btn-salvar-inserir").style.display = "none"
-       this.document.getElementById("btn-cancelar").style.display = "none"
-       this.document.getElementById("header-title-link").setAttribute("href", "javascript:void(0)");
+       self.document.getElementById("btn-salvar-editar").setAttribute("onclick", strBtnSalvarClick);
     }
 
-    /*myWindow.onbeforeunload = function(){
-      getDataLookup(model, module, 'id_' + name);
-      myWindow.close();      
-    }*/
+    myWindow.onload = function(){
+        disableLinks(this);
+    }
+   
+
+    myWindow.onbeforeunload = function(){
+        getDataLookup(model, module, 'id_' + name);
+        disableLinks(this);
+    }
 }
 
 function getDataLookup(model, module, id_component){
