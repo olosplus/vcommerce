@@ -19,6 +19,7 @@ apps_on_menu = (
     {'app': 'parametro', 'verbose_name' : 'Parâmetro', 'imgmenu':'fa fa-gear'},
     {'app': 'parametro.paramgeral', 'verbose_name' : 'Geral'},
     {'app': 'parametro.paramunidade', 'verbose_name' : 'Unidade'},
+    {'app': 'parametro.controle_acesso', 'verbose_name' : 'Controle de Acesso'},
     {'app': 'vatualiza', 'verbose_name' : 'Atualização', 'visible': False},
     {'app': 'cadastro.centro_custo', 'verbose_name' : 'Centro de Custos'},    
     

@@ -1,0 +1,56 @@
+{% extends 'simple_base.html' %}
+{% load staticfiles %}
+
+{% block css%}
+    <link rel="stylesheet" type="text/css" href="{% static 'controle_acesso/css/controle_acesso.css' %}"
+{% endblock%}
+
+{% block js %}
+   
+   <script type="text/javascript">
+     $(function() {
+       $( "#tabs" ).tabs();
+     });
+	 //lista_apps = {{ apps }};
+   </script>
+   <script type="text/javascript" src="{% static 'controle_acesso/js/controle_acesso.js' %}"></script>   
+{% endblock %}
+
+
+{% block corpo %}
+    <div>
+      <ul class="nav nav-tabs" role="tablist">
+         <li role="presentation" class="active">
+		   <a href="#tabs-usuario" aria-controls="tabs-usuario" role="tab" data-toggle="tab">Usuário</a>
+		 </li>
+         <li role="presentation" >
+		   <a href="#tabs-grupo" aria-controls="tabs-grupo" role="tab" data-toggle="tab">Grupo</a>
+		 </li>         
+      </ul>
+      <div class="tab-content">
+    	  <div id="tabs-usuario" class="tab-pane active" role="tabpanel">
+            <input type='hidden' value="{{lista_usuarios}}" id="list_users">
+  		    <input type='hidden' value='{{apps}}' id="list_apps">            
+        	
+			<div class="col-md-3" id="div-filtro-usuario">  		  
+        	</div>
+			
+  		    <div id="div-escolha-app-usuario" class="col-md-5">			
+  		    </div>
+			
+  		    <div id="container-permissoes-usuario" class="col-md-4">
+			  <p>Permissões:</p>
+			  <div class="alert alert-warning" id="alert-permissoes-usuario">Selecione os dados ao lado.</div>
+			  <div id="div-permissoes-usuario" >				
+			  </div>
+			  
+			  <input type="button" value="Salvar" class="btn btn-success" disabled id="btn-salvar-per-usuario">
+			  
+  		    </div>    		
+          </div>
+          <div id="tabs-grupo" class="tab-pane" role="tabpanel">
+        	<p>Grupo</p>
+          </div>
+	  </div>
+   </div>
+{% endblock %}
