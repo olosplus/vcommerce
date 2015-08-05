@@ -93,7 +93,7 @@ $(document).ready(function(){
     }
     
     var listBox = vmsisLib.listBox;
-    listBox.new(usuarios, 'div-filtro-usuario', 'Usuários:');
+    listBox.new(usuarios, 'div-filtro-usuario', 'Usuários:', getPermissoesUsuario);
     listBox.new(apps, 'div-escolha-app-usuario', 'Telas:', getPermissoesUsuario);
     $("#btn-salvar-per-usuario").click(setPermissoesUsuario);
 })
