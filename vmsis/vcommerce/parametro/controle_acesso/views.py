@@ -38,7 +38,7 @@ class PermissoesFuncionarios(object):
     
     def get_object_permission(self, app_label, model_name, permission_type):
         tela = ContentType.objects.get(app_label = app_label, model = model_name.lower())
-        code = permission_type + '_' + app_label 
+        code = permission_type + '_' + model_name.lower()
         return Permission.objects.get(content_type = tela, codename = code)
         
             
