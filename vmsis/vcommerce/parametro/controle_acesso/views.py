@@ -3,12 +3,18 @@ from django.shortcuts import render, render_to_response
 from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required
 from django.apps import apps
+from django.db import models
 import json
 
 from vlib import menu_apps
 from cadastro.funcionario.models import Funcionario
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.auth.models import Permission, User
+
+
+class EmptyModel(models.Model):
+    pass
+
 
 # Create your views here.
 class PermissoesFuncionarios(object):
@@ -21,8 +27,8 @@ class PermissoesFuncionarios(object):
     def get_permissoes(self, app_label):
         list_permissions = []
         models = apps.get_app_config(app_label).get_models()        
-        for model in models:
-            
+
+        for model in models:            
             can_add = self.usr.has_perm(app_label + '.add_' + model.__name__.lower())
             can_delete = self.usr.has_perm(app_label + '.delete_' + model.__name__.lower())
             can_change = self.usr.has_perm(app_label + '.change_' + model.__name__.lower())
@@ -33,6 +39,7 @@ class PermissoesFuncionarios(object):
                                      "can_change" : can_change})
         return list_permissions
     
+
     def get_permissoes_json(self, app_label):
         return json.dumps(self.get_permissoes(app_label))
     
@@ -41,7 +48,18 @@ class PermissoesFuncionarios(object):
         code = permission_type + '_' + model_name.lower()
         return Permission.objects.get(content_type = tela, codename = code)
         
+    def add_content_type(self, app_label):
+        content = ContentType.objects.filter(app_label = app_label)
+
+        if not content:
+            new_content = ContentType(name = "show_" + app_label, app_label = app_label,
+                                      model = app_label)
+            new_content.save()
             
+            new_permission = Permission(content_type = new_content, name = 'Can Show ' + app_label,
+                                        codename = 'show_' + app_label)
+            new_permission.save()
+                
     def liberar_acesso(self, app_label, model_name, permission_type):
         permission = self.get_object_permission(app_label = app_label, model_name = model_name,
                                                 permission_type = permission_type)        
@@ -61,7 +79,7 @@ class PermissoesFuncionarios(object):
     
     @staticmethod    
     def get_apps_dict():
-        return dict(menu_apps.MenuApps.GetAppsVerboseName(only_visible = True))
+        return menu_apps.MenuApps.GetAppsVerboseNameAsDict()
 
     @staticmethod    
     def get_apps_json():
@@ -88,8 +106,11 @@ def GetPermissoes(request):
         list_module = app_module.split('.')
         app_label = list_module[len(list_module) - 1]        
         permissoes = PermissoesFuncionarios(id_funcionario = id_funcionario)
-        
-        p =  permissoes.get_permissoes_json(app_label)       
+        print(list_module)
+        p = permissoes.get_permissoes_json(app_label)        
+        if not len(p) == 0:
+            permissoes.add_content_type(app_label = app_label)
+            p = permissoes.get_permissoes_json(app_label)
         
         return HttpResponse(p)
     

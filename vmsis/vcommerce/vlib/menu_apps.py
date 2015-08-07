@@ -43,7 +43,15 @@ class MenuApps:
 
         return json.loads(apps_str)
 
-
+    @staticmethod
+    def GetAppsVerboseNameAsDict():
+        apps = {}
+        for app in apps_on_menu:
+            if(MenuApps.AppIsVisible(app['app'])):
+                apps.update({app['app'] : app['verbose_name']})        
+        return apps
+    
+    
     @staticmethod
     def IncludeUrls():
         patt = patterns('', url(r'^$', MAIN_APP['view_name']),)
