@@ -34,10 +34,19 @@ $(document).ready(function(){
                 for (app in source) {
                     html += vmsisLib.format("<div class='col-md-12 container-permissions' data-model='%s'>",
                                             [source[app].model]);                    
-                        html += "<p>" + source[app].verbose_name + "</p>";                                        
-                        html += addCheckBox('usuario_can_add', source[app].can_add, 'Permitir adicionar');
-                        html += addCheckBox('usuario_can_change', source[app].can_change, 'Permitir modificar');
-                        html += addCheckBox('usuario_can_delete', source[app].can_delete, 'Permitir excluir');
+                    html += "<p>" + source[app].verbose_name + "</p>";                                        
+                    if (source[app].can_add != undefined) {
+                       html += addCheckBox('usuario_can_add', source[app].can_add, 'Permitir adicionar');
+                    }
+                    if (source[app].can_change != undefined) {
+                       html += addCheckBox('usuario_can_change', source[app].can_change, 'Permitir modificar');
+                    }
+                    if (source[app].can_delete != undefined) {
+                       html += addCheckBox('usuario_can_delete', source[app].can_delete, 'Permitir excluir');
+                    }
+                    if (source[app].can_show != undefined) {
+                       html += addCheckBox('usuario_can_show', source[app].can_delete, 'Permitir visualizar');
+                    }
                     html += "</div>";        
                 }
                 $("#div-permissoes-usuario").html(html);
@@ -61,6 +70,7 @@ $(document).ready(function(){
                 var can_add = $(this).find("input[name='usuario_can_add']").first().prop("checked");
                 var can_change = $(this).find("input[name='usuario_can_change']").first().prop("checked");
                 var can_delete = $(this).find("input[name='usuario_can_delete']").first().prop("checked");
+                var can_show = $(this).find("input[name='usuario_can_show']").first().prop("checked");
                 var model = $(this).attr("data-model");
                 
                 var listbox = vmsisLib.listBox;
@@ -82,7 +92,8 @@ $(document).ready(function(){
                 var app_label = modules[modules.length - 1];
 
                 permissoes.push({"model" : model, "can_add" : can_add, "can_change" : can_change,
-                                 "can_delete" : can_delete, "usuario" : usuario_id, "app_label" : app_label});
+                                 "can_delete" : can_delete,"can_show" : can_show, "usuario" : usuario_id,
+                                 "app_label" : app_label});
             });
         
             $.get("/set_permissoes", {"data" : JSON.stringify(permissoes)}).

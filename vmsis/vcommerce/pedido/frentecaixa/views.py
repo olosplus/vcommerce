@@ -2,7 +2,7 @@
 from django.shortcuts import render
 from vlib.view_lib import ViewCreate, StandardFormGrid, ViewUpdate
 from pedido.frentecaixa.models import Pedido, ItemPedido, ItAdicional
-from pedido.cadastro_pedido.cardapio.models import Cardapio
+from pedido.cadastro_pedido.itemcategoria.models import ItemCategoria as Cardapio
 from pedido.cadastro_pedido.agrupadicional.models import AgrupAdicional, Adicionais
 from cadastro.produto.models import Produto
 from estoque.lib_est.estoque import Estoque

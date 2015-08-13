@@ -22,6 +22,8 @@ class AgrupAdicional(models.Model):
 class Adicionais(models.Model):
 	agrupadicional = models.ForeignKey(AgrupAdicional)
 	item = models.ForeignKey(Produto, verbose_name="Adicional")
+	valor = models.FloatField(verbose_name="Valor")
+	quantidade = models.FloatField(verbose_name="Quantidade")
 	def __str__(self):
 		return self.item.nmproduto
 

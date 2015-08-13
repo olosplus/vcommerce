@@ -2,10 +2,10 @@
 from django.db import models
 from cadastro.cliente.models import Cliente
 from pedido.cadastro_pedido.mesa.models import Mesa
-from pedido.cadastro_pedido.categoria.models import Categoria, ItemCategoria
+from pedido.cadastro_pedido.categoria.models import Categoria 
 from cadastro.produto.models import Produto
 from pedido.cadastro_pedido.agrupadicional.models import AgrupAdicional, Adicionais
-from pedido.cadastro_pedido.cardapio.models import Cardapio
+from pedido.cadastro_pedido.itemcategoria.models import ItemCategoria
 from vlib.control.models import Master_empresa
 from cadastro.almoxarifado.models import Almoxarifado
 from estoque.lote.models import Lote
@@ -40,16 +40,12 @@ class ItemPedido(Master_empresa):
 		verbose_name_plural = "Itens dos Pedidos"
 		child_models = ['ItAdicional']
 
-	#categoria = models.ForeignKey(Categoria, verbose_name="Categoria")
 	pedido = models.ForeignKey(Pedido)
-	cardapio = models.ForeignKey(Cardapio, verbose_name="Produto")
+	cardapio = models.ForeignKey(ItemCategoria, verbose_name="Produto")
 	almoxarifado = models.ForeignKey(Almoxarifado,verbose_name='Almoxarifado', editable=False)
 	lote = models.ForeignKey(Lote,verbose_name='Lote', null=True, blank=True)
 	qtitem = models.FloatField(verbose_name="Quantidade")
-	#vrvenda = models.ForeignKey(Cardapio, related_name='Preço', verbose_name="Valor Item")
-	#vrvenda = models.ForeignKey(Cardapio, related_name='Preço',editable = False)
 	vrvenda = models.FloatField(default=0,editable=False)
-	#vrtotal = models.FloatField(verbose_name="Valor Total")
 	vrtotal = models.FloatField(default=0,editable = False)
 	idadicional = models.BooleanField(verbose_name='Adicional',default=False,blank=True)
 
@@ -57,10 +53,7 @@ class ItAdicional(models.Model):
 	class Meta:
 		verbose_name = "Adicional do produto"
 		verbose_name_plural = "Adicionais do produto"
-		
 
-	#adicional = models.ForeignKey(Adicionais, verbose_name="Adicional")
-#	pedido = models.ForeignKey(Pedido)
 	itempedido = models.ForeignKey(ItemPedido)
 	item = models.ForeignKey(Adicionais, verbose_name="Produto")
 	qtitem = models.FloatField(verbose_name="Quantidade")

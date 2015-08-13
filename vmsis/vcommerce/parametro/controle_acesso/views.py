@@ -32,11 +32,20 @@ class PermissoesFuncionarios(object):
             can_add = self.usr.has_perm(app_label + '.add_' + model.__name__.lower())
             can_delete = self.usr.has_perm(app_label + '.delete_' + model.__name__.lower())
             can_change = self.usr.has_perm(app_label + '.change_' + model.__name__.lower())
+            can_show = self.usr.has_perm(app_label + '.show_' + app_label)
             list_permissions.append({"verbose_name" : model._meta.verbose_name,
                                      "model" : model.__name__,
                                      "can_add" : can_add,
                                      "can_delete" : can_delete,
-                                     "can_change" : can_change})
+                                     "can_change" : can_change,
+                                     "can_show" : can_show})
+        else:
+            can_show = self.usr.has_perm(app_label + '.show_' + app_label)
+            print('passou')
+            list_permissions.append({"verbose_name" : app_label,
+                                      "model" : app_label,
+                                      "can_show" : can_show})
+            
         return list_permissions
     
 
@@ -106,8 +115,8 @@ def GetPermissoes(request):
         list_module = app_module.split('.')
         app_label = list_module[len(list_module) - 1]        
         permissoes = PermissoesFuncionarios(id_funcionario = id_funcionario)
-        print(list_module)
         p = permissoes.get_permissoes_json(app_label)        
+
         if not len(p) == 0:
             permissoes.add_content_type(app_label = app_label)
             p = permissoes.get_permissoes_json(app_label)
@@ -141,8 +150,7 @@ def SetPermissoes(request):
             permissoes_func.definir_permissao(app_label = label, model_name = model_name,
                                               permission_type = 'delete', liberar = can_delete)
             
-            
-        
+                    
         return HttpResponse("Dados salvos com sucesso")
     except Exception as e:
         print(e)
