@@ -25,4 +25,8 @@ def get_fk(fields, key):
 
 @register.filter(name='add_class')
 def add_class(field, css):
-   return field.as_widget(attrs={"class":css})
+    att = "";
+    if 'class' in field.field.widget.attrs:
+       att = field.field.widget.attrs['class']
+    att += " " + css
+    return field.as_widget(attrs={"class":att})

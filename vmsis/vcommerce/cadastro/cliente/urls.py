@@ -5,4 +5,5 @@ from cadastro.cliente.models import Cliente
 
 Crud = CrudView(Cliente)
 
-urlpatterns = Crud.AsUrl(GridFields  = ('nrinscjurd','nmcliente',))
+urlpatterns = Crud.AsUrl(GridFields  = ('nrinscjurd','nmcliente',), 
+    MediaFilesInsert = ['cliente/cliente.js'], MediaFilesUpdate = ['cliente/cliente.js'])

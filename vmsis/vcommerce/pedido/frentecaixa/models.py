@@ -30,8 +30,8 @@ class Pedido(models.Model):
 	mesa = models.ForeignKey(Mesa, verbose_name="Mesa",blank=True,null=True)
 	#vrpedido = models.FloatField(verbose_name="Valor Total" , editable = False)
 	vrpedido = models.FloatField(verbose_name='Valor total',default=0,editable = False)
-	#idstatusped = models.CharField(max_length=1, verbose_name="Status",choices=choice_status_pedido,default='P' , editable = False)
-	idstatusped = models.CharField(max_length=1, default='P' , editable = False)
+	idstatusped = models.CharField(max_length=1, default='P',
+	    choices=choice_status_pedido)
 
 class ItemPedido(Master_empresa):
 	class Meta:
@@ -51,6 +51,7 @@ class ItemPedido(Master_empresa):
 
 class ItAdicional(models.Model):
 	class Meta:
+		db_table = "ItAdicional"
 		verbose_name = "Adicional do produto"
 		verbose_name_plural = "Adicionais do produto"
 

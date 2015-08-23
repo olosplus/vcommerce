@@ -5,4 +5,5 @@ from cadastro.fornecedor.models import Fornecedor
 
 Crud = CrudView(Fornecedor)
 
-urlpatterns = Crud.AsUrl(GridFields  = ('nrinscjurd','nmfornecedor',))
+urlpatterns = Crud.AsUrl(GridFields  = ('nrinscjurd','nmfornecedor',),
+	MediaFilesInsert = ['cliente/cliente.js'], MediaFilesUpdate = ['cliente/cliente.js'])

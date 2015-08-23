@@ -8,6 +8,7 @@ from cadastro.localidade.pais.models import Pais
 from cadastro.localidade.estado.models import Estado
 from cadastro.localidade.cidade.models import Cidade
 from cadastro.localidade.bairro.models import Bairro
+import hashlib
 
 TIPO_C = (('PF',u'Pessoa Física'),('PJ',u'Pessoa Jurídica'),)
 SEXO_C = (('F','Feminino'),('M','Masculino'),)
@@ -21,8 +22,8 @@ class Funcionario(Master_empresa):
     sexo = models.CharField(max_length=1,choices=SEXO_C, verbose_name='Sexo')
     dtnascimento = widgets.VDateField(verbose_name='Data de nascimento')
     email = models.EmailField(max_length=255, verbose_name='E-mail')
-    senha = models.CharField(max_length=30, verbose_name='Senha')
-    confsenha = models.CharField(max_length=30, verbose_name='Confirma Senha')
+    senha = models.CharField(max_length=128, verbose_name='Senha')
+    confsenha = models.CharField(max_length=128, verbose_name='Confirma Senha')
     endereco = models.CharField(max_length=255, verbose_name='Endereço')
     numero = models.CharField(max_length=20, verbose_name='Número')
     complemento = models.CharField(max_length=255, null=True, blank=True, verbose_name='Complemento')
@@ -39,8 +40,7 @@ class Funcionario(Master_empresa):
 
     class Meta:
         ordering = ['-id']
-        
-
+                
     def save(self):
         if not self.id:
             c = Funcionario.objects.filter(usuario=self.usuario).count()
@@ -52,7 +52,9 @@ class Funcionario(Master_empresa):
             else:
                 u = User.objects.create_user(self.usuario, self.email, self.senha)
             u.save()
-            self.user = u
+            self.user = u            
+            #self.senha = hashlib.sha224(self.senha.encode('ascii')).hexdigest();
+            #self.confsenha = hashlib.sha224(self.confsenha.encode('ascii')).hexdigest();
         else:
             self.user.username = self.usuario
             self.user.email = self.email
@@ -61,5 +63,5 @@ class Funcionario(Master_empresa):
 
         super(Funcionario, self).save()
 
-        def __str__(self):
-            return self.nome
+    def __str__(self):
+        return self.nome

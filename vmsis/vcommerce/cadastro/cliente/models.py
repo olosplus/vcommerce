@@ -16,9 +16,14 @@ class Cliente(Master_endereco):
         child_models = ['cadastro.localidade.endereco.models.Endereco',
                         'cadastro.contato.models.Contato']
 
+    identificador = models.CharField(max_length=1,verbose_name="Tipo",choices=choice_tipo_jfo,
+        blank=True)
     nrinscjurd = models.CharField(max_length=20,verbose_name="Inscrição Jurídica")
     nmcliente = models.CharField(max_length=250,verbose_name="Nome",unique=True)
-    identificador = models.CharField(max_length=1,verbose_name="Tipo",choices=choice_tipo_jfo)
+    telcel = models.CharField(max_length=15,verbose_name="Telefone celular", blank=True, 
+        null=True)
+    telfixo = models.CharField(max_length=15,verbose_name="Telefone fixo",blank=True,
+        null=True)
 
     def __str__(self):
     	return self.nmcliente

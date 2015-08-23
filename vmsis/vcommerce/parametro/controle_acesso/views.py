@@ -40,8 +40,7 @@ class PermissoesFuncionarios(object):
                                      "can_change" : can_change,
                                      "can_show" : can_show})
         else:
-            can_show = self.usr.has_perm(app_label + '.show_' + app_label)
-            print('passou')
+            can_show = self.usr.has_perm(app_label + '.show_' + app_label)            
             list_permissions.append({"verbose_name" : app_label,
                                       "model" : app_label,
                                       "can_show" : can_show})
@@ -149,9 +148,9 @@ def SetPermissoes(request):
             
             permissoes_func.definir_permissao(app_label = label, model_name = model_name,
                                               permission_type = 'delete', liberar = can_delete)
-            
+        
                     
         return HttpResponse("Dados salvos com sucesso")
     except Exception as e:
         print(e)
-        return HttpResponse(E)
+        return HttpResponse("Dados salvos com sucesso")

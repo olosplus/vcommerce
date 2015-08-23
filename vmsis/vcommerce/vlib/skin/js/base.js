@@ -167,10 +167,19 @@ function getDataLookup(model, module, id_component){
   });
 }
 
+function InicializarValidacoes(){
+  $('.cep').mask('00000-000');
+  $('.cpf').mask('000.000.000-00', {reverse: true});
+}
+
 $(document).ajaxComplete(function() {
   Inicializacao();  
+  InicializarValidacoes();
 });
+
+
 
 $(document).ready(function() {
   Inicializacao();  
+  InicializarValidacoes();
 });

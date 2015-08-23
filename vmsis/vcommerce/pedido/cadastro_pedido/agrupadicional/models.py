@@ -20,6 +20,9 @@ class AgrupAdicional(models.Model):
 		return self.nmagrupadic
 
 class Adicionais(models.Model):
+	class Meta:
+		db_table = "Adicionais"
+		
 	agrupadicional = models.ForeignKey(AgrupAdicional)
 	item = models.ForeignKey(Produto, verbose_name="Adicional")
 	valor = models.FloatField(verbose_name="Valor")

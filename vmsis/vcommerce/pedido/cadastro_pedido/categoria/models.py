@@ -12,7 +12,9 @@ class Categoria(models.Model):
 		verbose_name_plural = "Categorias"
 
 	nmcategoria = models.CharField(max_length=250,verbose_name="Nome",unique=True)
-	idcategoriativ = models.CharField(max_length=1,verbose_name="Situação",choices=choice_tipo_ativ,default='A')
+	idcategoriativ = models.CharField(max_length=1,verbose_name="Situação",
+	    choices=choice_tipo_ativ,default='A')
+	imgindex = models.IntegerField(verbose_name="Imagem")
 
 	def __str__(self):
 		return self.nmcategoria
