@@ -62,7 +62,11 @@ apps_on_menu = (
     {'app': 'pedido.cadastro_pedido.categoria', 'verbose_name' : 'Categoria'},
     {'app': 'pedido.cadastro_pedido.itemcategoria', 'verbose_name' : 'Cardápio'},
     {'app': 'pedido.cadastro_pedido.composicaoproduto', 'verbose_name' : 'Composição do Produto', 'visible' : False},
-
+    {'app': 'pedido.cadastro_pedido.caixa', 'verbose_name' : 'Caixas'},
+    {'app': 'pedido.aberfechcaixa', 'verbose_name' : 'Abertura e fechamento dos caixas', 
+       'visible':False},
+#    {'app': 'pedido.movcaixa', 'verbose_name' : 'Movimentações dos caixas'},    
+#    {'app': 'pedido.fechcaixa', 'verbose_name' : 'Fechamento do caixa'},    
     #TELAS DO FINANCEIRO
     # {'app': 'financeiro', 'verbose_name':'Financeiro', 'imgmenu':'fa fa-dollar'},
     # {'app': 'financeiro.banco', 'verbose_name': 'Banco', 'visible': False},
