@@ -93,3 +93,62 @@ vmsisLib.format = function(str, list){
 		};
 		return text;
 	};
+vmsisLib.waitting = {};
+vmsisLib.waitting.intervalVar;
+vmsisLib.waitting.start = function(){
+    vmsisLib.waitting.intervalVar = setInterval(function(){
+        if($(".modal-waitting").length == 0){
+            $("body").append("<div class='modal-waitting'></div>");
+            
+            $(".modal-waitting").css({"background-color":"white", "bottom": 0, "left": 0, "position": "fixed",
+              "right": 0, "top": 0, "height" : "100%", "width":"100%", "opacity" : 0.5,
+              "border-radius" : "0px", "box-shadow": "0px 0px 0px gray"});
+            
+            
+            $(".modal-waitting").append($( '<div class="waitting-vmsis 1 active"> </div>'));
+            $(".modal-waitting").append($( '<div class="waitting-vmsis 2"> </div>'));
+            $(".modal-waitting").append($( '<div class="waitting-vmsis 3"> </div>'));
+            $(".modal-waitting").append($( '<div class="waitting-vmsis 4"> </div>'));
+            $(".modal-waitting").append($( '<div class="waitting-vmsis 5"> </div>'));
+            $(".modal-waitting").append($( '<div class="waitting-vmsis 6"> </div>'));
+            $(".modal-waitting").append($( '<div class="waitting-vmsis 7"> </div>'));
+            
+            
+        }
+        if($(".waitting-vmsis.1").hasClass("active")){
+            $(".waitting-vmsis.1").removeClass("active");
+            $(".waitting-vmsis.2").addClass("active");
+        }else if($(".waitting-vmsis.2").hasClass("active")){
+            $(".waitting-vmsis.2").removeClass("active");
+            $(".waitting-vmsis.3").addClass("active");          
+        }else if($(".waitting-vmsis.3").hasClass("active")){
+            $(".waitting-vmsis.3").removeClass("active");
+            $(".waitting-vmsis.4").addClass("active");          
+        }else if($(".waitting-vmsis.4").hasClass("active")){
+            $(".waitting-vmsis.4").removeClass("active");
+            $(".waitting-vmsis.5").addClass("active");          
+        }else if($(".waitting-vmsis.5").hasClass("active")){
+            $(".waitting-vmsis.5").removeClass("active");
+            $(".waitting-vmsis.6").addClass("active");          
+        }else if($(".waitting-vmsis.6").hasClass("active")){
+            $(".waitting-vmsis.6").removeClass("active");
+            $(".waitting-vmsis.7").addClass("active");          
+        }else if($(".waitting-vmsis.7").hasClass("active")){
+            $(".waitting-vmsis.7").removeClass("active");
+            $(".waitting-vmsis.1").addClass("active");          
+        };
+        
+        $(".waitting-vmsis").css({"border-radius" : "10px", "width" : "10px", "height" : "10px", "background-color" : "#337ab7",
+            "float" : "left", "position" : "relative", "left" : "45%", "top" : "45%", "margin" : "2px", "z-index" : 1001})
+        
+        $(".waitting-vmsis.active").css({"background-color": "white", "border" : "1px solid #337ab7"});
+                
+    }, 350);
+    return vmsisLib.waitting.intervalVar;
+}
+
+vmsisLib.waitting.stop = function(waittingVar){
+   clearVar = waittingVar || vmsisLib.waitting.intervalVar;
+   clearInterval(vmsisLib.waitting.intervalVar); 
+   $(".modal-waitting").remove();
+}

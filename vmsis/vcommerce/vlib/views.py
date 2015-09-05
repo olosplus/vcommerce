@@ -59,6 +59,7 @@ def index(request):
 
     return render_to_response('base.html', {"funcionario":request.session['funcionario']})
 
+@login_required
 def SetUnidade(request):
     try:
         unidade = request.GET.get('unidade')     
@@ -74,6 +75,7 @@ def SetUnidade(request):
     except:
         return HttpResponse('error')
 
+@login_required
 def insert(data, model, commit = True, link_to_form = "", parent_instance = None, 
     execute_on_after_insert = None, grid_id = ""):
 
@@ -149,7 +151,7 @@ def insert(data, model, commit = True, link_to_form = "", parent_instance = None
 
     return str()
 
-#@staticmethod    
+@login_required
 def delete(data, model, execute_on_before_delete = None):
     lista = data.split(LINE_SEPARATOR)    
 
@@ -167,7 +169,7 @@ def delete(data, model, execute_on_before_delete = None):
         
     return ""    
 
-#@staticmethod
+@login_required
 def update(data, model, commit = True, execute_on_after_update = None, grid_id = ""):
 
     if data.count(LINE_SEPARATOR) > 0:
@@ -210,7 +212,7 @@ def update(data, model, commit = True, execute_on_after_update = None, grid_id =
 
     return str()    
 
-#@classonlymethod
+@login_required
 def save_grid(request):    
     str_model = request.GET.get('model')
     str_module = request.GET.get('module')
@@ -237,7 +239,7 @@ def save_grid(request):
  
     return HttpResponse('Dados atualizados com sucesso!');
 
-#@staticmethod
+@login_required
 def get_model_by_string(module, model_name):
     list_module = module.split('.')    
 
@@ -247,7 +249,7 @@ def get_model_by_string(module, model_name):
         return HttpResponse("An error ocurred. The model or module don't exists")
     return model
 
-#@staticmethod
+@login_required
 def delete_grid(request):    
     str_model = request.GET.get('model')
     str_module = request.GET.get('module')
@@ -267,7 +269,7 @@ def delete_grid(request):
  
     return HttpResponse('Dados atualizados com sucesso!');
 
-
+@login_required
 def Filtro(request):
    
     str_model = request.GET.get('model')
@@ -283,7 +285,7 @@ def Filtro(request):
     Filtrar = FormFiltro(model = model, request = request, template="filtro.html")    
     return Filtrar.Response()
 
-
+@login_required
 def GetGridConfiguration(request):
     str_model = request.GET.get('model')
     str_module = request.GET.get('module')    
@@ -358,7 +360,7 @@ def GetGridConfiguration(request):
     return {"model" : model, "filter" : dict_filter, "fields" : fields_display, "page" : page, "order" : order_by,
        "parent":parent_model, "parent_id":parent_id}
 
-
+@login_required
 def GetGridCrud(request):
     try:
         conf = GetGridConfiguration(request = request)    
@@ -371,7 +373,7 @@ def GetGridCrud(request):
         print(e)
     return HttpResponse(grid_js)    
 
-
+@login_required
 def GetGridEditable(request):
     try:
         conf = GetGridConfiguration(request = request)    
@@ -386,7 +388,7 @@ def GetGridEditable(request):
     return HttpResponse(grid_js)    
 
 
-
+@login_required
 def PrintGrid(request):
 
     try:
@@ -459,6 +461,7 @@ def PrintGrid(request):
         print(e)
         return HttpResponse(e)
 
+@login_required
 def GetDataLookup(request):
     str_model = request.GET.get('model')
     str_module = request.GET.get('module')
@@ -479,4 +482,39 @@ def GetDataLookup(request):
         data.append({"object":str(q), "value":str(q.id)})
     
     return HttpResponse(str(data))
+
+def GetModelAsJson(request):
+    try:
+        senha = request.GET.get('senha')
+        usuario = request.GET.get('usuario')
+        #dados fixos até ajustar a questão da criptografia
+        if (senha != 'masterVMSIS123v') or (usuario != 'vmsismaster'):
+            return HttpResponse('Login error')
+    except Exception:
+        return HttpResponse('Login error')
+
     
+    str_model = request.GET.get('model')
+    str_module = request.GET.get('module')    
+    fields = request.GET.get('fields', [])
+    
+    if fields:
+        fields = fields.split("|")
+
+    list_module = str_module.split('.')    
+
+    try:
+        model = apps.get_app_config(list_module[len(list_module)-2]).get_model(str_model)
+    except LookupError:
+        return HttpResponse("An error ocurred. The model or module don't exists")
+
+    print(tuple(fields))
+    try:
+        if fields:
+            query = serializers.serialize("xml", model.objects.all(), fields = tuple(fields))
+        else:
+            query = serializers.serialize("xml", model.objects.all())
+    except Exception as e:
+        HttpResponse(e)
+
+    return HttpResponse(query)

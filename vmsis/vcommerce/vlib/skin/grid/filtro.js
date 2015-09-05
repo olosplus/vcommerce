@@ -22,6 +22,7 @@ $(document).ready(function() {
 });
 
 function Filter (module, model, columns) {
+  vmsisLib.waitting.start();
   var modulo = module;
   var modelo = model;
   var colunas = columns;
@@ -29,8 +30,13 @@ function Filter (module, model, columns) {
     url: '/filtro',
     type: 'get',    
     data: {"module" : modulo, "model" : modelo},
-    success: function (data) {
-      $('#dialog').html(data);      
+    success: function (data) {      
+      vmsisLib.waitting.stop();
+      try{
+         $('#dialog').html(data);         
+      }catch(ch){
+                
+      }
       
       $('#dialog').dialog({
         dialogClass : "no-close",        
@@ -39,7 +45,7 @@ function Filter (module, model, columns) {
           {
             text : "Filtrar",
             click : function(){
-              
+              vmsisLib.waitting.start();
               form = $(this).children("form");              
               form_serialized = form.serializeArray();
               
@@ -48,8 +54,9 @@ function Filter (module, model, columns) {
                 " value= '" + JSON.stringify(form_serialized) + "' >");
 
               var palavras_inteiras = $("#palavras_inteiras").val();
-
+              
               GetGridData(modulo, modelo, form_serialized, colunas, palavras_inteiras, 1, 'id');
+              vmsisLib.waitting.stop();
               $(this).dialog("close");
             }
           },

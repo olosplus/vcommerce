@@ -650,6 +650,7 @@ function getJsonChildGrids(id){
 }
 
 function doPostForm(send_to, form_id, url_redirect, is_delete, id_grid_delete, close_window) {
+  vmsisLib.waitting.start();
   close_window = close_window || false;
   var form = $('#' + form_id);
   if(form.attr('tagName') != 'form'){
@@ -682,7 +683,7 @@ function doPostForm(send_to, form_id, url_redirect, is_delete, id_grid_delete, c
     type: 'post',
     data: form.serialize(),
     success: function (data) {
-
+      vmsisLib.waitting.stop();
       var parser = new DOMParser()
       var doc_received = parser.parseFromString(data, "text/html");
       var frm_received = doc_received.getElementById(form_id);
@@ -723,13 +724,14 @@ function doPostForm(send_to, form_id, url_redirect, is_delete, id_grid_delete, c
             return false;
           };
         }
-      }
+      }      
       if(close_window){
         window.close();              
       }
-
+      
     },
     error: function (data) {
+      vmsisLib.waitting.stop()
       alert(data.responseText);
     }
   });
