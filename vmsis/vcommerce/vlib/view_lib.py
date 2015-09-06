@@ -91,7 +91,7 @@ class StandardFormGrid(ModelForm):
         parent_model = ""):        
         if not data:
             return str()
-    
+        
         if link_to_form[-3:].upper() == "_ID":
             link_to_form = link_to_form[:-3]
     
@@ -260,6 +260,7 @@ class StandardFormGrid(ModelForm):
         return self.child_models.split(GRID_SEPARATOR)
                      
     def get_grids_erros(self, parent_instance):        
+        
         erro = ""
         if self.child_models:
             grids = self.split_child_models()           
@@ -271,14 +272,15 @@ class StandardFormGrid(ModelForm):
 
                 if not 'rows_inserted' in data_dict:
                     continue
-
+                
                 model = vlib_views.get_model_by_string(data_dict['module'], data_dict['model'])
-     
+                
                 if data_dict['rows_inserted']:
                     erro = self.insert_grid(data = data_dict['rows_inserted'], model = model, commit = False,
                         link_to_form = data_dict['link_to_form'], parent_instance = parent_instance, 
                         grid_id = data_dict['grid_id'], parent_model = data_dict['parent'])
-                    
+                print('pass54')           
+                print(erro)
                 if erro:
                     return erro
                 else:
@@ -287,6 +289,7 @@ class StandardFormGrid(ModelForm):
                             grid_id = data_dict['grid_id'], parent_model = data_dict['parent'])
                     if erro:                        
                         return erro
+
         return str()
 
     def custom_grid_validations(self, grid_model, grid_data, parent_instance):
@@ -549,13 +552,13 @@ class ViewCreate(StandardCrudView, CreateView):
         self.form_class = CreateForm(self.model).create_form(GridsData = grids_data, class_form = self.form_class, \
             user = request.user, colaborador = request.session['funcionario'], \
             campo_empresa = self.nome_campo_empresa, campo_unidade = self.nome_campo_unidade)
-
+        
         form_class = self.get_form_class()
         form = self.get_form(form_class)
         self.object = self.model
-
+        
         if form.is_valid():
-           
+            
             instance = form.get_instace()            
             
             error = form.get_grids_erros(instance)

@@ -192,6 +192,7 @@ vReport = function(pageType, container, data, sel_document){
 	    
 	
 	this.view = function(){		                  
+		vmsisLib.waitting.start();
         var pageHeader = data.pageHeader;
 		var masterBand = data.masterBand;
         var row = [];    
@@ -237,5 +238,6 @@ vReport = function(pageType, container, data, sel_document){
 				};
 			};
 		};		       
+		vmsisLib.waitting.stop();
 	}
 };

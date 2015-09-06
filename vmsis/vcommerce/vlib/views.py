@@ -239,7 +239,7 @@ def save_grid(request):
  
     return HttpResponse('Dados atualizados com sucesso!');
 
-@login_required
+
 def get_model_by_string(module, model_name):
     list_module = module.split('.')    
 
@@ -507,8 +507,7 @@ def GetModelAsJson(request):
         model = apps.get_app_config(list_module[len(list_module)-2]).get_model(str_model)
     except LookupError:
         return HttpResponse("An error ocurred. The model or module don't exists")
-
-    print(tuple(fields))
+    
     try:
         if fields:
             query = serializers.serialize("xml", model.objects.all(), fields = tuple(fields))
