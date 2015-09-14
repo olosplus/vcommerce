@@ -495,11 +495,13 @@ def GetModelAsJson(request):
 
     
     str_model = request.GET.get('model')
-    str_module = request.GET.get('module')    
+    str_module = request.GET.get('module')
+    str_extra_model = request.GET.get('extra_model', str())
+    str_extra_module = request.GET.get('extra_module', str())
     fields = request.GET.get('fields', [])
     
     if fields:
-        fields = fields.split("|")
+        fields = fields.split("|")    
 
     list_module = str_module.split('.')    
 
@@ -508,12 +510,25 @@ def GetModelAsJson(request):
     except LookupError:
         return HttpResponse("An error ocurred. The model or module don't exists")
     
+    extra_model = None
+    if str_extra_model:
+        list_extra_module = str_extra_module.split('.')
+        try:
+            extra_model = apps.get_app_config(list_extra_module[len(list_extra_module)-2]).get_model(str_extra_model)
+        except LookupError:
+            return HttpResponse("An error ocurred. The model or module don't exists")
+    
+    if extra_model:
+        objs = list(model.objects.all()) + list(extra_model.objects.all())
+    else:
+        objs = model.objects.all()
     try:
         if fields:
-            query = serializers.serialize("xml", model.objects.all(), fields = tuple(fields))
+            query = serializers.serialize("xml", objs, 
+                fields = tuple(fields))
         else:
-            query = serializers.serialize("xml", model.objects.all())
+            query = serializers.serialize("xml", objs)
     except Exception as e:
-        HttpResponse(e)
+        return HttpResponse(e)
 
     return HttpResponse(query)

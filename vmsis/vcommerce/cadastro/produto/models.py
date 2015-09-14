@@ -13,7 +13,7 @@ class Produto(Master_empresa):
         ordering = ['nmproduto']
 
     posarvore = models.CharField(max_length=40,verbose_name='Arvore',null=True,blank=True,editable=False)
-    nmproduto = models.CharField(max_length=200,verbose_name='Nome',blank=True)
+    nmproduto = models.CharField(max_length=200,verbose_name='Nome', unique=True)
     unimedida = models.ForeignKey(Unimedida,verbose_name='Unidade de medida')
     cdbarra = models.CharField(max_length=100,verbose_name='Código de barras',null=True, blank=True)
     idprodvenda = models.BooleanField(verbose_name='Produto de venda',default=False,blank=True) 

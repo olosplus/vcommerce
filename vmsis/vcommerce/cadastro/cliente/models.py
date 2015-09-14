@@ -1,13 +1,14 @@
 # -*- coding: utf-8 -*-
 from django.db import models
 from vlib.control.models import Master_endereco
+from vlib.control.models import EnderecoGenerico
 
 choice_tipo_jfo = (('J','Jurídica'),
 	('F','Física'),
 	('O','Outros'))
 
 # Create your models here.
-class Cliente(Master_endereco):
+class Cliente(Master_endereco, EnderecoGenerico):
     class Meta:
         db_table = "cliente"
         verbose_name = "Cliente"
@@ -23,7 +24,7 @@ class Cliente(Master_endereco):
     telcel = models.CharField(max_length=15,verbose_name="Telefone celular", blank=True, 
         null=True)
     telfixo = models.CharField(max_length=15,verbose_name="Telefone fixo",blank=True,
-        null=True)
+        null=True)    
 
     def __str__(self):
     	return self.nmcliente

@@ -10,7 +10,7 @@ class Almoxarifado(Master_endereco):
     	ordering = ['nmalmoxa']
     	verbose_name_plural = "Almoxarifados"
     	child_models = ['cadastro.localidade.endereco.models.Endereco',
-    	                'cadastro.contato.models.Contato',]
+    	                'cadastro.contato.models.Contato']
 
     nmalmoxa = models.CharField(max_length=250,verbose_name="Descrição")
 

@@ -279,8 +279,6 @@ class StandardFormGrid(ModelForm):
                     erro = self.insert_grid(data = data_dict['rows_inserted'], model = model, commit = False,
                         link_to_form = data_dict['link_to_form'], parent_instance = parent_instance, 
                         grid_id = data_dict['grid_id'], parent_model = data_dict['parent'])
-                print('pass54')           
-                print(erro)
                 if erro:
                     return erro
                 else:
