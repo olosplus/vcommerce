@@ -14,7 +14,7 @@ class FormSaida(StandardFormGrid):
         msgErro = FunEstoque.said_prod_est(instance.produto_id, instance.almoxarifado, instance.lote_id, instance.qtdeprod)
         if msgErro:
         	Saida.objects.get(pk=instance.master_moviest_id).delete()
-        print(msgErro)
+        return msgErro
 
     def after_update_grid_row(self, instance, old_instance):
         lote_ok = True
@@ -34,13 +34,13 @@ class FormSaida(StandardFormGrid):
             if not msgErro:
                 msgErro = FunEstoque.said_prod_est(instance.produto_id, instance.almoxarifado, instance.lote_id, instance.qtdeprod)
 
-        print(msgErro)
+        return msgErro
 
     def before_delete_grid_row(self, instance):
         msgErro = ''
         FunEstoque = Estoque(self.funcionario["empresa"])
         msgErro = FunEstoque.entr_prod_est(instance.produto_id, instance.almoxarifado, instance.lote_id, instance.qtdeprod)
-        print(msgErro)
+        return msgErro
 
 class ViewSaidaCreate(ViewCreate):
     form_class = FormSaida
