@@ -499,6 +499,7 @@ def GetModelAsJson(request):
     str_extra_model = request.GET.get('extra_model', str())
     str_extra_module = request.GET.get('extra_module', str())
     fields = request.GET.get('fields', [])
+    filtro = request.GET.get('filter', {})
     
     if fields:
         fields = fields.split("|")    
@@ -521,7 +522,12 @@ def GetModelAsJson(request):
     if extra_model:
         objs = list(model.objects.all()) + list(extra_model.objects.all())
     else:
-        objs = model.objects.all()
+        if filtro:
+            condicao = json.loads(filtro)
+            objs = model.objects.filter(**condicao)
+        else:
+            objs = model.objects.all()
+
     try:
         if fields:
             query = serializers.serialize("xml", objs, 
