@@ -120,11 +120,11 @@ class StandardFormGrid(ModelForm):
                 if field.name == 'id':
                     continue
                 
-                if field.name.lower() == 'empresa':
+                if field.name.lower() == 'empresa' and not self.funcionario['is_superuser']:
                     setattr(mod, field.get_attname_column()[0], self.funcionario['empresa'])
                     continue
 
-                if field.name.lower() == 'unidade':
+                if field.name.lower() == 'unidade' and not self.funcionario['is_superuser']:
                     setattr(mod, field.get_attname_column()[0], self.funcionario['unidade'])
                     continue
 
@@ -211,11 +211,11 @@ class StandardFormGrid(ModelForm):
                 if field.name == 'id':
                     continue
                 
-                if field.name.lower() == 'empresa':                    
+                if field.name.lower() == 'empresa' and not self.funcionario['is_superuser']:                    
                     setattr(mod, field.get_attname_column()[0], self.funcionario['empresa'])
                     continue
 
-                if field.name.lower() == 'unidade':
+                if field.name.lower() == 'unidade' and not self.funcionario['is_superuser']:
                     setattr(mod, field.get_attname_column()[0], self.funcionario['unidade'])
                     continue
 
@@ -374,14 +374,14 @@ class StandardFormGrid(ModelForm):
 
             if self.funcionario:        
                 try:
-                    if self.nome_campo_empresa:
+                    if self.nome_campo_empresa and not self.funcionario['is_superuser']:
                         if self.funcionario['empresa']:
                             copy_data[self.nome_campo_empresa] = self.funcionario['empresa']
                 except :
                     pass
 
                 try:
-                    if self.nome_campo_unidade:
+                    if self.nome_campo_unidade and not self.funcionario['is_superuser']:
                         if self.funcionario['unidade']:
                             copy_data[self.nome_campo_unidade] = self.funcionario['unidade']
                 except :

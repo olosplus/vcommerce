@@ -50,12 +50,13 @@ def index(request):
             empresa_id = func.empresa.id
 
         request.session['funcionario'] = {"id" : func.id, "nome" : func.nome, "usuario" : func.user.id,
-            "empresa" : empresa_id, "unidades" : list_unidades, "unidade":list_unidades[0]["id"]}
+            "empresa" : empresa_id, "unidades" : list_unidades, "unidade":list_unidades[0]["id"],
+            "is_superuser": request.user.is_superuser}
                 
     except :
         request.session['funcionario'] = {"id" : request.user.id, "nome" : request.user.username, 
             "usuario" : request.user.id,
-            "empresa" : None, "unidades" : None, "unidade":None}
+            "empresa" : None, "unidades" : None, "unidade":None, "is_superuser": request.user.is_superuser}
 
     return render_to_response('base.html', {"funcionario":request.session['funcionario']})
 
@@ -483,58 +484,3 @@ def GetDataLookup(request):
     
     return HttpResponse(str(data))
 
-def GetModelAsJson(request):
-    try:
-        senha = request.GET.get('senha')
-        usuario = request.GET.get('usuario')
-        #dados fixos até ajustar a questão da criptografia
-        if (senha != 'masterVMSIS123v') or (usuario != 'vmsismaster'):
-            return HttpResponse('Login error')
-    except Exception:
-        return HttpResponse('Login error')
-
-    
-    str_model = request.GET.get('model')
-    str_module = request.GET.get('module')
-    str_extra_model = request.GET.get('extra_model', str())
-    str_extra_module = request.GET.get('extra_module', str())
-    fields = request.GET.get('fields', [])
-    filtro = request.GET.get('filter', {})
-    
-    if fields:
-        fields = fields.split("|")    
-
-    list_module = str_module.split('.')    
-
-    try:
-        model = apps.get_app_config(list_module[len(list_module)-2]).get_model(str_model)
-    except LookupError:
-        return HttpResponse("An error ocurred. The model or module don't exists")
-    
-    extra_model = None
-    if str_extra_model:
-        list_extra_module = str_extra_module.split('.')
-        try:
-            extra_model = apps.get_app_config(list_extra_module[len(list_extra_module)-2]).get_model(str_extra_model)
-        except LookupError:
-            return HttpResponse("An error ocurred. The model or module don't exists")
-    
-    if extra_model:
-        objs = list(model.objects.all()) + list(extra_model.objects.all())
-    else:
-        if filtro:
-            condicao = json.loads(filtro)
-            objs = model.objects.filter(**condicao)
-        else:
-            objs = model.objects.all()
-
-    try:
-        if fields:
-            query = serializers.serialize("xml", objs, 
-                fields = tuple(fields))
-        else:
-            query = serializers.serialize("xml", objs)
-    except Exception as e:
-        return HttpResponse(e)
-
-    return HttpResponse(query)

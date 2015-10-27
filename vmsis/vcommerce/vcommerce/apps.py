@@ -22,6 +22,7 @@ apps_on_menu = (
     {'app': 'parametro.controle_acesso', 'verbose_name' : 'Controle de Acesso'},
     {'app': 'vatualiza', 'verbose_name' : 'Atualização', 'visible': False},
     {'app': 'cadastro.centro_custo', 'verbose_name' : 'Centro de Custos'},    
+    {'app': 'sincronizacao', 'verbose_name' : 'Centro de Custos', 'visisble': False},    
     
 
     # TELAS DA CONTABILIDADE
