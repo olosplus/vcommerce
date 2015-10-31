@@ -39,7 +39,7 @@ def SaveJsonAsModel(request):
         usuario = request.GET.get('usuario')
     except Exception:
         return HttpResponse('Login error')
-
+    print(senha)
     data_str = request.GET.get('data', "")
     
     data_dict = {}

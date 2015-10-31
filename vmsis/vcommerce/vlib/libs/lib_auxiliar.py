@@ -7,5 +7,5 @@ def get_model_by_string(module, model_name):
     try:
         model = apps.get_app_config(list_module[len(list_module)-2]).get_model(model_name)
     except LookupError:
-        return None#HttpResponse("An error ocurred. The model or module don't exists")
+        return None
     return model
