@@ -87,19 +87,32 @@ class UploadModel(SincronizacaoBase):
                             break
                     except model.DoesNotExist:
                         mod = None  
-                        
+            
+            desktop_id = row["desktop_id"]
+
             if not mod:
                 mod = model()
             
             for field in row.keys():
                 if not field in ["model_child", "desktop_id"]:
-                    setattr(mod, field, row[field])
-                else: 
-                    if field == "desktop_id":
-                        desktop_id = row[field]
+                    if field != parent_field:
+                        try :
+                            mod_pai = mod.__meta.get_field(field).rel.to
+                        except:
+                            mod_pai = None
+                        
+                        if mod_pai:
+                            id_fk = mod_pai.objects.get(pk=desktop_id).values_list('id')[0]
+                            setattr(mod, field, id_fk)
+                        else:
+                            setattr(mod, field, row[field])     
+                    else:    
+                        setattr(mod, field, row[field])
 
             if parent_id:
                 setattr(mod, parent_field, parent_id)
+
+            setattr(mod, "id_desktop", desktop_id)
 
             mod.save()
             

@@ -11,6 +11,7 @@ class ControleSincronizacao(models.Model):
         editable=False)
     dt_data_edt_sinc = models.DateTimeField(verbose_name='Data de cadastro', null=True,
         editable=False)  
+    id_desktop = models.IntegerField(verbose_name="Código no desktop", null=True, editable=False)
 
 
 class Master_endereco(models.Model):
