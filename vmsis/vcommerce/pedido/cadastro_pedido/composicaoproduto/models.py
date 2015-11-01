@@ -3,9 +3,10 @@ from django.db import models
 from cadastro.produto.models import Produto
 from cadastro.unimedida.models import Unimedida
 from cadastro.empresa.models import Empresa
+from vlib.control.models import ControleSincronizacao
 
 # Create your models here.
-class ComposicaoProd(models.Model):
+class ComposicaoProd(ControleSincronizacao):
 	class Meta:
 		db_table = "ComposicaoProd"
 		verbose_name = "Composição do produto"

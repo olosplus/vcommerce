@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 from django.db import models
-from vlib.control.models import Master_endereco
+from vlib.control.models import Master_endereco, ControleSincronizacao
 from cadastro.localidade.bairro.models import Bairro
 
 # Create your models here.
-class Endereco(models.Model):
+class Endereco(ControleSincronizacao):
 	class Meta:
 		db_table = "endereco"
 		verbose_name = "Endereço"

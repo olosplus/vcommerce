@@ -5,7 +5,7 @@ from django.http import HttpResponse
 from django.db import models
 from vlib.libs import lib_auxiliar
 from django.db import IntegrityError
-
+from django.db.models import Q
 # Create your views here.
 class Autenticacao(object):
     def __init__(self, usuario, senha):
@@ -22,28 +22,31 @@ class Autenticacao(object):
 class SincronizacaoBase(object):
     def __init__(self, usuario, senha):
         self.usuario = usuario
-        self.senha = senha
+        self.senha = senha        
 
     def Autenticado(self):
         aut = Autenticacao(self.usuario, self.senha)
         return aut.autenticado()
 
 class DownloadModel(SincronizacaoBase):
-    def __init__(self, usuario, senha, model):
-        super(DownloadModel, self).__init__(usuario, senha)
+    def __init__(self, usuario, senha, model, DataUltimaSinc):
+        super(DownloadModel, self).__init__(usuario = usuario, senha = senha)
         self.fields = []
         self.filtro = {}
         self.model = model
-            
+        self.DataUltimaSinc = DataUltimaSinc            
+
     def GetDataAsXML(self):
         if not self.Autenticado():
             return HttpResponse('Login error')
 
         if self.filtro:
             condicao = json.loads(self.filtro)
-            objs = self.model.objects.filter(**condicao)
+            objs = self.model.objects.filter(Q(dt_data_inc_sinc__gte=self.DataUltimaSinc) | 
+                Q(dt_data_edt_sinc__gte=self.DataUltimaSinc)).filter(**condicao)
         else:
-            objs = self.model.objects.all()
+            objs = self.model.objects.filter(Q(dt_data_inc_sinc__gte=self.DataUltimaSinc) | 
+                Q(dt_data_edt_sinc__gte=self.DataUltimaSinc))
         
         try:
             if self.fields:

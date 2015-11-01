@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 from django.db import models
-from vlib.control.models import Master_empresa
+from vlib.control.models import Master_empresa, ControleSincronizacao
 
 # Create your models here.
-class Pais(Master_empresa):
+class Pais(Master_empresa, ControleSincronizacao):
 	"""docstring for ClassName"""
 	class Meta:
 		db_table = "pais"

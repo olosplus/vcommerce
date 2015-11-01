@@ -3,9 +3,11 @@ from django.db import models
 from cadastro.produto.models import Produto
 from pedido.cadastro_pedido.agrupadicional.models import AgrupAdicional
 from pedido.cadastro_pedido.categoria.models import Categoria
+from vlib.control.models import ControleSincronizacao
+
 # Create your models here.
 
-class ItemCategoria(models.Model):
+class ItemCategoria(ControleSincronizacao):
     class Meta:
         db_table = "ItemCategoria"
         verbose_name = "Cardápio"
@@ -20,7 +22,7 @@ class ItemCategoria(models.Model):
     def __str__(self):
         return self.produto.nmproduto
 
-class ItAgrupAdicional(models.Model):
+class ItAgrupAdicional(ControleSincronizacao):
     class Meta:
         db_table = "itagrupadicional"
         verbose_name = "Agrupamentos de Adicionais Permitidos"

@@ -1,12 +1,13 @@
 # -*- coding: utf-8 -*-
 from django.db import models
 from cadastro.produto.models import Produto
+from vlib.control.models import ControleSincronizacao
 
 choice_tipo_ativ = (('A','Ativa'),
 	('D','Inativa'))
 
 # Create your models here.
-class AgrupAdicional(models.Model):
+class AgrupAdicional(ControleSincronizacao):
 	class Meta:
 		db_table = "AgrupAdicional"
 		verbose_name = "Agrupamento de Adicional"
@@ -19,7 +20,7 @@ class AgrupAdicional(models.Model):
 	def __str__(self):
 		return self.nmagrupadic
 
-class Adicionais(models.Model):
+class Adicionais(ControleSincronizacao):
 	class Meta:
 		db_table = "Adicionais"
 		

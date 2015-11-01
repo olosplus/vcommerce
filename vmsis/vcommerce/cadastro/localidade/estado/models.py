@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 from django.db import models
 from cadastro.localidade.pais.models import Pais
-from vlib.control.models import Master_empresa
+from vlib.control.models import Master_empresa, ControleSincronizacao
 
 # Create your models here.
-class Estado(Master_empresa):
+class Estado(Master_empresa, ControleSincronizacao):
 	class Meta:
 		db_table = "estado"
 		verbose_name = "Estado"

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from django.db import models
-from vlib.control.models import Master_empresa
+from vlib.control.models import Master_empresa, ControleSincronizacao
 
 choice_TipoMed = (
 	('C','Capacidade'),
@@ -8,7 +8,7 @@ choice_TipoMed = (
 	('M','Massa'),
 	('U','Unidade'))
 
-class Unimedida(Master_empresa):
+class Unimedida(Master_empresa, ControleSincronizacao):
 	class Meta:
 		db_table = "unimedida"
 		verbose_name = "Unidade de Medida"

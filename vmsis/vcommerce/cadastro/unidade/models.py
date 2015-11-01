@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from django.db import models 
-from vlib.control.models import Master_endereco
+from vlib.control.models import Master_endereco, ControleSincronizacao
 from cadastro.almoxarifado.models import Almoxarifado
 
 choice_tipo = (('M','Matriz'),
@@ -10,7 +10,7 @@ choice_tipo_jfo = (('J','Jurídica'),
 	('F','Física'),
 	('O','Outros'))
 
-class Unidade(Master_endereco):
+class Unidade(Master_endereco, ControleSincronizacao):
     class Meta:
         db_table = "unidade"
         verbose_name = "Unidade"

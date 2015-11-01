@@ -3,10 +3,10 @@ from pedido.frentecaixa.models import Pedido, ItemPedido
 from cadastro.produto.models import Produto
 from cadastro.almoxarifado.models import Almoxarifado
 from estoque.lote.models import Lote
-
+from vlib.control.models import ControleSincronizacao
 
 # Create your models here.
-class ItemReti(models.Model):
+class ItemReti(ControleSincronizacao):
     class Meta:
         db_table = "itemreti"
         verbose_name = "Ajuste Pedido"

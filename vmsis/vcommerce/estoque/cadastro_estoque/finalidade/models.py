@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 from django.db import models
-from vlib.control.models import Master_empresa
+from vlib.control.models import Master_empresa, ControleSincronizacao
 
 # Create your models here.
-class Finalidade(Master_empresa):
+class Finalidade(Master_empresa, ControleSincronizacao):
 	class Meta:
 		db_table = "finalidade"
 		verbose_name = "Finalidade"

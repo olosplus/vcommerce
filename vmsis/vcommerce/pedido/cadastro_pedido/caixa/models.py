@@ -1,8 +1,10 @@
 # coding: utf-8
 from django.db import models
 from cadastro.unidade.models import Unidade
+from vlib.control.models import ControleSincronizacao
+
 # Create your models here.
-class Caixa(models.Model):
+class Caixa(ControleSincronizacao):
     class Meta:
         db_table = "caixa"
         verbose_name = "Caixa"

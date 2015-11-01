@@ -3,7 +3,7 @@ from django.db import models
 from vlib.vmodels import widgets
 from django.contrib.auth.models import User
 from cadastro.unidade.models import Unidade
-from vlib.control.models import Master_empresa
+from vlib.control.models import Master_empresa, ControleSincronizacao
 from cadastro.localidade.pais.models import Pais
 from cadastro.localidade.estado.models import Estado
 from cadastro.localidade.cidade.models import Cidade
@@ -14,7 +14,7 @@ TIPO_C = (('PF',u'Pessoa Física'),('PJ',u'Pessoa Jurídica'),)
 SEXO_C = (('F','Feminino'),('M','Masculino'),)
 
 # Create your models here.
-class Funcionario(Master_empresa):
+class Funcionario(Master_empresa, ControleSincronizacao):
     user = models.ForeignKey(User, blank=True, null=True, editable=False)
 
     nome = models.CharField(max_length=255, verbose_name='Nome')

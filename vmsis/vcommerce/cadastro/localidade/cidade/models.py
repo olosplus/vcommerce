@@ -2,9 +2,9 @@
 from django.db import models
 from cadastro.localidade.pais.models import Pais
 from cadastro.localidade.estado.models import Estado
-from vlib.control.models import Master_empresa
+from vlib.control.models import Master_empresa, ControleSincronizacao
 
-class Cidade(Master_empresa):
+class Cidade(Master_empresa, ControleSincronizacao):
     class Meta:
         db_table = "cidade"
         verbose_name = "Cidade"

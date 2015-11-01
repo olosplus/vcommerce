@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 from django.db import models
 from vlib.vmodels import widgets
-from vlib.control.models import Master_unidade
+from vlib.control.models import Master_unidade, ControleSincronizacao
 
 # Create your models here.
-class Lote(Master_unidade):
+class Lote(Master_unidade, ControleSincronizacao):
 	class Meta:
 		db_table = "lote"
 		verbose_name = "Lote"

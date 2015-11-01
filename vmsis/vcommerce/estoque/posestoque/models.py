@@ -3,10 +3,10 @@ from django.db import models
 from cadastro.produto.models import Produto
 from estoque.lote.models import Lote
 from cadastro.almoxarifado.models import Almoxarifado
-from vlib.control.models import Master_empresa
+from vlib.control.models import Master_empresa, ControleSincronizacao
 
 # Create your models here.
-class Posestoque(Master_empresa):
+class Posestoque(Master_empresa, ControleSincronizacao):
 	class Meta:
 		db_table = "posestoque"
 		verbose_name = "Posição de Estoque"

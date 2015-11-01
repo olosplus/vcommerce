@@ -1,9 +1,9 @@
 # coding : utf-8
 from django.db import models
-from vlib.control.models import Master_empresa
+from vlib.control.models import Master_empresa, ControleSincronizacao
 from cadastro.unidade.models import Unidade
 
-class CentroCusto(Master_empresa):
+class CentroCusto(Master_empresa, ControleSincronizacao):
     class Meta:
     	db_table = "centro_custo"
     	verbose_name = "Centro de custo"

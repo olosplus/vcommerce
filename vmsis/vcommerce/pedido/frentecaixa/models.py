@@ -6,7 +6,7 @@ from pedido.cadastro_pedido.categoria.models import Categoria
 from cadastro.produto.models import Produto
 from pedido.cadastro_pedido.agrupadicional.models import AgrupAdicional, Adicionais
 from pedido.cadastro_pedido.itemcategoria.models import ItemCategoria
-from vlib.control.models import Master_empresa
+from vlib.control.models import Master_empresa, ControleSincronizacao
 from cadastro.almoxarifado.models import Almoxarifado
 from estoque.lote.models import Lote
 
@@ -17,7 +17,7 @@ choice_status_pedido = (('P','Pendente'),('C','Concluido'))
 choice_SN = (('S','Sim'),('N','Não'))
 
 # Create your models here.
-class Pedido(models.Model):
+class Pedido(ControleSincronizacao):
 	class Meta:
 		db_table = "pedido"
 		verbose_name = "Pedido"
@@ -33,7 +33,7 @@ class Pedido(models.Model):
 	idstatusped = models.CharField(max_length=1, default='P',
 	    choices=choice_status_pedido)
 
-class ItemPedido(Master_empresa):
+class ItemPedido(Master_empresa, ControleSincronizacao):
 	class Meta:
 		db_table = "itempedido"
 		verbose_name = "Item do Pedido"
@@ -49,7 +49,7 @@ class ItemPedido(Master_empresa):
 	vrtotal = models.FloatField(default=0,editable = False)
 	idadicional = models.BooleanField(verbose_name='Adicional',default=False,blank=True)
 
-class ItAdicional(models.Model):
+class ItAdicional(ControleSincronizacao):
 	class Meta:
 		db_table = "ItAdicional"
 		verbose_name = "Adicional do produto"

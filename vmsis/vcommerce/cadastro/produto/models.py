@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 from django.db import models
 from cadastro.unimedida.models import Unimedida
-from vlib.control.models import Master_empresa
+from vlib.control.models import Master_empresa, ControleSincronizacao
 
 # Create your models here.
-class Produto(Master_empresa):
+class Produto(Master_empresa, ControleSincronizacao):
     class Meta:
         db_table = "produto"
         verbose_name = "Produto"

@@ -1,9 +1,11 @@
 from django.db import models
 from pedido.cadastro_pedido.caixa.models import Caixa
 from cadastro.funcionario.models import Funcionario
-choices_status = (('P', 'Pendente'), ('A', 'Abertor'), ('F', 'Fechado'))
+from vlib.control.models import ControleSincronizacao
+
+choices_status = (('P', 'Pendente'), ('A', 'Aberto'), ('F', 'Fechado'))
 # Create your models here.
-class AberFechCaixa(models.Model):
+class AberFechCaixa(ControleSincronizacao):
     caixa = models.ForeignKey(Caixa, verbose_name="Caixa")
     vrinicial = models.FloatField(verbose_name="Valor inicial")
     vrcorrigido = models.FloatField(verbose_name="Valor conferido")

@@ -4,10 +4,10 @@ from estoque.control.models import Master_moviest
 from cadastro.produto.models import Produto
 from cadastro.almoxarifado.models import Almoxarifado
 from estoque.lote.models import Lote
-from vlib.control.models import Master_empresa
+from vlib.control.models import Master_empresa, ControleSincronizacao
 
 # Create your models here.
-class Itemproduto(Master_empresa):
+class Itemproduto(Master_empresa, ControleSincronizacao):
 	class Meta:
 		db_table = "itemproduto"
 		verbose_name = "Item"

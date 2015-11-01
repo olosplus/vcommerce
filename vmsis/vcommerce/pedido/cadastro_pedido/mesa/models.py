@@ -1,13 +1,14 @@
 # -*- coding: utf-8 -*-
 from django.db import models
 from cadastro.unidade.models import Unidade
+from vlib.control.models import ControleSincronizacao
 
 choice_tipo_idmesa = (('A','Ativa'),
 	('D','Inativa'))
 
 
 # Create your models here.
-class Mesa(models.Model):
+class Mesa(ControleSincronizacao):
 	class Meta:
 		db_table = "mesa"
 		verbose_name = "Mesa"

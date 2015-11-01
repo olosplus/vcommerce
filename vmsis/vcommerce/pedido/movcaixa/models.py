@@ -1,12 +1,13 @@
 from django.db import models
 from pedido.frentecaixa.models import Pedido
 from pedido.cadastro_pedido.caixa.models import Caixa
+from vlib.control.models import ControleSincronizacao
 
 tipo_movimento = (('E', 'Entrada'), ('V', 'Venda'), ('S', 'Sangria'), ('R', 'Retirada'))
 forma_pagamento = (('DI', 'Dinheiro'), ('DE', 'Débito'), ('CR', 'Crédito'))
 
 # Create your models here.
-class MovCaixa(models.Model):
+class MovCaixa(ControleSincronizacao):
     caixa = models.ForeignKey(Caixa, verbose_name="Caixa")
     dtmovi = models.DateField(verbose_name="Data do lancamento")
     vrmovi = models.FloatField(verbose_name="Valor do pedido")

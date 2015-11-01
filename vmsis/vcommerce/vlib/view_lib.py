@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import datetime
 import json
 from django.shortcuts import render_to_response
 from django import forms
@@ -243,6 +244,9 @@ class StandardFormGrid(ModelForm):
                 if erro:
                     return self.formatMsgError(mod.__class__.__name__, erro)
 
+                if hasattr(mod, 'dt_data_edt_sinc'):
+                    setattr(mod, 'dt_data_edt_sinc', datetime.datetime.now())
+
                 mod.save()            
                 maps.update({row_json['data-indexrow'] : mod.id})
                 
@@ -397,6 +401,8 @@ class StandardFormGrid(ModelForm):
         return super(StandardFormGrid, self).save(commit=False)
 
     def save(self, commit = True):
+        if self.instance.pk and hasattr(self.instance, 'dt_data_edt_sinc'):
+            self.instance.dt_data_edt_sinc = datetime.datetime.now()
 
         instance = super(StandardFormGrid, self).save(commit = commit)
         

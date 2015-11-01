@@ -1,11 +1,12 @@
 # -*- coding: utf-8 -*-
 from django.db import models
+from vlib.control.models import ControleSincronizacao
 
 choice_tipo_ativ = (('A','Ativa'),
 	('D','Inativa'))
 
 # Create your models here.
-class Categoria(models.Model):
+class Categoria(ControleSincronizacao):
 	class Meta:
 		db_table = "categoria"
 		verbose_name = "Categoria"
