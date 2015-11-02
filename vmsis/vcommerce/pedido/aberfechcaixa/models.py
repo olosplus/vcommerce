@@ -6,6 +6,9 @@ from vlib.control.models import ControleSincronizacao
 choices_status = (('P', 'Pendente'), ('A', 'Aberto'), ('F', 'Fechado'))
 # Create your models here.
 class AberFechCaixa(ControleSincronizacao):
+    class Meta:
+        db_table = 'AberFechCaixa'
+        
     caixa = models.ForeignKey(Caixa, verbose_name="Caixa")
     vrinicial = models.FloatField(verbose_name="Valor inicial")
     vrcorrigido = models.FloatField(verbose_name="Valor conferido")

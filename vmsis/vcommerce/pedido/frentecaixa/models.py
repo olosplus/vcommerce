@@ -28,10 +28,10 @@ class Pedido(ControleSincronizacao):
 	cliente = models.ForeignKey(Cliente, verbose_name="Cliente",blank=True,null=True)
 	nmcliente = models.CharField(max_length=250,verbose_name="Nome",blank=True,null=True)
 	mesa = models.ForeignKey(Mesa, verbose_name="Mesa",blank=True,null=True)
-	#vrpedido = models.FloatField(verbose_name="Valor Total" , editable = False)
 	vrpedido = models.FloatField(verbose_name='Valor total',default=0,editable = False)
 	idstatusped = models.CharField(max_length=1, default='P',
 	    choices=choice_status_pedido)
+	dsmotivo = models.TextField(verbose_name="Motivo para o cancelamento", null=True)
 
 class ItemPedido(Master_empresa, ControleSincronizacao):
 	class Meta:
@@ -48,6 +48,7 @@ class ItemPedido(Master_empresa, ControleSincronizacao):
 	vrvenda = models.FloatField(default=0,editable=False)
 	vrtotal = models.FloatField(default=0,editable = False)
 	idadicional = models.BooleanField(verbose_name='Adicional',default=False,blank=True)
+	produto = models.ForeignKey(Produto, verbose_name="Produto")
 
 class ItAdicional(ControleSincronizacao):
 	class Meta:

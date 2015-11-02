@@ -13,7 +13,7 @@ class Autenticacao(object):
         self.senha = senha
     
     def autenticado(self):
-    	#dados fixos até ajustar a questão da criptografia
+        #dados fixos até ajustar a questão da criptografia
         if (self.senha == 'masterVMSIS123v') and (self.usuario == 'vmsismaster'):
             return True
         else:
@@ -39,7 +39,7 @@ class DownloadModel(SincronizacaoBase):
     def GetDataAsXML(self):
         if not self.Autenticado():
             return HttpResponse('Login error')
-
+        print(self.DataUltimaSinc)
         if self.filtro:
             condicao = json.loads(self.filtro)
             objs = self.model.objects.filter(Q(dt_data_inc_sinc__gte=self.DataUltimaSinc) | 
@@ -73,49 +73,55 @@ class UploadModel(SincronizacaoBase):
         try:            
             desktop_id = str()            
             mod = None
-            
             if chaves:
-                lista_chaves = chaves.split(',')
+                lista_chaves = chaves.split("|")
                 for chave in lista_chaves:
                     if chave == str():
                         continue
-
                     try:
-                        filtro_chave = {chave : row[chave]}                        
+                        filtro_chave = {}
+                        lista_campo_caves = chave.split(",")
+
+                        for campo_chave in lista_campo_caves: 
+                            if campo_chave == str():
+                                continue                            
+                            filtro_chave.update({campo_chave : row[campo_chave]})  
+                        print(model.__name__)
+                        print(filtro_chave)
                         mod = model.objects.get(**filtro_chave)
                         if mod:
                             break
                     except model.DoesNotExist:
                         mod = None  
-            
+
             desktop_id = row["desktop_id"]
 
             if not mod:
-                mod = model()
-            
-            for field in row.keys():
-                if not field in ["model_child", "desktop_id"]:
-                    if field != parent_field:
-                        try :
-                            mod_pai = mod.__meta.get_field(field).rel.to
-                        except:
-                            mod_pai = None
-                        
-                        if mod_pai:
-                            id_fk = mod_pai.objects.get(pk=desktop_id).values_list('id')[0]
-                            setattr(mod, field, id_fk)
-                        else:
-                            setattr(mod, field, row[field])     
-                    else:    
-                        setattr(mod, field, row[field])
+                mod = model()                
 
-            if parent_id:
-                setattr(mod, parent_field, parent_id)
+            for field in row.keys():
+                                
+                if not field in ["model_child", "desktop_id"]:                 
+                    field_obj = model._meta.get_field(field);
+                    if field_obj.__class__ == models.ForeignKey:
+                        mod_pai = field_obj.rel.to                        
+                    else:
+                        mod_pai = None
+
+                    if mod_pai:                                                                     
+                        try:
+                            id_fk = mod_pai.objects.get(id_desktop=row[field]).id
+                        except Exception as e:
+                            print(e)
+                            id_fk = row[field]
+                        print(id_fk)
+                        setattr(mod, field_obj.get_attname_column()[0], id_fk)
+                    else:
+                        setattr(mod, field_obj.get_attname_column()[0], row[field])   
+
 
             setattr(mod, "id_desktop", desktop_id)
-
-            mod.save()
-            
+            mod.save()           
             self.str_lista_id_desktop += desktop_id + ":" +  str(mod.id) + ";"
 
             return mod.id
