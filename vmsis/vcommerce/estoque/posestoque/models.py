@@ -16,3 +16,4 @@ class Posestoque(Master_empresa, ControleSincronizacao):
 	almoxarifado = models.ForeignKey(Almoxarifado, verbose_name='Almoxarifado')
 	lote = models.ForeignKey(Lote, verbose_name='Lote', null=True)
 	qtdeproduto = models.FloatField(verbose_name='Quantidade')
+	customedio = models.FloatField(verbose_name='Custo médio', null=True)
