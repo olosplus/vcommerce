@@ -12,7 +12,7 @@ from estoque.lote.models import Lote
 
 choice_tipo_pedido = (('B','Balcao'),('D','Delivery'),('M','Mesa'))
 
-choice_status_pedido = (('P','Pendente'),('C','Concluido'))
+choice_status_pedido = (('F','Finalizado'),('C','Cancelado'), ('A', 'Aberto'))
 
 choice_SN = (('S','Sim'),('N','Não'))
 
@@ -59,3 +59,5 @@ class ItAdicional(ControleSincronizacao):
 	itempedido = models.ForeignKey(ItemPedido)
 	item = models.ForeignKey(Adicionais, verbose_name="Produto")
 	qtitem = models.FloatField(verbose_name="Quantidade")
+	valor = models.FloatField(verbose_name="Valor")
+	VrVenda = models.FloatField(verbose_name="Valor da venda")

@@ -6,6 +6,8 @@ from django.db import models
 from vlib.libs import lib_auxiliar
 from django.db import IntegrityError
 from django.db.models import Q
+from django.db import transaction
+
 # Create your views here.
 class Autenticacao(object):
     def __init__(self, usuario, senha):
@@ -39,16 +41,15 @@ class DownloadModel(SincronizacaoBase):
     def GetDataAsXML(self):
         if not self.Autenticado():
             return HttpResponse('Login error')
-        print(self.DataUltimaSinc)
-        if self.filtro:
-            condicao = json.loads(self.filtro)
-            objs = self.model.objects.filter(Q(dt_data_inc_sinc__gte=self.DataUltimaSinc) | 
-                Q(dt_data_edt_sinc__gte=self.DataUltimaSinc)).filter(**condicao)
-        else:
-            objs = self.model.objects.filter(Q(dt_data_inc_sinc__gte=self.DataUltimaSinc) | 
-                Q(dt_data_edt_sinc__gte=self.DataUltimaSinc))
-        
         try:
+            if self.filtro:
+                condicao = json.loads(self.filtro)
+                objs = self.model.objects.filter(Q(dt_data_inc_sinc__gte=self.DataUltimaSinc) | 
+                    Q(dt_data_edt_sinc__gte=self.DataUltimaSinc)).filter(**condicao)
+            else:
+                objs = self.model.objects.filter(Q(dt_data_inc_sinc__gte=self.DataUltimaSinc) | 
+                    Q(dt_data_edt_sinc__gte=self.DataUltimaSinc))
+            
             if self.fields:
                 query = serializers.serialize("xml", objs, 
                     fields = tuple(self.fields))
@@ -85,9 +86,8 @@ class UploadModel(SincronizacaoBase):
                         for campo_chave in lista_campo_caves: 
                             if campo_chave == str():
                                 continue                            
-                            filtro_chave.update({campo_chave : row[campo_chave]})  
-                        print(model.__name__)
-                        print(filtro_chave)
+                            if campo_chave in row.keys():
+                                filtro_chave.update({campo_chave : row[campo_chave]})  
                         mod = model.objects.get(**filtro_chave)
                         if mod:
                             break
@@ -112,9 +112,8 @@ class UploadModel(SincronizacaoBase):
                         try:
                             id_fk = mod_pai.objects.get(id_desktop=row[field]).id
                         except Exception as e:
-                            print(e)
                             id_fk = row[field]
-                        print(id_fk)
+
                         setattr(mod, field_obj.get_attname_column()[0], id_fk)
                     else:
                         setattr(mod, field_obj.get_attname_column()[0], row[field])   
@@ -127,6 +126,7 @@ class UploadModel(SincronizacaoBase):
             return mod.id
 
         except Exception as e:
+            transaction.rollback()
             print(e)
             return str(e)
 

@@ -6,6 +6,8 @@ from vlib.libs import lib_auxiliar
 from sincronizacao import lib_sincronizacao as lib_sinc
 import json
 import datetime
+
+
 #views method
 def GetModelAsXML(request):
     try:
@@ -47,7 +49,6 @@ def SaveJsonAsModel(request):
     
     if data_str:
         data_dict = dict(json.loads(data_str))
-
+    
     upload = lib_sinc.UploadModel(usuario, senha)
-
     return upload.SaveJson(data_dict, parent_id = None)

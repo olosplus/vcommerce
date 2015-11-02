@@ -20,6 +20,10 @@ class Fornecedor(Master_endereco, EnderecoGenerico, ControleSincronizacao):
     identificador = models.CharField(max_length=1,verbose_name="Tipo",choices=choice_tipo_jfo)
     nrinscjurd = models.CharField(max_length=20,verbose_name="Inscrição Jurídica")
     nmfornecedor = models.CharField(max_length=250,verbose_name="Nome",unique=True)
+    telcel = models.CharField(max_length=15,verbose_name="Telefone celular", blank=True, 
+        null=True)
+    telfixo = models.CharField(max_length=15,verbose_name="Telefone fixo",blank=True,
+        null=True)    
 
 
     def __str__(self):
