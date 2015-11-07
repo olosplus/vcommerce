@@ -31,7 +31,7 @@ class Pedido(ControleSincronizacao):
 	vrpedido = models.FloatField(verbose_name='Valor total',default=0,editable = False)
 	idstatusped = models.CharField(max_length=1, default='P',
 	    choices=choice_status_pedido)
-	dsmotivo = models.TextField(verbose_name="Motivo para o cancelamento", null=True)
+	dsmotivo = models.TextField(verbose_name="Motivo para o cancelamento", null=True, blank=True)
 
 class ItemPedido(Master_empresa, ControleSincronizacao):
 	class Meta:
