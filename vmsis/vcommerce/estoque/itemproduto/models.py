@@ -19,4 +19,4 @@ class Itemproduto(Master_empresa, ControleSincronizacao):
 	lote = models.ForeignKey(Lote,verbose_name='Lote', null=True, blank=True)
 	qtdeprod = models.FloatField(verbose_name="Quantidade")
 	master_moviest = models.ForeignKey(Master_moviest,null=True)
-	vlProd = models.FloatField("Valor unitário")
+	vlProd = models.FloatField(verbose_name="Valor unitário")
