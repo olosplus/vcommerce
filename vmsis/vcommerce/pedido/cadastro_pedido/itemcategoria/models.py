@@ -21,7 +21,7 @@ class ItemCategoria(ControleSincronizacao):
     dsproduto = models.CharField(length=100,verbose_name="Descrição")
 
     def __str__(self):
-        return self.produto.dsproduto
+        return self.dsproduto
 
 class ItAgrupAdicional(ControleSincronizacao):
     class Meta:
