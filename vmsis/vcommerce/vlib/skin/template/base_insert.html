@@ -3,7 +3,10 @@
 {% load db_tags %} 
 
 {% block js %}
-  <script src="{% static 'js/base.js' %}"></script>
+    <script src="{% static 'js/vmsis-lib.js' %}"></script>    
+    <script src="{% static 'js/base.js' %}"></script>        
+    <script src="{% static 'js/base-ajax.js' %}"></script>        
+
   {% for media in JsFiles %}
     <script type="text/javascript" src='{% static media %}'></script>
   {% endfor %}
@@ -32,6 +35,7 @@
                       {{ field.label_tag }} </br>
                       {{ field|add_class:"form-control form-control-customizado inline" }}
                       {{ fks|get_fk:field.name | safe }}
+                      {{ fks|get_contextmenu:field.name | safe }}
                     </div>
                   {%endif%}                  
                 {% endfor %}                

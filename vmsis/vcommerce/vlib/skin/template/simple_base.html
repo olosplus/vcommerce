@@ -75,13 +75,12 @@
     <!-- /#page-wrapper -->
   {% endblock %}    
   
-  {% block js %}
-  {% endblock %}
 
     <!-- Grid Personalizado -->
+    <script src="{% static 'js/vmsis-lib.js' %}"></script>    
     <script src="{% static 'grid/grid.js' %}"></script>    
     <script src="{% static 'grid/filtro.js' %}"></script>    
-    <script src="{% static 'js/vmsis-lib.js' %}"></script>    
+    
     <script src="{% static 'js/base.js' %}"></script>        
     <script src="{% static 'js/base-ajax.js' %}"></script>        
 
@@ -106,6 +105,9 @@
           document.getElementById(form).submit();     
       }; 
     </script>
+   {% block js %}
+   {% endblock %}
+
   </body>
   {% block rodape %}
   {% endblock %}

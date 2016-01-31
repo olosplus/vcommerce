@@ -181,6 +181,7 @@ function InsertEmptyRow(columns, idGrid, link_to_form) {
     JSON.stringify(columns) +")' "+
          " data-parent-indexrow = "+parent_data_index+">";
   html += "<td> <center><input type='checkbox' checked onchange='selectLine(this)'></input> </td></center>";
+
   for (column in columns) {
     if (columns.hasOwnProperty(column)) {
       if (columns[column].type === 'link') {
@@ -192,8 +193,7 @@ function InsertEmptyRow(columns, idGrid, link_to_form) {
         html += "<td>";
       };
       //for inputs
-      if ((columns[column].type != 'select') && (columns[column].type != 'link') 
-         /*&& (columns[column].type != 'textarea')*/) {
+      if ((columns[column].type != 'select') && (columns[column].type != 'link')) {
         html += html_input.replace('{{TYPE}}', columns[column].type);
         html = html.replace('{{VALOR}}', "");
         html = html.replace('{{DISABLE}}', '');
@@ -204,9 +204,6 @@ function InsertEmptyRow(columns, idGrid, link_to_form) {
           html = html.replace("{{STEP}}", "");
         };
       };
-/*      if (columns[column].type === 'textarea') {
-        html += "<textarea class = 'gridtag' name='" + columns[column].name + "' onchange='SetChangesLine(this)'>" + "</textarea>";
-      };*/
       if (columns[column].type == 'select') {
         if (columns[column].options != 'undefined') {
           var options = columns[column].options;
@@ -223,6 +220,7 @@ function InsertEmptyRow(columns, idGrid, link_to_form) {
           }
 
           html += "<select class = 'gridtag' name='" + columns[column].name + "' onclick='SetChangesLine(this)' "+
+            "id='" + columns[column].name + "_"+ data_row + "'" +
           popupScript + " >";
           for (option in options) {
             if (options.hasOwnProperty(option)) {
@@ -237,6 +235,11 @@ function InsertEmptyRow(columns, idGrid, link_to_form) {
             selected = "";
           };
           html += "</select>";
+          if(url){
+            html += vmsisLib.format('<div class="contextmenu" data-container="%s" > '+
+                '   <div class="contextmenu-item" onclick="getDataLookup(\'%s\', \'%s\', \'%s\')">Atualizar</div> '+
+                ' </div> ', [ columns[column].name + "_"+ data_row , model, module, name ])            
+          }
         };
       };
     };
@@ -245,6 +248,7 @@ function InsertEmptyRow(columns, idGrid, link_to_form) {
   html += "</tr>";
   body = $("#" + idGrid + "> tbody");
   $("#" + idGrid + "> tbody").append(html);
+  vmsisLib.contextMenu();
 };
 
 function InsertLineWithValue(row, columns, readonly, link_to_form, index_row, idGrid) {
@@ -272,7 +276,9 @@ function InsertLineWithValue(row, columns, readonly, link_to_form, index_row, id
   if (readonly === "False") {
     html += "<td> <center><input type='checkbox' onchange='selectLine(this)'> " + "</input> </td></center>";
   };
+
   for (column in columns) {
+
     if (columns.hasOwnProperty(column)) {
       if ((columns[column].type === 'link') && (readonly === "False")) {
         continue;
@@ -284,7 +290,7 @@ function InsertLineWithValue(row, columns, readonly, link_to_form, index_row, id
       }
       //for inputs
       if ((columns[column].type != 'select') && (columns[column].type != 'link') && 
-          /*(columns[column].type != 'textarea')*/  (columns[column].type != "") && 
+          (columns[column].type != "") && 
           (columns[column].type != "select-readonly") ) {
         html += html_input.replace('{{TYPE}}', columns[column].type);
         html = html.replace('{{VALOR}}', row.v[index]);
@@ -295,9 +301,7 @@ function InsertLineWithValue(row, columns, readonly, link_to_form, index_row, id
           html = html.replace("{{STEP}}", "");
         };
       };
-/*      if (columns[column].type === 'textarea') {
-        html += "<textarea class = 'gridtag' name='" + columns[column].name + "' onchange='SetChangesLine(this)'>" + row.v[index] + "</textarea>"
-      };*/
+
       if ((columns[column].type === 'link') && (readonly === "True")) {
         if (columns[column].name === "update") {
           class_links = "fa fa-pencil";
@@ -339,7 +343,8 @@ function InsertLineWithValue(row, columns, readonly, link_to_form, index_row, id
             popupScript += "ondblclick='insert(\""+ model +"\", \""+ module +"\", \""+ url +"\",\""+name +"\")'"
           }
           
-          html += "<select  class='gridtag' name='" + columns[column].name + "' " + 
+          html += "<select  class='gridtag' name='" + columns[column].name + "'  " + 
+            " id='" + columns[column].name + "_" + index_row + "' "+            
             " onclick='SetChangesLine(this)' onkeydown='SetChangesLine(this)' "+ popupScript +">";
           for (option in options) {
             if (options.hasOwnProperty(option)) {
@@ -353,6 +358,12 @@ function InsertLineWithValue(row, columns, readonly, link_to_form, index_row, id
             };
           };
           html += "</select>";
+          if(url){
+              html += vmsisLib.format('<div class="contextmenu" data-container="%s" > '+
+                 '   <div class="contextmenu-item" onclick="getDataLookup(\'%s\', \'%s\', \'%s\')">Atualizar</div> '+
+                 ' </div> ', [ columns[column].name + "_"+ index_row, model, module, name ]);
+          }
+
         };
       };
       if (columns[column].type === "") {
@@ -507,9 +518,6 @@ function Grid(DivGridId, Data) {
 
     html += "  <a href='javascript:void(0)' onclick='doDeleteGrid(\"" + grid_id + "\")' class = 'fa fa-trash-o' " + 
       "title='Deletar selecionados'></a>  ";
-
-/*    html += "  <a href='javascript:void(0)' onclick='doPostGrid(\"" + grid_id + "\")' class='glyphicon glyphicon-floppy-disk' " + 
-      " title='Salvar'></a>"; */
   
   }else{
     html += "<div class='navigation' >";
@@ -538,6 +546,7 @@ function Grid(DivGridId, Data) {
   html += "</div>"
   $("#" + DivGridId).html(html);
   ControlPagination(pages, columns, selected_page, module, model, "");
+  vmsisLib.contextMenu();
 
 };
 

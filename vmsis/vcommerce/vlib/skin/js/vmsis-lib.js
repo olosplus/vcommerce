@@ -152,3 +152,33 @@ vmsisLib.waitting.stop = function(waittingVar){
    clearInterval(vmsisLib.waitting.intervalVar); 
    $(".modal-waitting").remove();
 }
+
+
+vmsisLib.contextMenu = function(){
+    $(".contextmenu").each(function(){
+        var element = $(this);
+        element.css("display","none");
+        var parent = $("#" + element.attr("data-container"));
+        parent.on('contextmenu', function(e){
+            var all_context = $(".contextmenu");
+            all_context.offset({left:0, top:0});
+            all_context.css("display", "none"); 
+            
+            var ele = $(this);                          
+            var context = $("[data-container='" + $(this).attr("id") + "']");
+            context.offset({left:e.clientX, top:e.clientY});
+            context.css("display", "block");
+            e.preventDefault();
+                                                
+        });
+        $(document).on('click', function(e){
+            if(e.button == 0){
+                var context = $(".contextmenu");
+                context.offset({left:0, top:0});
+                context.css("display", "none");                                 
+            }
+        });
+    });
+    
+    
+};

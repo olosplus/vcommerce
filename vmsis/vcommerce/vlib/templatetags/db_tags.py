@@ -30,3 +30,14 @@ def add_class(field, css):
        att = field.field.widget.attrs['class']
     att += " " + css
     return field.as_widget(attrs={"class":att})
+
+
+@register.filter(name='get_contextmenu')
+def get_contextmenu(fields, key):
+    if key in fields:
+        return  '<div class="contextmenu" data-container="id_%s" > '\
+                '   <div class="contextmenu-item" onclick="getDataLookup(\'%s\', \'%s\', \'id_%s\')">Atualizar</div> '\
+                ' </div> ' % (fields[key]['field_name'], fields[key]['model'], 
+            fields[key]['module'], fields[key]['field_name'])
+    else:
+        return ''

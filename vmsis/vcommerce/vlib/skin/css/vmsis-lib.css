@@ -37,3 +37,25 @@
     background-color : blue;
     color : white;
 }
+
+
+.contextmenu{
+   background-color: white;
+   border: 1px solid #F3F3ED;
+   float:left;
+   position:absolute;
+   border-radius: 2px;
+   z-index: 10000;
+   box-shadow: 5px 5px 5px #888888; 
+   display: none;
+   
+}
+.contextmenu div{
+  background-color: #F3F3ED;
+  padding: 3px;
+}
+
+.contextmenu div:hover{
+   background-color: #DBDBD5;   
+   cursor: pointer;
+}

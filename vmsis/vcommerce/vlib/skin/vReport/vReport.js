@@ -156,6 +156,7 @@ vReport = function(pageType, container, data, sel_document){
         "  } "+
         ".page{ "+
         " background-color:white; "+
+        " box-shadow: 0px 0px 10px gray;"+
         "} "+
 
         ".pageHeader, .masterBand, .pageFooter{ "+
@@ -201,9 +202,9 @@ vReport = function(pageType, container, data, sel_document){
 		if(masterBand.bandData != undefined){		    		    			
 			addPage();
 		    configPageHeader(pageHeader);
-			var i = 0;
 			var a = 0;
-			var b = 0;			
+			var b = 0;
+			var i = 0;
 			var component = undefined;
 			for(i = 0; i <= masterBand.bandData.length - 1; i++){
 				addMasterBand(masterBand.style);

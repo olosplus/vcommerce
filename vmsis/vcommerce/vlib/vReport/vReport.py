@@ -1,5 +1,6 @@
 from django.db.models.query import ValuesQuerySet
 from django.conf import settings
+
     
 class PageHeader(object):
     ''' 
@@ -66,6 +67,7 @@ class MasterBand(object):
                 name : nome do component
                 dbLink : valor do campo a ser buscado no dataBand
                 style : formatação css para o component
+                detail: uma banda detalhe com 
           query = QuerySet com os dados que serão passados para o dataBand 
     '''
     def __init__(self):
@@ -91,6 +93,15 @@ class MasterBand(object):
             	"style": str(style)})
         except Exception as e:            
             print(e)
+    
+
+#class GroupHeader(object):
+#    def __init__(self):
+#        self.style = str()
+#        self.components = []
+#        self.query = None
+
+
 
 class Report(object):
     ''' classe responsável por geração de relatórios básicos '''
