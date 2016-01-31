@@ -82,7 +82,9 @@ class Estoque(object):
 				posicao = Posestoque.objects.get(empresa_id=self.empresa, produto_id=p_produto, almoxarifado=p_almoxa, lote=p_lote)
 			else:
 				posicao = Posestoque.objects.get(empresa_id=self.empresa, produto_id=p_produto, almoxarifado=p_almoxa)
-			posicao.qtdeproduto += (p_qtde*qtfatorconv)
+			quantidade = (p_qtde*qtfatorconv)
+			posicao.customedio = ((posicao.customedio * posicao.qtdeproduto) + (p_vrprod * quantidade))/(posicao.qtdeproduto+quantidade)
+			posicao.qtdeproduto += quantidade
 			posicao.save()
 		except Posestoque.DoesNotExist:
 			if p_lote:
