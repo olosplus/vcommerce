@@ -18,7 +18,7 @@ class ItemCategoria(ControleSincronizacao):
     vrvenda = models.FloatField(verbose_name="Preço")
     qtvenda = models.FloatField(verbose_name = "Quantidade")
     qtadicgratis = models.IntegerField(verbose_name = "Adicionais gratuitos")
-    dsproduto = models.CharField(length=100,verbose_name="Descrição")
+    dsproduto = models.CharField(max_length=100,verbose_name="Descrição")
 
     def __str__(self):
         return self.dsproduto

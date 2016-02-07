@@ -324,7 +324,8 @@ def GetGridConfiguration(request):
         properties_field = list(fields[1].items())
         if len(properties_field) >= 4: #equal or more than a four properties
             field_to_display = properties_field[len(properties_field)-1][1]
-            fields_display.append(field_to_display)
+            if field_to_display:
+                fields_display.append(field_to_display)
     
     try:
         model = apps.get_app_config(list_module[len(list_module)-2]).get_model(str_model)
@@ -360,37 +361,22 @@ def GetGridConfiguration(request):
     return {"model" : model, "filter" : dict_filter, "fields" : fields_display, "page" : page, "order" : order_by,
        "parent":parent_model, "parent_id":parent_id}
 
-#@login_required
-#def GetGridCrud(request):
-#    try:
-#        conf = GetGridConfiguration(request = request)    
-#    
-#        GridData = Grid(conf["model"])            
-#        
-#        grid_js = GridData.get_js_grid(use_crud = True, dict_filter = conf["filter"],
-#            display_fields = tuple(conf["fields"]), page = conf["page"], order_by = conf["order"])
-#    except Exception as e:
-#        print(e)
-#    return HttpResponse(grid_js)    
-#
-#@login_required
-#def GetGridEditable(request):
-#    try:
-#        conf = GetGridConfiguration(request = request)    
-#        
-#        GridData = Grid(conf["model"], parent_model = conf["parent"], parent_pk_value = conf["parent_id"])
-#
-#        grid_js = GridData.get_js_grid(use_crud = False, read_only = False, dict_filter = conf["filter"])
-#
-#    except Exception as e:
-#        print(e)
-#
-#    return HttpResponse(grid_js)    
-
+@login_required
+def GetGridCrud(request):
+    try:
+        conf = GetGridConfiguration(request = request)    
+    
+        GridData = Grid(conf["model"])            
+        
+        grid_js = GridData.get_js_grid(use_crud = True, dict_filter = conf["filter"],
+            display_fields = tuple(conf["fields"]), page = conf["page"], order_by = conf["order"])
+    except Exception as e:
+        print(e)
+    return HttpResponse(grid_js)  
 
 @login_required
 def PrintGrid(request):
-
+    
     try:
        conf = GetGridConfiguration(request = request)               
     except Exception as e:
@@ -400,7 +386,8 @@ def PrintGrid(request):
     fields = conf["fields"]    
     columns_size = 765 / (len(fields));
 
-    try:    
+    try:
+        
         header = PageHeader()
         
         style_label_header = 'font-family: "Times New Roman", Times, serif; font-style: normal;font-size: 20px; '\
@@ -413,10 +400,11 @@ def PrintGrid(request):
         
         header.add_component(type = "p", name = "lblLinhaHeader", text = "", 
             style = "border-bottom:solid 1px black;")    
-
+        
         for field in fields:
-            if field.upper() == "ID":                
-                continue        
+            if field.upper() == "ID" or field.strip() == '':                
+                continue
+            
             
             if field.find('__') >= 0:
                 field = field[0:field.find('__')]
@@ -433,13 +421,14 @@ def PrintGrid(request):
         master = MasterBand()    
         
         for field in fields:            
-            if field.upper() == "ID":
+            if field.upper() == "ID" or field.strip() == '':
                 continue
 
             master.add_component(type = "dataP", name=field, db_link=field, 
                 style="margin:3px 5px 3px 1px;float:left;width:%spx" %columns_size)
 
     except Exception as e:
+        return HttpResponse(e)
         print(e)
 
     try:        
@@ -451,6 +440,7 @@ def PrintGrid(request):
         
 #        if conf["order"]:
 #            q = q.order_by(conf["order"])
+        
         q = q.values(*fields)        
         master.query = q
         

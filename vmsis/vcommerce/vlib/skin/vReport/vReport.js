@@ -9,7 +9,7 @@ PageHeader - Div com tamanho de 100%
 vReport = function(pageType, container, data, sel_document){	
     
     if(pageType == "A4 portrait"){	
-	  var pageHeight = 1122.519685039;//1207; 
+	  var pageHeight = 1156;//1122.519685039;//1207; 
 	  var pageWidth = 793.700787402;//826.67; 
 	}else if(pageType == "A4 landscape"){
 	  var pageHeight = 826.67;//1207; 
@@ -22,7 +22,7 @@ vReport = function(pageType, container, data, sel_document){
 	  var doc = document;
     };    
 	
-	var pages = 1;
+	var pages = 0;
     
     /*utilidade - Serve para selecionar os elementos. Não utilizei jquery pois ainda não chegamos na matéria*/ 
 	var getE = function(select){
@@ -55,19 +55,19 @@ vReport = function(pageType, container, data, sel_document){
 		allBody = allBody[0]
 
     allBody.className += "body vReport";
-//    allBody.innerHTML += "<div id='tools'></div>"
 	allBody.innerHTML += "<div id='relContainer'></div>";
     
 	var body = getE('#relContainer');
 	
 	var getPage = function(){
-		return pages - 1;
+		return pages;
 	}
     
 	addPage = (function(){		
-		body.innerHTML += format("<div class='page' id='page%s' style='width:%spx;height:%spx;margin:3px auto 3px'></div>", 
-		  [pages, pageWidth, pageHeight]);
 		pages += 1;
+        body.innerHTML += format("<div class='page' id='page%s' style='width:%spx;height:%spx;margin:0px auto 3px'></div>", 
+		  [getPage(), pageWidth, pageHeight]);
+		
 	});
 	
 	var getPageEle = function(){
@@ -86,19 +86,24 @@ vReport = function(pageType, container, data, sel_document){
 		   parE = doc.getElementById(parent);
 	    else
 			parE = page;
-		parE.innerHTML += component;
+        if (parE) {
+            parE.innerHTML += component;
+        }else{
+            throw new Error("Não foi possível localizar o parent " + parent );
+        }
+		
 	};
 	
 	var addLabel = function(parent, name, text, style){		
-        addComponent(parent, format("<label class='label' id='%s_%s' style='%s'>%s</label>", [name, getPage(), style, text]));
+        addComponent(parent, format("<label class='label' id='%s_%s_%s' style='%s'>%s</label>", [name, getPage(), parent, style, text]));
 	};
 
 	var addP = function(parent, name, text, style){		
-        addComponent(parent, format("<p class='paragraph' id='%s_%s' style='%s'>%s</label>", [name, getPage(), style, text]));
+        addComponent(parent, format("<p class='paragraph' id='%s_%s_%s' style='%s'>%s</p>", [name, getPage(), parent, style, text]));
 	};
 
 	var addDiv = function(parent, name, text, style){		
-        addComponent(parent, format("<div class='div' id='%s_%s' style='%s'>%s</div>", [name, getPage(), style, text]));
+        addComponent(parent, format("<div class='div' id='%s_%s_%s' style='%s'>%s</div>", [name, getPage(), parent, style, text]));
 	};
 	
 	var addMasterBand = function(style){
@@ -110,7 +115,17 @@ vReport = function(pageType, container, data, sel_document){
      	doc.getElementById("page" + getPage()).innerHTML += 
 		  format("<div class='masterBand' id = 'masterBand_%s_%s' style='%s'> </div>", [getPage(), mBandsCount, style] );		
 	};
+    
+    var addGroupHeader = function(style, group_index){
+	    var mBands = getE(".masterBand");
+		var mBandsCount = 1;
+		if(mBands != undefined){
+			mBandsCount = mBands.length;
+		}
+     	doc.getElementById(format("masterBand_%s_%s", [getPage(), mBandsCount] )).innerHTML += 
+		  format("<div class='groupHeader' id = 'groupHeader_%s_%s_%s' style='%s'> </div>", [getPage(), mBandsCount, group_index, style] );		        
 		
+    }
 	var checkPageSize = function(pageHeader, bandCount){
 		var pg = getPageEle();
           		
@@ -119,13 +134,17 @@ vReport = function(pageType, container, data, sel_document){
 		var lastChildTop = lastChild.offsetTop;
 		var lastChildHeight = lastChild.offsetHeight;
 		
-		if ( (lastChildTop + lastChildHeight) >= (pageHeight * getPage() ) ){
-			pg.removeChild(lastChild);
+        //var relSize = document.getElementById('relContainer').offsetHeight;
+        
+		if ( (lastChildTop + lastChildHeight) > ((pageHeight * getPage()) + (3 * getPage()) ) ){
+			console.log('pagina ' + getPage() + ' : valor soma ' + (lastChildTop + lastChildHeight) + ' valor multiplicacao ' + pageHeight * getPage() )
+            pg.removeChild(lastChild);
 			addPage();
 			configPageHeader(pageHeader);			
 			pg = getPageEle();
 			lastChild.id = format("masterBand_%s_%s", [getPage(), bandCount]);
 			pg.appendChild(lastChild);
+            
 		};
 	};
 	
@@ -146,20 +165,65 @@ vReport = function(pageType, container, data, sel_document){
 			};
 		};
 	};
+    
+    var confBand = function(components, row, bandType, pageHeader, bandCount, groupHeaderSeq){
+        var parent_id = ''
+		for(var a = 0; a <= components.length - 1; a++){
+            switch (bandType) {
+                case 'masterBand':
+                    parent_id = format("masterBand_%s_%s", [getPage(), bandCount] );
+                    break;
+                case 'groupHeader':
+                    parent_id = format("groupHeader_%s_%s_%s", [getPage(), bandCount, groupHeaderSeq] )
+                    break
+            }
+
+           var component = components[a];
+           if(component.type == "dataLabel"){
+		   	   for(var b = 0; b <= row.length - 1; b++){
+		   	   	   if (row[b].name == component.dbLink){
+		   	   	   	  addLabel(parent_id , component.name, row[b].value, component.style);
+		   	   	   	  checkPageSize(pageHeader, bandCount);
+                      break;
+		   	   	   };
+		   	   };
+		   }else if(component.type == "dataP"){
+		        for(var b = 0; b <= row.length - 1; b++){
+		        	if (row[b].name == component.dbLink){
+		        		addP(parent_id , component.name, row[b].value, component.style);
+		        		checkPageSize(pageHeader, bandCount);
+                        break;
+		        	};					  
+		        };	
+		   }else if(component.type == "dataDiv"){
+		   	    for(var b = 0; b <= row.length - 1; b++){
+		   	    	if (row[b].name == component.dbLink){
+		   	    		addDiv(parent_id , component.name, row[b].value, component.style);
+		   	    		checkPageSize(pageHeader, bandCount);
+                        break;
+		   	    	};
+                };							
+		   }else if(component.type == "p"){
+		   	  addP(parent_id , component.name, component.text, component.style)
+              checkPageSize(pageHeader, bandCount);
+              break;
+		   };
+        }
+    }
 
 	var applyStyle = function(){
 		getE("head")[0].innerHTML +=
 		"<meta charset='UTF-8'>"+
 		"<style type='text/css'> "+
         " .body.vReport{ "+
-        "   background-color:#E6E6E6; "+
+       // "   background-color:#E6E6E6; "+
         "  } "+
         ".page{ "+
         " background-color:white; "+
         " box-shadow: 0px 0px 10px gray;"+
         "} "+
 
-        ".pageHeader, .masterBand, .pageFooter{ "+
+        ".pageHeader, .masterBand, .pageFooter, .groupHeader{ "+
         " display : inline; "+
 	    " float: left; "+
 	    " width: 100%;	"+
@@ -188,14 +252,21 @@ vReport = function(pageType, container, data, sel_document){
 		"  height: 50px;"+
         "  margin-bottom : 3px; "+		
 		" } "+
+        " @media print { "+
+        " .page{ "
+        " box-shadow: 0px 0px 0px white;"+
+        " border:none;"+
+        "  }"
+        " }   "
         "</style>";
 	};
 	    
 	
 	this.view = function(){		                  
-		vmsisLib.waitting.start();
+		//vmsisLib.waitting.start();
         var pageHeader = data.pageHeader;
 		var masterBand = data.masterBand;
+        var groupHeaders = data.masterBand.groupHeaders;
         var row = [];    
         applyStyle();
 
@@ -204,41 +275,29 @@ vReport = function(pageType, container, data, sel_document){
 		    configPageHeader(pageHeader);
 			var a = 0;
 			var b = 0;
+            var d = 0;
 			var i = 0;
 			var component = undefined;
 			for(i = 0; i <= masterBand.bandData.length - 1; i++){
 				addMasterBand(masterBand.style);
 				row = masterBand.bandData[i];
-				
-				for(a = 0; a <= masterBand.components.length - 1; a++){
-					component = masterBand.components[a];
-					if(component.type == "dataLabel"){
-						for(b = 0; b <= row.length - 1; b++){
-							if (row[b].name == component.dbLink){
-								addLabel(format("masterBand_%s_%s", [getPage(), i + 1] ) , component.name, row[b].value, component.style);
-								checkPageSize(pageHeader, i + 1);								
-							};
-						};
-					}else if(component.type == "dataP"){
-						for(b = 0; b <= row.length - 1; b++){
-							if (row[b].name == component.dbLink){
-								addP(format("masterBand_%s_%s", [getPage(), i + 1] ) , component.name, row[b].value, component.style);
-								checkPageSize(pageHeader, i + 1);								
-							};					  
-						};	
-					}else if(component.type == "dataDiv"){
-						for(b = 0; b <= row.length - 1; b++){
-							if (row[b].name == component.dbLink){
-								addDiv(format("masterBand_%s_%s", [getPage(), i + 1] ) , component.name, row[b].value, component.style);
-								checkPageSize(pageHeader, i + 1);
-							};
-                        };							
-					}else if(component.type == "p"){
-						addP(format("masterBand_%s_%s", [getPage(), i + 1] ) , component.name, component.text, component.style)
-					};
-				};
+                if (groupHeaders) {                    
+                    for (d = 0; d <= groupHeaders.length - 1; d++ ) {                    
+                       for(b = 0; b <= row.length - 1; b++){
+					    	if (row[b].name == groupHeaders[d].field_group){
+					    		if (row[b].value != groupHeaders[d].old_value) {
+                                    groupHeaders[d]['old_value'] = row[b].value;
+                                    addGroupHeader(groupHeaders[d].style, d);                            
+                                    confBand(groupHeaders[d].components, row, 'groupHeader', pageHeader, i + 1, d );
+                                    break;
+                                }                                
+					    	};
+					    }; 
+                    }
+                }
+				confBand(masterBand.components, row, 'masterBand', pageHeader, i + 1 );
 			};
 		};		       
-		vmsisLib.waitting.stop();
+		//vmsisLib.waitting.stop();
 	}
 };

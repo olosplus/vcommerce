@@ -306,7 +306,7 @@ function InsertLineWithValue(row, columns, readonly, link_to_form, index_row, id
         if (columns[column].name === "update") {
           class_links = "fa fa-pencil";
         } else {
-          if (columns[column].name = "delete") {
+          if (columns[column].name === "delete") {
             class_links = "fa fa-trash-o";
             events = 'return confirm("Deseja realmente deletar este registro ?")';
           };
