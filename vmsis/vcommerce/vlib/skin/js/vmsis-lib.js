@@ -182,3 +182,99 @@ vmsisLib.contextMenu = function(){
     
     
 };
+
+vmsisLib.popup = {}
+vmsisLib.popup.open = false;
+
+
+vmsisLib.popup.openPopup = function(select){
+//    this.popupSelected = select;
+	//vmsisLib.popup.intervalVar = setInterval(function(){	
+	    ele = document.querySelector(select);
+	    
+	    if(!ele){
+	    	ele = document.querySelector("#" + select);
+	    };
+	    
+	    if(ele){
+	    	ele.setAttribute('style', 'display:table');
+	    }
+        vmsisLib.popup.open = true;
+    //}, 1000)
+}
+
+vmsisLib.popup.closePopup = function(id_filter, fnToExecuteAfter){
+   
+   //clearInterval(vmsisLib.popup.intervalVar); 
+
+   ele = document.querySelector("#" + id_filter);
+	
+	if(ele){
+		ele.setAttribute('style', 'display:none');
+	}
+    
+    vmsisLib.popup.open = false;
+    
+    if (fnToExecuteAfter) {
+        fnToExecuteAfter.call();
+    }
+    
+}
+
+vmsisLib.popup.removePopup = function(id_filter, fnToExecuteAfter){
+   $("#" + id_filter).remove();
+    if (fnToExecuteAfter) {
+        fnToExecuteAfter.call();
+    }   
+}
+
+
+
+vmsisLib.aviso = function(message, fnToExecuteAfter){
+    var html =
+          '<div class="popup small-radius" id="vmsisMsg"> '+
+          '  <div class="popup-body small-radius">	'+
+ 	      '    <h2 class="yellow title">Aviso ! </h2> '+
+          '    <p > ' + message + ' </p>'+          
+ 	  	  '    <a href="javascript:void(0)" id="vmsisMsgBtn" class="btn btn-warning x-centralize">OK</a> '+       
+ 	      '  </div> '+
+ 	      '</div> ';
+ 
+
+    document.getElementsByTagName("body")[0].innerHTML += html; 
+    document.getElementById("vmsisMsgBtn").executeAfter = fnToExecuteAfter;
+    document.getElementById("vmsisMsgBtn").addEventListener('click', function(){
+       vmsisLib.popup.removePopup("vmsisMsg", this.executeAfter);
+    });
+
+    vmsisLib.popup.openPopup('vmsisMsg');    
+}
+
+vmsisLib.confirma = function(message, executeIfTrue, executeIfFalse){
+    var html =
+          '<div class="popup small-radius" id="vmsisMsg"> '+
+          '  <div class="popup-body small-radius">	'+
+ 	      '    <h2 class="yellow title">Confirmação ! </h2> '+
+          '    <p> ' + message + ' </p>'+          
+ 	  	  '    <button type="button" id="vmsisMsgBtnYes" class="button button-green small-radius">Sim</button> '+
+          '    <button type="button" id="vmsisMsgBtnNo" class="button button-red small-radius">Não</button> '+                  
+ 	      '  </div> '+
+ 	      '</div> ';
+ 
+    try{
+        document.getElementsByTagName("body")[0].innerHTML += html;
+    }catch(e){
+        
+    }
+    document.getElementById("vmsisMsgBtnYes").executeAfter = executeIfTrue;
+    document.getElementById("vmsisMsgBtnNo").executeAfter = executeIfFalse;
+    document.getElementById("vmsisMsgBtnYes").addEventListener('click', function(){      
+       vmsisLib.popup.removePopup("vmsisMsg", this.executeAfter);
+    });
+    document.getElementById("vmsisMsgBtnNo").addEventListener('click', function(){       
+       vmsisLib.popup.removePopup("vmsisMsg", this.executeAfter);
+    });
+
+    vmsisLib.popup.openPopup('vmsisMsg');
+        
+}

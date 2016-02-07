@@ -1,7 +1,21 @@
+.centralize{
+   margin:35% auto;
+}
+
+.x-centralize{
+   margin: 0px auto;
+}
+
+.title{
+    border-bottom: 1px solid #ebebe0;
+    padding: 10px;
+	text-align: center;
+}
+
+
 .vmsis-list-box{
   max-height: 450px;
   background-color : white;    
-  
   
 }
 
@@ -58,4 +72,158 @@
 .contextmenu div:hover{
    background-color: #DBDBD5;   
    cursor: pointer;
+}
+
+.popup{
+   /*float:left;*/
+   height: 100%;
+   width: 100%;
+   display:none;
+   position:fixed;   
+   z-index: 10000;
+   bottom: 0;
+   left: 0;
+   right: 0;
+   top: 0;
+}
+
+.popup-body{
+    
+    display:table;
+	background-color: ghostwhite;
+	height:auto;
+	box-shadow: gray 0px 10px 10px 0px ;
+	z-index: 10001;
+	padding: 5px;
+	width:auto;
+	margin: 12% auto;
+	opacity:0.99;
+}
+.popup.full > .popup-body{
+	height:99% !important;
+	width:99% !important;
+	margin: 3px auto !important;    
+}
+
+.popup.full > .popup-body.white{
+   background-color:white;
+}
+
+.small-radius{
+   border-radius: 4px;
+}
+
+.blue{
+   color:#66a2ff;
+}
+
+.green{
+ color:#004d00;
+}
+
+.light-olive{   
+   color:#a3a376;
+}
+
+.yellow{
+  color: #cccc00;
+}
+
+
+.red{
+  color:#990000;
+}
+
+.hover-red:hover{
+  color:#990000;
+}
+
+
+.background-white{
+   background-color:white;
+}
+
+.no-radius{
+   border-radius: 0px !important;
+}
+
+.button{
+  
+  float:left;
+  display: block;  
+  height: 40px;
+  margin:3px ;
+  border: 1px solid aliceblue;
+  background-color: ghostwhite;
+  cursor: pointer;
+  text-align:center;
+  color:#66a2ff;
+  font-size: 14px;
+  
+}
+
+.button:hover{
+   background-color:white;
+   color:#66a2ff;
+   
+}
+
+a.button{   
+   padding-left: 10px;
+   padding-right: 10px;
+   padding-top: 20px;
+   display:table-cell;
+   vertical-align:middle;
+    
+}
+
+
+
+.button.full-width{
+    width: 98%;
+}
+
+a.button.full-width{
+   
+   /*width: 95%;*/
+   height:28px;
+   padding-left: 0px;
+   padding-right: 0px;
+   padding-top: 8px;
+	  
+}
+
+.button.button-blue{
+    background-color:#66a2ff;
+	color:white;
+	
+}
+.button.button-blue:hover{
+    color:#66a2ff;
+	background-color:white;   
+	border: 1px solid ghostwhite;
+}
+
+.button.button-red{
+    background-color:#990000;
+	color:white;	
+}
+
+.button.button-red:hover{
+    color:#990000;
+	background-color:white;   
+	border: 1px solid ghostwhite;
+}
+
+.button.button-green{
+    background-color:#004d00;
+	color:white;	
+}
+
+
+.button.button-green:hover{
+    color:#004d00;
+	background-color:white;   
+	border: 1px solid ghostwhite;
+   
 }

@@ -20,11 +20,15 @@ function activeLine(line, columns){
         ok = false;
         var msg = 'Existem dados não salvos. Deseja prosseguir e perder os dados não salvos? '+
           'Caso não queira perder os dados não salvos, cancele e salve-os.';
-        ok = confirm(msg);
+        /*ok = confirm(msg);
         if (ok == false){
           return false;
-        };
+        };*/
+        vmsisLib.confirma(msg, undefined, function(){
+           return false; 
+        });
       };
+
       if (ok == true){
         $("table[parent = '"+parent.attr('id')+"']").each(function(){
           GetGridEditable($(this).attr('module'), $(this).attr('id'), "", columns, parent.attr("id"),
@@ -256,6 +260,7 @@ function InsertLineWithValue(row, columns, readonly, link_to_form, index_row, id
   var type_input = "";
   var class_links = "";
   var events = "";
+  var href = "";
   var index = 0;
   var options = undefined;
   var values = undefined;
@@ -305,13 +310,15 @@ function InsertLineWithValue(row, columns, readonly, link_to_form, index_row, id
       if ((columns[column].type === 'link') && (readonly === "True")) {
         if (columns[column].name === "update") {
           class_links = "fa fa-pencil";
+          href=row.v[index]; 
         } else {
           if (columns[column].name === "delete") {
             class_links = "fa fa-trash-o";
-            events = 'return confirm("Deseja realmente deletar este registro ?")';
+            events = 'vmsisLib.confirma("Deseja realmente deletar este registro ?", function(){ window.location.href = "'+ row.v[index]+'" })';
+            href="javascript:void(0)"; 
           };
         };
-        html += "<center><a  href = '" + row.v[index] + "' class='" + class_links + "' title= '" + columns[column].label + "' onclick='" + events + "'>" + "</a></center>";
+        html += "<center><a  href='"+href+"' class='" + class_links + "' title= '" + columns[column].label + "' onclick='" + events + "'>" + "</a></center>";
       };
       
       if(columns[column].type == 'select-readonly'){
@@ -386,7 +393,8 @@ function ShowError(input_error){
   var row = input_error.getAttribute("data-indexrow");
   
   if(row == -1){
-    alert(value);
+    //alert(value);
+    vmsisLib.aviso(value);
   };
 
   var list = value.split(",");
@@ -590,11 +598,13 @@ function doPostGrid(idGrid) {
         } else {
           ClearOperations(idGrid);
           
-          alert('Dados salvos com sucesso!');
+          //alert('Dados salvos com sucesso!');
+          vmsisLib.aviso('Dados salvos com sucesso!');
         }
       },
       failure: function (data) {
-        alert('Got an error dude');
+        //alert('Got an error dude');
+        vmsisLib.aviso('Erro ao salvar os dados.' + data);
       }
     });
   };
@@ -610,11 +620,13 @@ function doDeleteGrid(idGrid) {
       //this is the default though, you don't actually need to always mention it
       data: jsgrid,
       success: function (data) {
-        alert(data);
+        //alert(data);
+        vmsisLib.aviso(data);
         RemoveSelectedRows(idGrid);
       },
       failure: function (data) {
-        alert('Got an error dude');
+        //alert('Got an error dude');
+        vmsisLib.aviso('Ocorreu um erro ao excluir o registro.' + data);
       }
     });
   } else {
@@ -702,31 +714,54 @@ function doPostForm(send_to, form_id, url_redirect, is_delete, id_grid_delete, c
           ShowError(erros)
         } else {
           if (url_redirect != "") {
-            window.location.href = url_redirect;
+            window.redirect_to = url_redirect
+            vmsisLib.aviso('Dados atualizados com sucesso!', function(){
+               window.location.href = window.redirect_to;
+            });
+                      
           } else {            
             $('table[parent="' + form_id + '"]').each(function () {
               ClearOperations($(this).attr('id'));
             })
-            alert('Dados atualizados com sucesso!');
+            //alert('Dados atualizados com sucesso!');
+            vmsisLib.aviso('Dados atualizados com sucesso!');
+            
+            
           };
         };
       } else {
         var frm = document.getElementById(form_id);
         if (frm_received.innerHTML === "") {
           if (url_redirect != "") {
-            window.location.href = url_redirect;
+            
+            window.redirect_to = url_redirect
+            vmsisLib.aviso('Dados atualizados com sucesso!', function(){
+               window.location.href = window.redirect_to;
+            });
+
           } else {
             ClearOperations(idGrid);
-            alert('Dados atualizados com sucesso!');
+            //alert('Dados atualizados com sucesso!');
+            vmsisLib.aviso('Dados atualizados com sucesso!');
+            
+           
           }
         } else {
           var ownurl = doc_received.getElementById('ownurl');
           var errorList = doc_received.getElementsByClassName('errorlist');
           if(ownurl != undefined && ownurl != null && errorList.length ==0){
             if(url_redirect != undefined && url_redirect != ""){
-              window.location.href = url_redirect;
+              
+              window.redirect_to = url_redirect
+              vmsisLib.aviso('Dados atualizados com sucesso!', function(){
+                 window.location.href = window.redirect_to;
+              });
+  
             }else{
-              window.location.href = ownurl.value;   
+                window.redirect_to = ownurl.value;   
+                vmsisLib.aviso('Dados atualizados com sucesso!', function(){
+                   window.location.href = window.redirect_to;
+                });                          
             }
           }else{
             frm.innerHTML = frm_received.innerHTML;
@@ -741,7 +776,8 @@ function doPostForm(send_to, form_id, url_redirect, is_delete, id_grid_delete, c
     },
     error: function (data) {
       vmsisLib.waitting.stop()
-      alert(data.responseText);
+      //alert(data.responseText);
+      vmsisLib.aviso(data.responseText);
     }
   });
   return false;
@@ -796,7 +832,8 @@ function GetGridData (module, model, filter, columns, partial_search, page, orde
       Grid("div_" + modelo, dados)
     },
     failure: function (data) {
-      alert('Got an error dude');
+      //alert('Got an error dude');
+      vmsisLib.aviso('Ocorreu um erro ao buscar os dados.' + data);
     }
   });       
 }
@@ -822,7 +859,8 @@ function GetGridEditable(module, model, filter, columns, parent, parent_module, 
       Grid("div_" + modelo, dados)
     },
     failure: function (data) {
-      alert('Got an error dude');
+      //alert('Got an error dude');
+      vmsisLib.aviso('Ocorreu um erro ao buscar os dados.' + data);
     }
   });       
 }
@@ -955,7 +993,7 @@ function Print(module, model, columns, column, title){
 
       },
       failure: function (data) {
-        alert('Got an error dude');
+        vmsisLib.aviso('Ocorreu um erro ao buscar os dados.' + data);
       }
     });
 
