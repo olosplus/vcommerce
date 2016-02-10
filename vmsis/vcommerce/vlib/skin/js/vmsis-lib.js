@@ -51,11 +51,11 @@ vmsisLib.listBox.new = function(jsonList, idContainer, label, executeOnClick){
     $("#"+ idContainer +" .vmsis-list-box li").each(function(){
         
         $(this).click(function(){
-            ele = $("#"+ idContainer +" li .vmsis-text-box-item-active");            
+            var ele = $("#"+ idContainer +" li .vmsis-text-box-item-active");            
             $("#"+ idContainer +" li").removeClass("vmsis-text-box-item-active");
             $(this).addClass("vmsis-text-box-item-active");                    
             if (typeof executeOnClick == 'function') {
-                clickReturn = executeOnClick(this);
+                clickReturn = executeOnClick.call(this);
                 if (clickReturn === false) {
                     $("#"+ idContainer +" li").removeClass("vmsis-text-box-item-active");
                     ele.addClass("vmsis-text-box-item-active");
@@ -154,20 +154,38 @@ vmsisLib.waitting.stop = function(waittingVar){
 }
 
 
-vmsisLib.contextMenu = function(){
+vmsisLib.contextMenu = function(fnExecuteOnItenClick){
     $(".contextmenu").each(function(){
         var element = $(this);
         element.css("display","none");
-        var parent = $("#" + element.attr("data-container"));
+        
+        var parent = $(element.attr("data-container"));
+        if (parent.length == 0 && element.attr("data-container").substr(0, 1) != '#' ) {
+            parent = $("#" + element.attr("data-container"));
+        }
+        parent.attr('context-data-container', element.attr("data-container"))
         parent.on('contextmenu', function(e){
             var all_context = $(".contextmenu");
             all_context.offset({left:0, top:0});
             all_context.css("display", "none"); 
             
-            var ele = $(this);                          
-            var context = $("[data-container='" + $(this).attr("id") + "']");
+            var ele = $(this);
+            
+            var context = $("[data-container='" + $(this).attr("context-data-container") + "']");
             context.offset({left:e.clientX, top:e.clientY});
             context.css("display", "block");
+            
+            if (fnExecuteOnItenClick && typeof fnExecuteOnItenClick === 'function') {
+                subEle = context.find('div');
+                
+                subEle.each(function(){
+                   $(this).unbind('click');
+                   $(this).click(function(e){
+                      fnExecuteOnItenClick.call(ele[0]);                      
+                   });
+                });
+            }
+            
             e.preventDefault();
                                                 
         });
@@ -183,31 +201,30 @@ vmsisLib.contextMenu = function(){
     
 };
 
+
+/*popus e dialogos*/
 vmsisLib.popup = {}
 vmsisLib.popup.open = false;
 
 
 vmsisLib.popup.openPopup = function(select){
-//    this.popupSelected = select;
-	//vmsisLib.popup.intervalVar = setInterval(function(){	
-	    ele = document.querySelector(select);
-	    
-	    if(!ele){
-	    	ele = document.querySelector("#" + select);
-	    };
-	    
-	    if(ele){
-	    	ele.setAttribute('style', 'display:table');
-	    }
-        vmsisLib.popup.open = true;
-    //}, 1000)
+   var ele = document.querySelector(select);
+    
+    if(!ele){
+    	ele = document.querySelector("#" + select);
+    };
+    
+    if(ele){
+    	ele.setAttribute('style', 'display:table');
+    }
+       vmsisLib.popup.open = true;
+   
 }
 
 vmsisLib.popup.closePopup = function(id_filter, fnToExecuteAfter){
    
-   //clearInterval(vmsisLib.popup.intervalVar); 
 
-   ele = document.querySelector("#" + id_filter);
+    var ele = document.querySelector("#" + id_filter);
 	
 	if(ele){
 		ele.setAttribute('style', 'display:none');
@@ -232,16 +249,22 @@ vmsisLib.popup.removePopup = function(id_filter, fnToExecuteAfter){
 
 vmsisLib.aviso = function(message, fnToExecuteAfter){
     var html =
-          '<div class="popup small-radius" id="vmsisMsg"> '+
           '  <div class="popup-body small-radius">	'+
  	      '    <h2 class="yellow title">Aviso ! </h2> '+
           '    <p > ' + message + ' </p>'+          
  	  	  '    <a href="javascript:void(0)" id="vmsisMsgBtn" class="btn btn-warning x-centralize">OK</a> '+       
- 	      '  </div> '+
- 	      '</div> ';
+ 	      '  </div> ';
  
-
-    document.getElementsByTagName("body")[0].innerHTML += html; 
+    var popupE = document.createElement('div');
+    popupE.setAttribute('class', 'popup small-radius');
+    popupE.setAttribute('id', 'vmsisMsg');
+    popupE.innerHTML += html
+    
+    try{        
+        document.querySelector('body').appendChild(popupE); 
+    }catch(e){
+        console.log(e);
+    };
     document.getElementById("vmsisMsgBtn").executeAfter = fnToExecuteAfter;
     document.getElementById("vmsisMsgBtn").addEventListener('click', function(){
        vmsisLib.popup.removePopup("vmsisMsg", this.executeAfter);
@@ -252,20 +275,24 @@ vmsisLib.aviso = function(message, fnToExecuteAfter){
 
 vmsisLib.confirma = function(message, executeIfTrue, executeIfFalse){
     var html =
-          '<div class="popup small-radius" id="vmsisMsg"> '+
           '  <div class="popup-body small-radius">	'+
  	      '    <h2 class="yellow title">Confirmação ! </h2> '+
           '    <p> ' + message + ' </p>'+          
  	  	  '    <button type="button" id="vmsisMsgBtnYes" class="button button-green small-radius">Sim</button> '+
           '    <button type="button" id="vmsisMsgBtnNo" class="button button-red small-radius">Não</button> '+                  
- 	      '  </div> '+
- 	      '</div> ';
+ 	      '  </div> ';
  
+    var popupE = document.createElement('div');
+    popupE.setAttribute('class', 'popup small-radius');
+    popupE.setAttribute('id', 'vmsisMsg');
+    popupE.innerHTML += html
+    
     try{
-        document.getElementsByTagName("body")[0].innerHTML += html;
+        document.querySelector('body').appendChild(popupE);
     }catch(e){
-        
-    }
+        console.log(e);
+    };
+
     document.getElementById("vmsisMsgBtnYes").executeAfter = executeIfTrue;
     document.getElementById("vmsisMsgBtnNo").executeAfter = executeIfFalse;
     document.getElementById("vmsisMsgBtnYes").addEventListener('click', function(){      
@@ -277,4 +304,48 @@ vmsisLib.confirma = function(message, executeIfTrue, executeIfFalse){
 
     vmsisLib.popup.openPopup('vmsisMsg');
         
+}
+
+
+/*treeview*/
+
+vmsisLib.treeView = function(idTreeView, fnExecuteOnItenClick){
+    
+	$('#' + idTreeView + '.tree-view ul li').each(function(){
+		var ele = $(this).children('ul');
+		if(ele.length > 0){			
+		   $(this).addClass('has-child');
+    	}else{
+		   $(this).addClass('has-no-child');
+		};
+               
+
+	    $(this).click(function(e){
+		    $(this).parents('.tree-view').find('.selected').removeClass('selected');	
+            $(this).addClass('selected');
+            
+            var ele = $(this).children('ul');
+			if(ele.length > 0){
+			    if($(this).hasClass('opened')){
+			    	$(this).removeClass('opened');
+			    }else{
+			        $(this).addClass('opened');
+			    };
+			};
+			      
+	 	    if (ele.hasClass('node-active')){
+		   	    ele.removeClass('node-active');
+		    }else{
+		   	    ele.addClass('node-active');
+	        }
+            
+            if (fnExecuteOnItenClick) {
+               if(typeof fnExecuteOnItenClick == 'function'){
+                  fnExecuteOnItenClick.call(this);
+               }
+            }
+		    e.stopPropagation();			    	
+	    });
+		
+	});	
 }

@@ -1,18 +1,21 @@
 $(document).ready(function(){
     
-    var apps =  JSON.parse($("#list_apps").val());
-    var usuarios = JSON.parse($("#list_users").val());
+   // var apps =  JSON.parse($("#list_apps").val());
+   var usuarios = JSON.parse($("#list_users").val());
     
     var getPermissoesUsuario = function(item){
         var listbox = vmsisLib.listBox;
         var usuario_id = listbox.getVal('div-filtro-usuario');
         if (!usuario_id) {
-            alert('Primeiro selecione o usuário.');
+            vmsisLib.aviso('Primeiro selecione o usuário.');
             listbox.setFocus('div-filtro-usuario');
             return false;
         }
-        var modulo = listbox.getVal('div-escolha-app-usuario');
+        var modulo = this.getAttribute('data-module');
         
+        if (!modulo) {
+            return
+        }
         var addCheckBox = function(name, checked, label){
              var html = "<div>";
              if (checked) {                        
@@ -45,7 +48,7 @@ $(document).ready(function(){
                        html += addCheckBox('usuario_can_delete', source[app].can_delete, 'Permitir excluir');
                     }
                     if (source[app].can_show != undefined) {
-                       html += addCheckBox('usuario_can_show', source[app].can_delete, 'Permitir visualizar');
+                       html += addCheckBox('usuario_can_show', source[app].can_show, 'Permitir visualizar');
                     }
                     html += "</div>";        
                 }
@@ -59,14 +62,16 @@ $(document).ready(function(){
                     alert.css("display", "block");
                     alert.html("Nenhuma permissão pode ser fornecida.");
                 }
+            }).fail(function(data){
+                vmsisLib.aviso(data);
             })
     }
     
-    var setPermissoesUsuario = function(){
+    var setPermissoesUsuario = function(container_selector, check_btn_save){
         
         var permissoes = [];
-        if (!$("#btn-salvar-per-usuario").attr("disabled")) {
-            $("#div-permissoes-usuario .container-permissions").each(function(){                                                            
+        if (!$("#btn-salvar-per-usuario").attr("disabled") || !check_btn_save) {            
+            $(container_selector).each(function(){                                                            
                 var can_add = $(this).find("input[name='usuario_can_add']").first().prop("checked");
                 var can_change = $(this).find("input[name='usuario_can_change']").first().prop("checked");
                 var can_delete = $(this).find("input[name='usuario_can_delete']").first().prop("checked");
@@ -77,14 +82,14 @@ $(document).ready(function(){
                 var usuario_id = listbox.getVal('div-filtro-usuario');
                 
                 if (!usuario_id) {
-                    alert('Primeiro selecione o usuário.');
+                    vmsisLib.aviso('Primeiro selecione o usuário.');
                     listbox.setFocus('div-filtro-usuario');
                     return false;
                 }
-                var modulo = listbox.getVal('div-escolha-app-usuario');
+                var modulo = $("#treeViewApps .selected").attr("data-module");
 
                 if (!modulo) {
-                    alert('Primeiro selecione o módulo.');
+                    vmsisLib.aviso('Primeiro selecione o módulo.');
                     listbox.setFocus('div-escolha-app-usuario');
                     return false;
                 }
@@ -98,13 +103,43 @@ $(document).ready(function(){
         
             $.get("/set_permissoes", {"data" : JSON.stringify(permissoes)}).
             done(function(data){
-                alert(data);    
+                vmsisLib.aviso(data);    
             })
         }
     }
     
+    var aplicarConfiguracoesSubMenu = function(){
+        var aplicar = function(ele){
+            $("#treeViewApps").find('.selected').removeClass('selected');
+            $(ele).addClass('selected');
+            setPermissoesUsuario('#aplicar_permissao_sub_menus .popup-body', false);
+        };
+        $('.aplicarSubmenus').each(function(){
+           aplicar(this);
+        })
+        $('.aplicarSubmenus').find('li').each(function(){
+            aplicar(this);
+        });
+        vmsisLib.aviso('As permissões foram aplicadas com sucesso!');
+        vmsisLib.popup.closePopup('aplicar_permissao_sub_menus');
+    }
+    
     var listBox = vmsisLib.listBox;
-    listBox.new(usuarios, 'div-filtro-usuario', 'Usuários:', getPermissoesUsuario);
-    listBox.new(apps, 'div-escolha-app-usuario', 'Telas:', getPermissoesUsuario);
-    $("#btn-salvar-per-usuario").click(setPermissoesUsuario);
+    listBox.new(usuarios, 'div-filtro-usuario', '', getPermissoesUsuario);
+    vmsisLib.treeView("treeViewApps", getPermissoesUsuario);    
+    
+    $("#btn-salvar-per-usuario").click(function(){
+        setPermissoesUsuario("#div-permissoes-usuario .container-permissions", true)
+    });
+    
+    vmsisLib.contextMenu(function(){
+       //alert($(this).parent()[0].getAttribute('data-module'));
+       $('#treeViewApps .aplicarSubmenus').removeClass('aplicarSubmenus');
+       $(this).parent().addClass('aplicarSubmenus');
+       vmsisLib.popup.openPopup('aplicar_permissao_sub_menus');       
+    });
+    
+    $('#btn-replicar-permissao').click(aplicarConfiguracoesSubMenu);
+    
+    
 })

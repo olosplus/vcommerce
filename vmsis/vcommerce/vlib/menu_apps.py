@@ -6,6 +6,7 @@ from vcommerce import apps
 from vlib import urls as vlib_urls
 import json
 
+
 models.options.DEFAULT_NAMES += ('child_models', 'exclude_fk_plus')
 
 DIR = os.path.dirname(os.path.dirname(__file__))
@@ -97,3 +98,4 @@ class MenuApps:
                     return app['imgmenu']
                 else:
                     return ''
+

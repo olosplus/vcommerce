@@ -1,163 +1,54 @@
 from django import template
 from django.conf import settings
-from django.apps import apps as apps_on_project
+#from django.apps import apps as apps_on_project
 import os.path
-from vlib import menu_apps
-
-DIR = settings.BASE_DIR
-TAG_DROP = "<span class='fa arrow'></span>"
-TAG_UL_SEC = "<ul class='nav nav-second-level'>"
-TAG_UL_THI = "<ul class='nav nav-third-level'>"
-TAG_UL = "<ul>"
-TAG_LI = "<li>"
-CLOSE_TAG_LI = "</li>"
-TAG_I = "<i "
-CLOSE_TAG_I = "</i>"
-CLOSE_TAG_UL = "</ul>"
-TAG_A_PARTIAL = "<a"
-TAG_A = "<a>"
-CLOSE_TAG_A = "</a>"
-ATTR_HREF = "href="
-CLOSE_TAG = ">"
-OPEN_TAG = "<"
-
-def has_model(directory):
-    """Verifica se há o arquivo models.py no diretório informado"""
-    return os.path.isfile(directory + '/models.py')
-
-def has_url(directory):
-    """Verifica se há o arquivo urls.py no diretório informado"""
-    return os.path.isfile(directory + '/urls.py')
-
-def load_urls_patterns(patterns):
-    """Retorna a lista de configurações das urls do patterns passado no parâmetro"""
-    URL_NAMES = []
-    for pat in patterns:
-        if pat.__class__.__name__ == 'RegexURLPattern':
-            URL_NAMES.append(pat.regex.pattern)
-    return URL_NAMES
-
-def get_app_name_on_path(path):
-    position_path_app = len(DIR) + 1
-    tree_app = ''.join(path[position_path_app:])
-    tree_app = tree_app.replace("/", ".")
-    return tree_app
-
-def module_exists(module_name):
-    try:
-        __import__(module_name, fromlist = ['no_module_list'])
-    except ImportError:
-        return False
-    else:
-        return True        
-
-def load_url_app(path_app):
-    """Retorna a primeira url da lista de urls configuradas para o app situado no diretório 
-       completo informado no parâmetro
-    """
-    if not has_url(path_app):
-        return "javascript:void(0)"
-    tree_app = get_app_name_on_path(path_app) #tree_app.replace("/", ".")
-    urls = []
-    app = __import__(tree_app, fromlist=['no_module_list'])    
-    if app:
-        if hasattr(app, 'urls'):
-            if app.urls.urlpatterns:        
-                urls = load_urls_patterns(app.urls.urlpatterns)                
-    if urls:
-        return  "/" + urls[0].split('.')[0].replace("^", "")
-    else:  
-        return "javascript:void(0)"
-
-def installed_apps():
-    """ Retorna a lista com o nome do app. Apenas o nome, não retorna a árvore de módulos completa"""
-    lapps = []
-    for app in settings.INSTALLED_APPS  :
-        for nome_app in app.split("."):
-            lapps.append(nome_app)
-        else:
-            lapps.append(app)
-    return lapps
-
-NAME_APPS_INSTALLED = installed_apps() 
-def get_apps_html(path, hab_UL=False, nivel=1, empresa=None):
-    """ monta o html do menu"""
-    html = ""
-    abrir_ul = False
-    url_app = ""
-    if os.path.isdir(path):
-        try:
-            dirs = next(os.walk(path))[1]
-            dirs.sort()
-        except PermissionError:
-            dirs = []
-        for directory in dirs:
-            #return bool_apps_filho(directory)
-            app_name = get_app_name_on_path(path + "/" + directory)
-            if directory in NAME_APPS_INSTALLED:
-                if not menu_apps.MenuApps.AppIsVisible(app_name):
-                    continue
-            
-                if hab_UL:
-                    if not abrir_ul:
-                        nivel+=1
-                        if nivel == 2:
-                           html += TAG_UL_SEC
-                        else:
-                           html += TAG_UL_THI
-                        abrir_ul = True
-                
-                if html:
-                    html += TAG_LI
-
-                url_app = load_url_app(path + "/" + directory)
-                
-                if app_name == 'parametro.paramgeral':
-                    url_app = url_app.replace('(?P<pk>\d+)/$',str(empresa))
-                
-                #html += "%s %s '%s' %s" % (TAG_A_PARTIAL, ATTR_HREF, url_app, CLOSE_TAG)
-                html += "%s href='javascript:void(0)' onclick='openPage(\"%s\", \"%s\", \"%s\")' %s" % \
-                    (TAG_A_PARTIAL, app_name, url_app, menu_apps.MenuApps.GetAppVerboseName(app_name), 
-                        CLOSE_TAG_A)
-                
-                if menu_apps.MenuApps.ImgMenuApp(app_name):
-                    html += "%s class='%s'> %s" % (TAG_I, menu_apps.MenuApps.ImgMenuApp(app_name),CLOSE_TAG_I)
-                
-                html += ' '+menu_apps.MenuApps.GetAppVerboseName(app_name)
-                
-                if bool_apps_filho(path + "/" + directory):
-                    html += TAG_DROP
-                
-                html += CLOSE_TAG_A
-                html += get_apps_html(path=path + "/" + directory, hab_UL=True, nivel=nivel, empresa=empresa)
-                
-                if html:
-                    html += CLOSE_TAG_LI
-        if abrir_ul:
-            html += CLOSE_TAG_UL
-            nivel-=1
-    return html  
-
-LIST_APPS_MENUS = menu_apps.MenuApps.GetAppsOnMenu(only_visible=True)
-
-def bool_apps_filho(path_app):
-    """ verifica se aplicacao tem filho"""
-    
-    dirs = next(os.walk(path_app))[1]
-    for directory in dirs:
-        tree_app = get_app_name_on_path(path_app + "/"+ directory)
-
-        if tree_app in LIST_APPS_MENUS:
-            return True
-
-    return False
+#from vlib import menu_apps
+from vlib import menu_apps_templates as menu_apps
+from parametro.controle_acesso.views import PermissoesFuncionarios
+from django.contrib.auth.models import User
 
 register = template.Library()
+
 @register.assignment_tag(takes_context=True)
 def get_menu(context, request):
     """Retorna o html do menu(uma lista)"""
     try:
         emp = context['funcionario']['empresa']
+        func = context['funcionario']['id']
     except:
         emp = 0
-    return get_apps_html(path=DIR, empresa=emp)
+        func = -1
+   
+    if func == -1:
+        return ""
+    
+    if context['funcionario']['funcionario_existe']:
+        permissoes = PermissoesFuncionarios(id_funcionario=func)
+    else:
+        permissoes = PermissoesFuncionarios(id_funcionario=-1)
+        permissoes.usr = User.objects.get(pk=context['funcionario']['usuario'])
+   
+    menu = menu_apps.MenuAppsTemplate(permissoes=permissoes)
+    return menu.get_apps_html(path=settings.BASE_DIR, empresa=emp)
+
+@register.assignment_tag(takes_context=True)
+def get_controle_acesso_apps(context, request):
+    """Retorna o html para o controle de acesso menu(uma lista)"""
+    try:
+        emp = context['funcionario']['empresa']
+        func = context['funcionario']['id']
+    except:
+        emp = 0
+        func = -1
+
+    if func == -1:
+        return ""
+        
+    if context['funcionario']['funcionario_existe']:
+        permissoes = PermissoesFuncionarios(id_funcionario=func)
+    else:
+        permissoes = PermissoesFuncionarios(id_funcionario=-1)
+        permissoes.usr = User.objects.get(pk=context['funcionario']['usuario'])
+
+    menu = menu_apps.MenuAppsTemplate(permissoes=permissoes)
+    return menu.get_apps_html(path=settings.BASE_DIR, empresa=emp, menu=False)

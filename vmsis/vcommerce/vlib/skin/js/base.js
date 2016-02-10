@@ -1,8 +1,7 @@
 function Inicializacao() {
   $('.errorlist').css('color','#990000');
   $('.errorlist').addClass('alert alert-danger');
-  $('.ui-dialog-buttonset button').addClass('btn btn-outline btn-primary'); 
-  vmsisLib.contextMenu();
+  $('.ui-dialog-buttonset button').addClass('btn btn-outline btn-primary');   
 }
 
 function hidePage(page){

@@ -51,12 +51,12 @@ def index(request):
 
         request.session['funcionario'] = {"id" : func.id, "nome" : func.nome, "usuario" : func.user.id,
             "empresa" : empresa_id, "unidades" : list_unidades, "unidade":list_unidades[0]["id"],
-            "is_superuser": request.user.is_superuser}
+            "is_superuser": request.user.is_superuser, "funcionario_existe":True}
                 
     except :
         request.session['funcionario'] = {"id" : request.user.id, "nome" : request.user.username, 
             "usuario" : request.user.id,
-            "empresa" : None, "unidades" : None, "unidade":None, "is_superuser": request.user.is_superuser}
+            "empresa" : None, "unidades" : None, "unidade":None, "is_superuser": request.user.is_superuser, "funcionario_existe":False}
 
     return render_to_response('base.html', {"funcionario":request.session['funcionario']})
 

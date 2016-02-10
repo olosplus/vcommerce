@@ -1,6 +1,9 @@
 {% extends 'simple_base.html' %}
 {% load staticfiles %}
 
+
+
+
 {% block css%}
     <link rel="stylesheet" type="text/css" href="{% static 'controle_acesso/css/controle_acesso.css' %}"
 {% endblock%}
@@ -11,13 +14,27 @@
      $(function() {
        $( "#tabs" ).tabs();
      });
-	 //lista_apps = {{ apps }};
+	 
    </script>
    <script type="text/javascript" src="{% static 'controle_acesso/js/controle_acesso.js' %}"></script>   
 {% endblock %}
 
 
 {% block corpo %}
+    <div class="popup"  id="aplicar_permissao_sub_menus">
+	  <div class="popup-body small-radius">
+		<h2 class='title'>Replicar configurações para os submenus</h2>
+        <div><input type="checkbox" name="usuario_can_add">Permitir adicionar</div>
+		<div><input type="checkbox" name="usuario_can_change">Permitir modificar</div>
+		<div><input type="checkbox" name="usuario_can_delete">Permitir excluir</div>
+		<div><input type="checkbox" name="usuario_can_show">Permitir visualizar</div>
+		<input type="button" class="button button-blue small-radius" value="Replicar" id="btn-replicar-permissao" />
+		<input type="button" class="button button-blue small-radius" value="Cancelar" onclick="vmsisLib.popup.closePopup('aplicar_permissao_sub_menus')" />
+	  </div>
+	</div>
+	<div class="contextmenu" data-container="#treeViewApps .has-child>a">
+	   <div>Configurar submenus</div>
+	</div>
     <div>
       <ul class="nav nav-tabs" role="tablist">
          <li role="presentation" class="active">
@@ -30,22 +47,27 @@
       <div class="tab-content">
     	  <div id="tabs-usuario" class="tab-pane active" role="tabpanel">
             <input type='hidden' value="{{lista_usuarios}}" id="list_users">
-  		    <input type='hidden' value='{{apps}}' id="list_apps">            
-        	
-			<div class="col-md-3" id="div-filtro-usuario">  		  
-        	</div>
+  		    
+        	<div class="col-md-3">
+			  <h2 class='title'>Usuários</h2>
+			  <div class="col-md-12" id="div-filtro-usuario">
+			  
+        	  </div>
+			</div>
 			
-  		    <div id="div-escolha-app-usuario" class="col-md-5">			
+  		    <div id="div-escolha-app-usuario" class="col-md-5">
+			  <h2 class='title'>Aplicativos</h2>
+			  <div class="tree-view" id="treeViewApps">			  				  
+			      {{ apps | safe }}									
+			  </div>
   		    </div>
 			
   		    <div id="container-permissoes-usuario" class="col-md-4">
-			  <p>Permissões:</p>
+			  <h2 class='title'>Permissões</h2>
 			  <div class="alert alert-warning" id="alert-permissoes-usuario">Selecione os dados ao lado.</div>
 			  <div id="div-permissoes-usuario" >				
-			  </div>
-			  
-			  <input type="button" value="Salvar" class="btn btn-success" disabled id="btn-salvar-per-usuario">
-			  
+			  </div>			  
+			  <input type="button" value="Salvar" class="button button-green small-radius" disabled="True" id="btn-salvar-per-usuario" />			  			  
   		    </div>    		
           </div>
           <div id="tabs-grupo" class="tab-pane" role="tabpanel">
