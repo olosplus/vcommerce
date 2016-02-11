@@ -137,7 +137,7 @@ $(document).ready(function(){
        $('#treeViewApps .aplicarSubmenus').removeClass('aplicarSubmenus');
        $(this).parent().addClass('aplicarSubmenus');
        vmsisLib.popup.openPopup('aplicar_permissao_sub_menus');       
-    });
+    }, 'controle_acesso_sub');
     
     $('#btn-replicar-permissao').click(aplicarConfiguracoesSubMenu);
     

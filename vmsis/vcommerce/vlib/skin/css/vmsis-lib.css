@@ -63,12 +63,15 @@
    
 }
 .contextmenu div{
-  background-color: #F3F3ED;
+  /*background-color: #F3F3ED;*/
+  background-color: ghostwhite;
+  border-bottom: 1px solid white;
   padding: 3px;
 }
 
 .contextmenu div:hover{
-   background-color: #DBDBD5;   
+   /*background-color: #DBDBD5;   */
+   background-color: #f5f5f5;
    cursor: pointer;
 }
 

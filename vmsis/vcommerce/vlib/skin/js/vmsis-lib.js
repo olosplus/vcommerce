@@ -154,8 +154,15 @@ vmsisLib.waitting.stop = function(waittingVar){
 }
 
 
-vmsisLib.contextMenu = function(fnExecuteOnItenClick){
-    $(".contextmenu").each(function(){
+vmsisLib.contextMenu = function(fnExecuteOnItenClick, idContext){
+    if (idContext) {
+       var context_id = '#' + idContext
+    }else{
+       var context_id = "";
+    }
+    
+    
+    $(context_id + ".contextmenu").each(function(){
         var element = $(this);
         element.css("display","none");
         
@@ -181,7 +188,7 @@ vmsisLib.contextMenu = function(fnExecuteOnItenClick){
                 subEle.each(function(){
                    $(this).unbind('click');
                    $(this).click(function(e){
-                      fnExecuteOnItenClick.call(ele[0]);                      
+                      fnExecuteOnItenClick.call(ele[0],  this);                      
                    });
                 });
             }

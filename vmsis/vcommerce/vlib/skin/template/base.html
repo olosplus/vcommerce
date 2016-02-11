@@ -32,7 +32,7 @@
     <link rel="stylesheet" href="{% static 'components/font-awesome/css/font-awesome.min.css' %}" type="text/css" media="screen">
 
     <link rel="stylesheet" type="text/css" href="{% static 'main.css' %}">
-    <link rel="stylesheet" style="text/css" href="{% static 'grid/grid.css' %}"> 
+    <link rel="stylesheet" type="text/css" href="{% static 'grid/grid.css' %}"> 
 
     <!-- jQuery -->
     <script src="{% static 'components/jquery/dist/jquery.min.js' %}"></script>
@@ -42,12 +42,12 @@
 <!--    <script src="{% static 'components/jquery-ui-1.11.4.custom/jquery-ui.min.js' %}"></script> -->
    
     <!-- jQuery CSS-->
-    <link rel="stylesheet" style="text/css" href="{% static 'components/jquery-ui-1.11.4.custom/jquery-ui.min.css' %}"> 
-    <link rel="stylesheet" style="text/css" href="{% static 'components/jquery-ui-1.11.4.custom/jquery-ui.structure.min.css' %}"> 
-    <link rel="stylesheet" style="text/css" href="{% static 'components/jquery-ui-1.11.4.custom/jquery-ui.theme.min.css' %}"> 
+    <link rel="stylesheet" type="text/css" href="{% static 'components/jquery-ui-1.11.4.custom/jquery-ui.min.css' %}"> 
+    <link rel="stylesheet" type="text/css" href="{% static 'components/jquery-ui-1.11.4.custom/jquery-ui.structure.min.css' %}"> 
+    <link rel="stylesheet" type="text/css" href="{% static 'components/jquery-ui-1.11.4.custom/jquery-ui.theme.min.css' %}"> 
 
-
-    <link rel="stylesheet" style="text/css" href="{% static 'css/base.css' %}"> 
+    <link rel="stylesheet" type="text/css" href="{% static 'css/vmsis-lib.css' %}"> 
+    <link rel="stylesheet" type="text/css" href="{% static 'css/base.css' %}"> 
     {% block css %}
     {% endblock %}
 
@@ -59,6 +59,20 @@
     <![endif]-->
   </head>
 <body {% block tagbody %} {% endblock %}>
+  <div id="max-tab" class="popup full">    
+    <div class="popup-body">
+      <a class="page-close" href="javascript:void(0)" title="Fechar" onclick="minimizarTela()">
+        X
+      </a>
+      
+    </div>
+  </div>
+  
+  <div class="contextmenu" data-container=".pages-nav" id="context-maximizar">
+      <div>Tela cheia <span class="red">(Os dados atuais serão perdidos)</span></div>
+      
+  </div>
+  
   <div id="dialog" title="Filtro"></div>
 
   {% block corpo %}
@@ -123,7 +137,8 @@
     <script type="text/javascript">
         function submit(form){
           document.getElementById(form).submit();     
-      }; 
+      };
+            
     </script>
   </body>
   {% block rodape %}

@@ -26,6 +26,7 @@ function hideAllPages(){
 
 function resizeFrame(iframe){  
   if(iframe){
+
     var body = iframe.contentWindow.document.body;  
     
     var heightNavigation = $('#open-pages-navigation').height();
@@ -90,8 +91,30 @@ function openPage(app, url, title){
     }
     else{
       createPage(app_id, url, title);
+      vmsisLib.contextMenu(function(btn){
+        var ele = $(this);
+        vmsisLib.confirma('Os dados não salvos serão perdidos. Deseja continuar?',
+        function(){
+          var id_frame = ele.attr('id').replace('btn-show-', '');
+          showPage($('#'+id_frame));
+          var frame = $('#' + id_frame).detach();         
+          frame.addClass('maximizado');
+          $('#max-tab .popup-body').append(frame);         
+          vmsisLib.popup.openPopup('max-tab');
+        })
+      }, 'context-maximizar');
     }
   }
+}
+
+function minimizarTela() {
+   vmsisLib.confirma('Os dados não salvos serão perdidos. Deseja continuar?',
+   function (args) {
+      var frame = $("#max-tab .popup-body iframe").detach();
+      frame.removeClass('maximizado');
+      $('#main-container').append(frame);
+      vmsisLib.popup.closePopup('max-tab');
+   }) 
 }
 
 function insert(model, module, url, name){
