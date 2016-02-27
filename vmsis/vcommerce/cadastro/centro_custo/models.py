@@ -1,4 +1,4 @@
-# coding : utf-8
+# -*- coding: utf-8 -*-
 from django.db import models
 from vlib.control.models import Master_empresa, ControleSincronizacao
 from cadastro.unidade.models import Unidade
