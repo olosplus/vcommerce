@@ -1,3 +1,4 @@
+# coding: utf-8
 apps_on_menu = (
     {'app': 'cadastro', 'verbose_name' : 'Cadastro', 'imgmenu':'fa fa-cubes'},
     {'app': 'cadastro.almoxarifado', 'verbose_name' : 'Almoxarifado'},
