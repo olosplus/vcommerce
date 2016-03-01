@@ -4,40 +4,35 @@ from vlib.control.models import Master_unidade
 from cadastro.cliente.models import Cliente
 
 choice_forma_recebimento = (
-    ('B','Boleto'),
-	('C','Cheque'),
-	('D','Depósito'),
-    ('I', 'Dinheiro'))
-
-choice_repetir = (
-    ('1', 'Uma Vez'),
-    ('2', 'Diariamente'),
-    ('3', 'Semanalmente'),
-    ('4', 'Quinzenalmente'),
-    ('5', 'Mensalmente'),
-    ('6', 'Trimestralmente'),
-    ('7', 'Anualmente'))
+    ('C', 'Crédito'),
+    ('D', 'Débito'),
+    ('M', 'Dinheiro'),
+	('H','Cheque'),
+	('T','Depósito'))
 
 choice_status = (
-    ('1', 'A Receber'),
-    ('2', 'Recebido'))
+    ('A', 'Em Eberto'),
+    ('B', 'Baixado'))
 
 # Create your models here.
 class ContaReceber(Master_unidade):
     class Meta:
     	db_table = "contareceber"
     	verbose_name = "Conta a Receber"
-    	verbose_name_plural = "Conta a Receber"
+    	verbose_name_plural = "Contas a Receber"
 
-    idformapagamento = models.CharField(max_length=1,verbose_name="Forma de Recebimento",choices=choice_forma_recebimento)
-    dscontareceber = models.CharField(max_length=2000,verbose_name="Descriçao")
-    nrinscjurdClie = models.ForeignKey(Cliente, verbose_name="Cliente")
-    vrcontareceber = models.DecimalField(max_digits=10, decimal_places=4, verbose_name="Valor")
-    dtvencimento = models.DateField(verbose_name="Vencimento")
-    idrepetir = models.CharField(max_length=1,verbose_name="Repetir",choices=choice_repetir)
-    dtfinal = models.DateField(verbose_name="Data Final")
+    nro_documento = models.CharField(max_length=10,verbose_name="Número Documento")
+    cliente_id = models.ForeignKey(Cliente, verbose_name="Cliente")
+    data_inclusao = models.DateField(verbose_name="Data Inclusão")
+    data_prevista = models.DateField(verbose_name="Data Prevista")
+    data_baixa = models.DateField(verbose_name="Data Baixa", null=True)
+    valor_previsto = models.FloatFIeld(verbose_name="Valor Previsto")
+    acrescimo = models.FloatFIeld(verbose_name="Acréscimo", null=True)
+    desconto = models.FloatField(verbose_name="Desconto", null=True)
+    valor_baixado = models.FloatFIeld(verbose_name="Valor Baixado", null=True)
     idstatus = models.CharField(max_length=1, verbose_name="Situação", choices=choice_status, default="1")
+    forma_rbto = models.CharField(max_length=1,verbose_name="Forma de Recebimento",choices=choice_forma_recebimento)
     idorigem = models.CharField(max_length=10, null=True, blank=True)
 
     def __str__(self):
-    	return self.descricao
+    	return self.nro_documento

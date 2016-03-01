@@ -55,7 +55,7 @@ apps_on_menu = (
 
    # TELAS DO PEDIDO
     {'app': 'pedido', 'verbose_name' : 'Pedido', 'imgmenu' : 'fa fa-building-o'},
-    {'app': 'pedido.frentecaixa', 'verbose_name' : 'Pedido'},
+    #{'app': 'pedido.frentecaixa', 'verbose_name' : 'Pedido'},
     {'app': 'pedido.itemreti', 'verbose_name' : 'Ajuste de Pedido'},
     {'app': 'pedido.cadastro_pedido', 'verbose_name' : 'Cadastros Pedido'},
     {'app': 'pedido.cadastro_pedido.mesa', 'verbose_name' : 'Mesa'},
@@ -63,7 +63,7 @@ apps_on_menu = (
     #{'app': 'pedido.cadastro_pedido.cardapio', 'verbose_name' : 'Cardápio'},
     {'app': 'pedido.cadastro_pedido.categoria', 'verbose_name' : 'Categoria'},
     {'app': 'pedido.cadastro_pedido.itemcategoria', 'verbose_name' : 'Cardápio'},
-    {'app': 'pedido.cadastro_pedido.composicaoproduto', 'verbose_name' : 'Composição do Produto', 'visible' : False},
+    #{'app': 'pedido.cadastro_pedido.composicaoproduto', 'verbose_name' : 'Composição do Produto', 'visible' : False},
     {'app': 'pedido.cadastro_pedido.caixa', 'verbose_name' : 'Caixas'},
     {'app': 'pedido.aberfechcaixa', 'verbose_name' : 'Abertura e fechamento dos caixas', 
        'visible':False},

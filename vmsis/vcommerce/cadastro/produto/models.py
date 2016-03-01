@@ -9,7 +9,6 @@ class Produto(Master_empresa, ControleSincronizacao):
         db_table = "produto"
         verbose_name = "Produto"
         verbose_name_plural = "Produtos"
-        child_models = ['pedido.cadastro_pedido.composicaoproduto.models.ComposicaoProd']
         ordering = ['nmproduto']
 
     posarvore = models.CharField(max_length=40,verbose_name='Arvore',null=True,blank=True,editable=False)

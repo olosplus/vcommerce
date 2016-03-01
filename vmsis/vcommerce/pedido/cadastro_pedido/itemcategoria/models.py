@@ -1,6 +1,7 @@
 # -*- coding : utf-8 -*-
 from django.db import models
 from cadastro.produto.models import Produto
+from cadastro.unimedida.models import Unimedida
 from pedido.cadastro_pedido.agrupadicional.models import AgrupAdicional
 from pedido.cadastro_pedido.categoria.models import Categoria
 from vlib.control.models import ControleSincronizacao
@@ -11,7 +12,7 @@ class ItemCategoria(ControleSincronizacao):
     class Meta:
         db_table = "ItemCategoria"
         verbose_name = "Cardápio"
-        child_models = ["ItAgrupAdicional"]
+        child_models = ["ItAgrupAdicional","ComposicaoProd"]
 
     categoria = models.ForeignKey(Categoria, verbose_name="Categoria")
     produto = models.ForeignKey(Produto, verbose_name="Produto")
@@ -31,4 +32,15 @@ class ItAgrupAdicional(ControleSincronizacao):
 
     cardapio = models.ForeignKey(ItemCategoria)
     agrupadicional = models.ForeignKey(AgrupAdicional, verbose_name="Agrupamentos de Adicionais")
+
+class ComposicaoProd(ControleSincronizacao):
+	class Meta:
+		db_table = "ComposicaoProd"
+		verbose_name = "Composição do produto"
+		verbose_name_plural = "Composições dos produtos"
+	
+	categoria = models.ForeignKey(ItemCategoria)
+	produto = models.ForeignKey(Produto, verbose_name='Produto')
+	qtcomp = models.FloatField(verbose_name="Quantidade")
+	unimedida = models.ForeignKey(Unimedida,verbose_name='Unidade de medida')
 
