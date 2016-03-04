@@ -75,7 +75,12 @@ class PermissoesFuncionarios(object):
     
     
     def get_object_permission(self, app_label, model_name, permission_type):
-        tela = ContentType.objects.get(app_label = app_label, model = model_name.lower())
+        try:
+            tela = ContentType.objects.get(app_label = app_label, model = model_name.lower())
+        except:
+            self.add_content_type(app_label, model_name)
+            tela = ContentType.objects.get(app_label = app_label, model = model_name.lower())
+            
         code = permission_type + '_' + model_name.lower()
         try:
            return Permission.objects.get(content_type = tela, codename = code)
@@ -97,10 +102,8 @@ class PermissoesFuncionarios(object):
             self.add_content_type_permission(model_name = model_name, content_type = content.first())
     
     def add_content_type_permission(self, model_name, content_type):
-        print('caiu aqui agora')
+        
         per = Permission.objects.filter(codename = 'show_' + model_name.lower(),  content_type = content_type)
-        print('pubs')
-        print('show_' + model_name)
         if not per:
             new_permission = Permission(content_type = content_type, name = 'Can Show ' + model_name,
                                         codename = 'show_' + model_name.lower())
@@ -168,7 +171,7 @@ def GetPermissoes(request):
             models = apps.get_app_config(app_label).get_models()            
             for model in models:                        
                 permissoes.add_content_type(model_name=model.__name__, app_label = app_label)
-        print(app_label)
+        
         p = permissoes.get_permissoes_json(app_label)
         
         

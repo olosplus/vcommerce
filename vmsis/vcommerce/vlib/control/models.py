@@ -1,13 +1,13 @@
 # -*- coding: utf-8 -*-
 from django.db import models
 from cadastro.empresa.models import Empresa
-
+from datetime import datetime   
 
 class ControleSincronizacao(models.Model):
     class Meta:
         abstract = True
 
-    dt_data_inc_sinc = models.DateTimeField(auto_now_add=True, verbose_name='Data de cadastro', 
+    dt_data_inc_sinc = models.DateTimeField(default=datetime.now , verbose_name='Data de cadastro', 
         editable=False)
     dt_data_edt_sinc = models.DateTimeField(verbose_name='Data de cadastro', null=True,
         editable=False)  
