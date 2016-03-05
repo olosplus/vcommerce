@@ -44,6 +44,7 @@ class PermissoesFuncionarios(object):
                                      "can_delete" : can_delete,
                                      "can_change" : can_change,
                                      "can_show" : can_show})
+            break
         else:
             if show_whithout_model:            
                 can_show = self.usr.has_perm(app_label + '.show_' + app_label) or is_superuser            
@@ -74,18 +75,18 @@ class PermissoesFuncionarios(object):
     
     
     
-    def get_object_permission(self, app_label, model_name, permission_type):
+    def get_object_permission(self, app_label, model_name, permission_type):       
         try:
             tela = ContentType.objects.get(app_label = app_label, model = model_name.lower())
         except:
             self.add_content_type(app_label, model_name)
             tela = ContentType.objects.get(app_label = app_label, model = model_name.lower())
-            
+        
         code = permission_type + '_' + model_name.lower()
         try:
-           return Permission.objects.get(content_type = tela, codename = code)
+           return Permission.objects.get(content_type = tela, codename = code)           
         except ObjectDoesNotExist as e:
-            self.add_content_type(app_label=app_label, model_name=model_name)
+            self.add_content_type_permission(model_name=model_name, content_type=tela)
             return Permission.objects.get(content_type = tela, codename = code)
         
         
@@ -157,6 +158,7 @@ def PaginaPrincipal(request):
     
     return render_to_response('controle_acesso.html', {"lista_usuarios" : dict_usr, "apps" : list_apps, "request" : request })
 
+@login_required
 def GetPermissoes(request):
     try:
         id_funcionario = request.GET.get('id_funcionario')
@@ -180,7 +182,8 @@ def GetPermissoes(request):
     except Exception as e:
         print(e)
         return HttpResponse(e)
-    
+
+@login_required   
 def SetPermissoes(request):
     try:
         data = request.GET.get("data")
