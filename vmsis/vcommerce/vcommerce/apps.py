@@ -70,7 +70,8 @@ apps_on_menu = (
 #    {'app': 'pedido.movcaixa', 'verbose_name' : 'Movimentações dos caixas'},    
 #    {'app': 'pedido.fechcaixa', 'verbose_name' : 'Fechamento do caixa'},    
     #TELAS DO FINANCEIRO
-    # {'app': 'financeiro', 'verbose_name':'Financeiro', 'imgmenu':'fa fa-dollar'},
+     {'app': 'financeiro', 'verbose_name':'Financeiro', 'imgmenu':'fa fa-dollar'},
+     {'app': 'financeiro.cartao_bandeira', 'verbose_name':'Bandeiras de Cartão'},
     # {'app': 'financeiro.banco', 'verbose_name': 'Banco', 'visible': False},
     # {'app': 'financeiro.conta', 'verbose_name': 'Conta'},
     # {'app': 'financeiro.mov_financeira','verbose_name': 'Transferencia Financeira'},
