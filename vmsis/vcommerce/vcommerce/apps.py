@@ -76,5 +76,7 @@ apps_on_menu = (
     # {'app': 'financeiro.mov_financeira','verbose_name': 'Transferencia Financeira'},
     # {'app': 'financeiro.contapagar', 'verbose_name' : 'Conta a Pagar'},
     # {'app': 'financeiro.contareceber', 'verbose_name' : 'Conta a Receber'},
+    
+    {'app': 'imagens', 'verbose_name':'imaagens', 'visible': False},
 
 )

@@ -5,4 +5,4 @@ from pedido.cadastro_pedido.caixa.models import Caixa
 
 Crud = CrudView(Caixa)
 
-urlpatterns = Crud.AsUrl()
+urlpatterns = Crud.AsUrl(GridFields=('nmcaixa', 'unidade__nmfantasia'))

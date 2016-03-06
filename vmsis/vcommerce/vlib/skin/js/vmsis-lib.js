@@ -356,3 +356,38 @@ vmsisLib.treeView = function(idTreeView, fnExecuteOnItenClick){
 		
 	});	
 }
+
+vmsisLib.listImage = function(id, container, bindTo, data_stringfy){
+    imagens = JSON.parse(data_stringfy);
+    sel = $(bindTo).val();
+    
+    $(container).append(vmsisLib.format('<div id="%s" class="sel-imglist cur-pointer" > </div>', [id + 'sel-imglist']));
+         
+    
+    $(container).append(vmsisLib.format('<div class="popup" id="%s">  <div class="popup-body"><div class="imglist"></div>  </div> </div>',
+                                        [id]))
+    for (img in imagens) {
+      
+      $("#" + id + ' .imglist').append(vmsisLib.format('<div class="flo-left bck-hover-blue cur-pointer imglist-item" data-value="%s"> <img src="%s"></img></div>',
+          [img,imagens[img]]))
+    }
+   
+    $('#' + id +  ' .imglist-item').click(function(){
+       $('#' + id + ' .imglist-item').removeClass('selected');
+       $(this).addClass('selected');
+       $('#' + id + 'sel-imglist').html($(this).html());
+       vmsisLib.popup.closePopup(id);
+       $(bindTo).val($(this).attr('data-value'));
+    });
+   
+    if (sel) {
+       $('#' + id +  'sel-imglist').html( $(vmsisLib.format('[data-value="%s"]', [sel])).html());
+    }else{
+       $('#' + id +  'sel-imglist').html('<span class="red">Selecione uma imagem...</span>');  
+    }
+   
+    $('#' + id +  'sel-imglist').click(function(){
+       vmsisLib.popup.openPopup(id);
+    })
+
+}
