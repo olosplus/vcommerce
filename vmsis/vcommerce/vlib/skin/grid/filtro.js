@@ -38,6 +38,7 @@ function Filter (module, model, columns) {
          var frm_received = doc_received.querySelector('form');
          
          try{
+             $('#filtro .popup-body .content-filter').empty();
              document.querySelector('#filtro .popup-body .content-filter').appendChild(frm_received);
          }catch(e){
              console.log(e);
