@@ -37,14 +37,7 @@
     <!-- jQuery -->
     <script src="{% static 'components/jquery/dist/jquery.min.js' %}"></script>
     <script src="{% static 'components/jquery/dist/jquery.mask.min.js' %}"></script>
-    <!-- jQuery UI-->
-    <script src="{% static 'components/jquery-ui-1.11.4.custom/jquery-ui.min.js' %}"></script>
-<!--    <script src="{% static 'components/jquery-ui-1.11.4.custom/jquery-ui.min.js' %}"></script> -->
-   
-    <!-- jQuery CSS-->
-    <link rel="stylesheet" type="text/css" href="{% static 'components/jquery-ui-1.11.4.custom/jquery-ui.min.css' %}"> 
-    <link rel="stylesheet" type="text/css" href="{% static 'components/jquery-ui-1.11.4.custom/jquery-ui.structure.min.css' %}"> 
-    <link rel="stylesheet" type="text/css" href="{% static 'components/jquery-ui-1.11.4.custom/jquery-ui.theme.min.css' %}"> 
+    <script src="{% static 'js/vmsis-lib.js' %}"></script>    
 
     <link rel="stylesheet" type="text/css" href="{% static 'css/vmsis-lib.css' %}"> 
     <link rel="stylesheet" type="text/css" href="{% static 'css/base.css' %}"> 
@@ -69,11 +62,9 @@
   </div>
   
   <div class="contextmenu" data-container=".pages-nav" id="context-maximizar">
-      <div>Tela cheia <span class="red">(Os dados atuais serão perdidos)</span></div>
-      
+      <div>Tela cheia <span class="red">(Os dados atuais serão perdidos)</span></div>      
   </div>
   
-  <div id="dialog" title="Filtro"></div>
 
   {% block corpo %}
     <div id="wrapper">
@@ -112,7 +103,7 @@
   {% endblock %}
 
     <!-- Grid Personalizado -->
-    <script src="{% static 'js/vmsis-lib.js' %}"></script>    
+    
     <script src="{% static 'grid/grid.js' %}"></script>    
     <script src="{% static 'grid/filtro.js' %}"></script>    
 

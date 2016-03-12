@@ -30,44 +30,42 @@ function Filter (module, model, columns) {
     url: '/filtro',
     type: 'get',    
     data: {"module" : modulo, "model" : modelo},
-    success: function (data) {      
-      vmsisLib.waitting.stop();
+    success: function (data) {            
       try{
-         $('#dialog').html(data);         
-      }catch(ch){
-                
-      }
-      
-      $('#dialog').dialog({
-        dialogClass : "no-close",        
-        maxHeight: 500,
-        buttons : [
-          {
-            text : "Filtrar",
-            click : function(){
-              vmsisLib.waitting.start();
-              form = $(this).children("form");              
-              form_serialized = form.serializeArray();
-              
-              $("#filter_cache").remove();
-              $("body").append("<input type='hidden' id='filter_cache'  "+
-                " value= '" + JSON.stringify(form_serialized) + "' >");
 
-              var palavras_inteiras = $("#palavras_inteiras").val();
+         var parser = new DOMParser()
+         var doc_received = parser.parseFromString(data, "text/html");
+         var frm_received = doc_received.querySelector('form');
+         
+         try{
+             document.querySelector('#filtro .popup-body .content-filter').appendChild(frm_received);
+         }catch(e){
+             console.log(e);
+         };
+
+         vmsisLib.popup.openPopup('#filtro');
+      }catch(e){
+         vmsisLib.aviso(e);
+         vmsisLib.waitting.stop();
+      }
+      vmsisLib.waitting.stop();
+      
+      $("#btn-filtrar").click(function(){
+            vmsisLib.waitting.start();
+            form = $("#filtro .popup-body .content-filter").children("form");              
+            form_serialized = form.serializeArray();
               
-              GetGridData(modulo, modelo, form_serialized, colunas, palavras_inteiras, 1, 'id');
-              vmsisLib.waitting.stop();
-              $(this).dialog("close");
-            }
-          },
-          {
-            text : "Cancelar",
-            click : function(){
-              $(this).dialog("close");
-            }
-          }
-        ]
+            $("#filter_cache").remove();
+            $("body").append("<input type='hidden' id='filter_cache'  "+
+               " value= '" + JSON.stringify(form_serialized) + "' >");
+
+            var palavras_inteiras = $("#palavras_inteiras").val();
+              
+            GetGridData(modulo, modelo, form_serialized, colunas, palavras_inteiras, 1, 'id');
+            vmsisLib.waitting.stop();
+            vmsisLib.popup.closePopup('filtro');
       });
+      
     },
     failure: function (data) {
       alert('Got an error dude');

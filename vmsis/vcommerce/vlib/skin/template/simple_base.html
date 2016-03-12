@@ -15,50 +15,41 @@
     <link rel="stylesheet" href="{% static 'components/bootstrap/dist/css/bootstrap.min.css' %}" type="text/css" media="screen">
 
 
-    <!-- Timeline CSS -
-    <link rel="stylesheet" href="{% static 'dist/css/timeline.css' %}" type="text/css" media="screen">
-  -->
-    <!-- Custom CSS -
-    <link rel="stylesheet" href="{% static 'dist/css/sb-admin-2.css' %}" type="text/css" media="screen">
-     -->
-    <!-- Morris Charts CSS 
-    <link rel="stylesheet" href="{% static 'components/morrisjs/morris.css' %}" type="text/css" media="screen">
-            -->
     <!-- Custom Fonts -->
     <link rel="stylesheet" href="{% static 'components/font-awesome/css/font-awesome.min.css' %}" type="text/css" media="screen">
 
     <link rel="stylesheet" type="text/css" href="{% static 'main.css' %}">
-    <link rel="stylesheet" style="text/css" href="{% static 'grid/grid.css' %}"> 
+    <link rel="stylesheet" type="text/css" href="{% static 'grid/grid.css' %}"> 
 
     <!-- jQuery -->
     <script src="{% static 'components/jquery/dist/jquery.min.js' %}"></script>
     <script src="{% static 'components/jquery/dist/jquery.mask.min.js' %}"></script>
 
-    <!-- jQuery UI-->
-    <script src="{% static 'components/jquery-ui-1.11.4.custom/jquery-ui.min.js' %}"></script>
-<!--    <script src="{% static 'components/jquery-ui-1.11.4.custom/jquery-ui.min.js' %}"></script> -->
-   
-    <!-- jQuery CSS-->
-    <link rel="stylesheet" style="text/css" href="{% static 'components/jquery-ui-1.11.4.custom/jquery-ui.min.css' %}"> 
-
-    <link rel="stylesheet" style="text/css" href="{% static 'components/jquery-ui-1.11.4.custom/jquery-ui.structure.min.css' %}"> 
-    <link rel="stylesheet" style="text/css" href="{% static 'components/jquery-ui-1.11.4.custom/jquery-ui.theme.min.css' %}"> 
-
-
-    <link rel="stylesheet" style="text/css" href="{% static 'css/base.css' %}">
-    <link rel="stylesheet" style="text/css" href="{% static 'css/vmsis-lib.css' %}"> 
+    <script src="{% static 'js/vmsis-lib.js' %}"></script>
+    
+    <link rel="stylesheet" type="text/css" href="{% static 'css/base.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/vmsis-lib.css' %}"> 
     {% block css %}
     {% endblock %}
 
-    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
-    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
-    <!--[if lt IE 9]>
-    <!--    <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
-        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script> -->
-    <!--[endif]-->
   </head>
 <body {% block tagbody %} {% endblock %} >
-  <div id="dialog" title="Filtro"></div>
+  <div id="filtro" class="popup" title="Filtro">
+
+    <div class="popup-body no-top-margin popup-filter" style="padding-top: 0px">
+
+     
+      <div style="position: fixed; width: 38.5%; padding: 10px; box-shadow: #f2f2f2 0px 2px 2px;background-color:ghostwhite">
+          <a class="page-close" href="javascript:void(0)" title="Fechar" onclick="vmsisLib.popup.closePopup('filtro')">X</a>
+          <h4 class="title blue">Filtro</h4>          
+          <div><button class="button button-blue radius full-width" id="btn-filtrar">OK</button></div>                 
+      </div>
+      <div class="content-filter" style="margin-top: 160px " >
+      </div>
+     
+    </div>
+  </div>
+
   {% block corpo %}
     <div id="wrapper">
 
@@ -77,7 +68,7 @@
   
 
     <!-- Grid Personalizado -->
-    <script src="{% static 'js/vmsis-lib.js' %}"></script>    
+
     <script src="{% static 'grid/grid.js' %}"></script>    
     <script src="{% static 'grid/filtro.js' %}"></script>    
     

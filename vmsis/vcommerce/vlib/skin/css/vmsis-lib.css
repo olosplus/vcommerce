@@ -84,6 +84,12 @@
    cursor: pointer;
 }
 
+.no-overflow{
+   overflow: none !important;
+}
+.auto-overflow{
+  overflow: auto;
+}
 .popup{
    /*float:left;*/
    height: 100%;
@@ -97,11 +103,14 @@
    top: 0;
 }
 
-.popup-body{
-    
-    display:table;
+.popup-body{    
+    /*display: run-in;*/
+    /*float: left;*/
 	background-color: ghostwhite;
 	height:auto;
+    /*max-height: 95%;
+    max-width: 95%;*/
+    overflow: auto;
 	box-shadow: gray 0px 10px 10px 0px ;
 	z-index: 10001;
 	padding: 5px;
@@ -117,6 +126,10 @@
 
 .popup.full > .popup-body.white{
    background-color:white;
+}
+
+.no-top-margin{
+  margin-top: 0px !important;
 }
 
 .small-radius{
@@ -318,3 +331,80 @@ a.button.full-width{
   border-radius: 5px;
   background-color: ghostwhite;
 }
+
+.popup-dlg{
+   width: 30%;   
+}
+
+.popup-filter{
+  width: 40% !important;  
+  height: 90%;
+}
+
+.popup-dlg .content-center{
+   display: inline;
+   float: left;
+   width: 50%;
+   text-align: center;
+   margin: 0px 40% 0px;  
+}
+
+
+
+
+@media screen and (min-width: 800px){
+
+  
+
+}
+
+@media screen and (max-width: 800px) {
+   
+
+}
+	
+	
+
+@media screen and (max-width: 600px) {
+   
+
+	
+}
+
+@media screen and (max-width: 800px) {
+
+   	
+}
+
+
+@media screen and (min-height:600px){
+    .popup-filter{
+	   height: 500px;
+	}
+   	
+}
+
+@media screen and (min-height:768px){
+    .popup-filter{
+	   height: 668px;
+	}
+}
+
+@media screen and (min-height:800px){
+    .popup-filter{
+	   height: 700px;
+	}
+}
+
+@media screen and (min-height:960px){
+    .popup-filter{
+	   height: 860px;
+	}
+}
+
+@media screen and (min-height:1024px){
+    .popup-filter{
+	   height: 824px;
+	}
+}
+

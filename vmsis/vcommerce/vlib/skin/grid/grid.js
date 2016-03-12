@@ -775,9 +775,8 @@ function doPostForm(send_to, form_id, url_redirect, is_delete, id_grid_delete, c
       
     },
     error: function (data) {
-      vmsisLib.waitting.stop()
-      //alert(data.responseText);
       vmsisLib.aviso(data.responseText);
+      vmsisLib.waitting.stop();
     }
   });
   return false;
