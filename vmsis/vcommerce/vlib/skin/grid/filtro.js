@@ -35,7 +35,8 @@ function Filter (module, model, columns) {
 
          var parser = new DOMParser()
          var doc_received = parser.parseFromString(data, "text/html");
-         var frm_received = doc_received.querySelector('form');
+         var frm_received = doc_received.querySelector('#conteudo-filtro');
+         
          
          try{
              $('#filtro .popup-body .content-filter').empty();
@@ -53,7 +54,7 @@ function Filter (module, model, columns) {
       
       $("#btn-filtrar").click(function(){
             vmsisLib.waitting.start();
-            form = $("#filtro .popup-body .content-filter").children("form");              
+            form = $("#conteudo-filtro").children("form");              
             form_serialized = form.serializeArray();
               
             $("#filter_cache").remove();
