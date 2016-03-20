@@ -85,10 +85,13 @@
 }
 
 .no-overflow{
-   overflow: none !important;
+   overflow:none !important;
 }
 .auto-overflow{
   overflow: auto;
+}
+.hid-overflow{
+  overflow: hidden !important;
 }
 .popup{
    /*float:left;*/
@@ -104,12 +107,8 @@
 }
 
 .popup-body{    
-    /*display: run-in;*/
-    /*float: left;*/
-	background-color: ghostwhite;
+ 	background-color: ghostwhite;
 	height:auto;
-    /*max-height: 95%;
-    max-width: 95%;*/
     overflow: auto;
 	box-shadow: gray 0px 10px 10px 0px ;
 	z-index: 10001;
@@ -210,15 +209,14 @@
   background-color: ghostwhite;
   cursor: pointer;
   text-align:center;
-  color:#66a2ff;
+  color:white;
   font-size: 14px;
   
 }
 
 .button:hover{
    background-color:white;
-   color:#66a2ff;
-   
+   color:#66a2ff;  
 }
 
 a.button{   
@@ -227,7 +225,7 @@ a.button{
    padding-top: 20px;
    display:table-cell;
    vertical-align:middle;
-    
+
 }
 
 .button.full-width{
@@ -235,19 +233,14 @@ a.button{
 }
 
 a.button.full-width{
-   
-   /*width: 95%;*/
    height:28px;
    padding-left: 0px;
    padding-right: 0px;
-   padding-top: 8px;
-	  
+   padding-top: 8px;	  
 }
 
 .button.button-blue{
     background-color:#66a2ff;
-	color:white;
-	
 }
 .button.button-blue:hover{
     color:#66a2ff;
@@ -268,7 +261,6 @@ a.button.full-width{
 
 .button.button-green{
     background-color:#004d00;
-	color:white;	
 }
 
 
@@ -277,6 +269,17 @@ a.button.full-width{
 	background-color:white;   
 	border: 1px solid ghostwhite;
    
+}
+
+.button.button-orange{
+  background-color: #ff9900;
+}
+
+.button.button-orange:hover{
+  color: #ff9900;
+  background-color:white;   
+  border: 1px solid ghostwhite;
+  
 }
 
 .tree-view ul{
@@ -337,6 +340,8 @@ a.button.full-width{
 }
 
 .popup-filter{
+  position: absolute !important;
+  margin-left:25%;  
   width: 40% !important;  
   height: 90%;
 }
@@ -349,62 +354,17 @@ a.button.full-width{
    margin: 0px 40% 0px;  
 }
 
-
-
-
-@media screen and (min-width: 800px){
-
-  
-
+.fixed{
+  position: fixed;
 }
 
-@media screen and (max-width: 800px) {
-   
-
-}
-	
-	
-
-@media screen and (max-width: 600px) {
-   
-
-	
+.fixed-header{
+  position: fixed;
+  box-shadow: #f2f2f2 0px 2px 2px;
+  background-color:ghostwhite;
+  width: inherit;
 }
 
-@media screen and (max-width: 800px) {
-
-   	
+.bigger-on-hover:hover{
+  box-shadow: gray 0px 10px 10px 0px ;  
 }
-
-
-@media screen and (min-height:600px){
-    .popup-filter{
-	   height: 500px;
-	}
-   	
-}
-
-@media screen and (min-height:768px){
-    .popup-filter{
-	   height: 668px;
-	}
-}
-
-@media screen and (min-height:800px){
-    .popup-filter{
-	   height: 700px;
-	}
-}
-
-@media screen and (min-height:960px){
-    .popup-filter{
-	   height: 860px;
-	}
-}
-
-@media screen and (min-height:1024px){
-    .popup-filter{
-	   height: 824px;
-	}
-}
-

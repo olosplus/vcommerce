@@ -259,7 +259,7 @@ vmsisLib.aviso = function(message, fnToExecuteAfter){
           '  <div class="popup-body popup-dlg small-radius">	'+
  	      '    <h2 class="yellow title">Aviso ! </h2> '+
           '    <p > <center>' + message + ' </center></p>'+          
- 	  	  '    <center><a href="javascript:void(0)" id="vmsisMsgBtn" class="btn btn-warning ">OK</a></center> '+       
+ 	  	  '    <div><button id="vmsisMsgBtn" type="button" class="button full-width button-orange small-radius">OK</button> </div>'+       
  	      '  </div> ';
  
     var popupE = document.createElement('div');
@@ -285,8 +285,8 @@ vmsisLib.confirma = function(message, executeIfTrue, executeIfFalse){
           '  <div class="popup-body popup-dlg small-radius">	'+
  	      '    <h2 class="yellow title">Confirmação ! </h2> '+
           '    <p><center> ' + message + ' </center> </p>'+          
- 	  	  '   <div class="content-center"> <button type="button" id="vmsisMsgBtnYes" class="button button-green small-radius">Sim</button> '+
-          '    <button type="button" id="vmsisMsgBtnNo" class="button button-red small-radius">Não</button> </div>'+                  
+ 	  	  '   <div> <button type="button" id="vmsisMsgBtnYes" class="button full-width button-green small-radius">Sim</button> '+
+          '    <button type="button" id="vmsisMsgBtnNo" class="button button-red full-width small-radius">Não</button> </div>'+                  
  	      '  </div> ';
  
     var popupE = document.createElement('div');
@@ -365,8 +365,8 @@ vmsisLib.listImage = function(id, container, bindTo, data_stringfy){
          
     
     $(container).append(vmsisLib.format('<div class="popup" id="%s">  '+
-                                        '  <div class="popup-body"> '+
-                                        '    <a class="page-close" href="javascript:void(0)" title="Fechar" >X</a>'+
+                                        '  <div class="popup-body no-top-margin popup-filter"> '+
+                                        '    <a class="page-close fixed" href="javascript:void(0)" title="Fechar" >X</a>'+
                                         '    <div class="imglist"></div> '+
                                         '  </div> '+
                                         '</div>',
@@ -376,7 +376,7 @@ vmsisLib.listImage = function(id, container, bindTo, data_stringfy){
     });
     for (img in imagens) {
       
-      $("#" + id + ' .imglist').append(vmsisLib.format('<div class="flo-left bck-hover-blue cur-pointer imglist-item" data-value="%s"> <img src="%s"></img></div>',
+      $("#" + id + ' .imglist').append(vmsisLib.format('<div class="flo-left bigger-on-hover cur-pointer imglist-item" style="margin:5px" data-value="%s"> <img src="%s"></img></div>',
           [img,imagens[img]]))
     }
    
