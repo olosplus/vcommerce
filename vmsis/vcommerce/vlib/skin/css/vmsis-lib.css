@@ -1,3 +1,9 @@
+html, body{
+  height: 100%;
+  width: 100%;
+  margin: 0px;
+  padding: 0px;
+}
 .centralize{
    margin:35% auto;
 }
@@ -282,9 +288,18 @@ a.button.full-width{
   
 }
 
+/*.tree-view{
+  height: 90%;
+}
+
+.tree-view>ul{
+  height: 100%;
+}*/
+
 .tree-view ul{
    list-style:none;
    padding-left: 25px;
+   
  }
 
 .tree-view ul li{
@@ -367,4 +382,65 @@ a.button.full-width{
 
 .bigger-on-hover:hover{
   box-shadow: gray 0px 10px 10px 0px ;  
+}
+
+/*aba*/
+
+.hidden {
+    display: none;
+}
+.tabs-group,
+.body-group {
+    float: left;
+    width: 100%;
+}
+.body-group {
+    height: 100%;
+}
+.tab {
+    margin-right: 5px;
+    margin-left: 5px;
+    display: inline;
+    float: left;
+    padding: 3px;
+    margin-top: 15px;
+    min-width: 15%;
+    min-height: 35px;
+    text-align: center;
+    border-top-left-radius: 12px;
+    border-top-right-radius: 12px;
+    /*background-color: #F3F3ED;*/
+    background-color:#f8f8f8;
+    box-shadow: 2px -2px 1px 0px gray;
+}
+.tab:hover {
+    cursor: pointer;
+    color: blue;
+}
+.tab.active {
+    border: none;    
+    position: relative;
+}
+.page-control {
+    height: 90%;
+}
+.tab-body {
+    display: none;
+    margin-left: 15px;
+    margin-right: 15px;
+    border-radius: 5px;
+    border-bottom-left-radius: 5px;
+    height: 100%;
+    overflow: auto;
+    box-shadow: 0px 0px 2px 1px gray;
+}
+.tab-body.active {
+    display: inline;
+    float: left;
+    width: 98%;
+    padding: 3px;
+    background-color: #f8f8f8;
+}
+.tab:first-of-type {
+    margin-left: 35px;
 }

@@ -10,19 +10,13 @@
 
 {% block js %}
    
-   <script type="text/javascript">
-     $(function() {
-       $( "#tabs" ).tabs();
-     });
-	 
-   </script>
    <script type="text/javascript" src="{% static 'controle_acesso/js/controle_acesso.js' %}"></script>   
 {% endblock %}
 
 
 {% block corpo %}
     <div class="popup"  id="aplicar_permissao_sub_menus">
-	  <div class="popup-body small-radius">
+	  <div class="popup-body small-radius popup-dlg">
 		<h2 class='title'>Replicar configurações para os submenus</h2>
         <div><input type="checkbox" name="usuario_can_add">Permitir adicionar</div>
 		<div><input type="checkbox" name="usuario_can_change">Permitir modificar</div>
@@ -35,17 +29,10 @@
 	<div class="contextmenu" data-container="#treeViewApps .has-child>a" id="controle_acesso_sub">
 	  <div>Configurar submenus</div>
 	</div>
-    <div>
-      <ul class="nav nav-tabs" role="tablist">
-         <li role="presentation" class="active">
-		   <a href="#tabs-usuario" aria-controls="tabs-usuario" role="tab" data-toggle="tab">Usuário</a>
-		 </li>
-         <li role="presentation" >
-		   <a href="#tabs-grupo" aria-controls="tabs-grupo" role="tab" data-toggle="tab">Grupo</a>
-		 </li>         
-      </ul>
-      <div class="tab-content">
-    	  <div id="tabs-usuario" class="tab-pane active" role="tabpanel">
+
+    
+         <div>
+    	  <div id="tabs-usuario" >
             <input type='hidden' value="{{lista_usuarios}}" id="list_users">
   		    
         	<div class="col-md-3">
@@ -70,9 +57,9 @@
 			  <input type="button" value="Salvar" class="button button-green small-radius" disabled="True" id="btn-salvar-per-usuario" />			  			  
   		    </div>    		
           </div>
-          <div id="tabs-grupo" class="tab-pane" role="tabpanel">
+          <div id="tabs-grupo" >
         	<p>Grupo</p>
           </div>
 	  </div>
-   </div>
+   
 {% endblock %}

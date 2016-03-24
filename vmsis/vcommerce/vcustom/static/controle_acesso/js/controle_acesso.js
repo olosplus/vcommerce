@@ -1,6 +1,13 @@
 $(document).ready(function(){
     
-   // var apps =  JSON.parse($("#list_apps").val());
+   
+   /*criação das tabs*/
+   pgcAcesso = new vmsisLib.pageControl();
+   pgcAcesso.addTab('tbsAcessoUsuario', 'Usuários', vmsisLib.find('#tabs-usuario').elements[0]);
+   pgcAcesso.addTab('tbsAcessoGrupo', 'Grupos', vmsisLib.find('#tabs-grupo').elements[0]);   
+   pgcAcesso.draw();
+   pgcAcesso.activeTab('tbsAcessoUsuario');
+   
    var usuarios = JSON.parse($("#list_users").val());
     
     var getPermissoesUsuario = function(item){
