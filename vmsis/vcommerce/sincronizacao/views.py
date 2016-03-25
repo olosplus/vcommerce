@@ -42,13 +42,15 @@ def SaveJsonAsModel(request):
         usuario = request.POST['usuario']
     except Exception:
         return HttpResponse('Error|Login error')
+    try:
+        data_str = request.POST['data']
     
-    data_str = request.POST['data']
+        data_dict = {}
     
-    data_dict = {}
-    
-    if data_str:
-        data_dict = dict(json.loads(data_str))
+        if data_str:
+            data_dict = dict(json.loads(data_str))
+    except Exception as e:
+        return HttpResponse('Error|%s' % str(e) )
     
     upload = lib_sinc.UploadModel(usuario, senha)
     return upload.SaveJson(data_dict, parent_id = None)

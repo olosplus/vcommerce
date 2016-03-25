@@ -75,33 +75,35 @@ class UploadModel(SincronizacaoBase):
         if not self.Autenticado():
             return HttpResponse('Error|Login error')
         
-        model = lib_auxiliar.get_model_by_string(json_data["module"], json_data["model"])
-        
-        parent_field = None
-        
-        if "parent_field" in json_data.keys():
-            parent_field = json_data["parent_field"]
-        
-        chaves = str();
-        if "chaves" in json_data.keys():
-            chaves = json_data["chaves"]
-        
-        rows = json_data["rws"]
-
-        for row in rows:
-            self.str_lista_id_desktop += "|model=" + model.__name__ + ";"
+        try:
+            model = lib_auxiliar.get_model_by_string(json_data["module"], json_data["model"])
             
-            id_ou_erro = self.SaveRow(model = model, row = row, chaves = chaves, 
-                parent_field = parent_field, parent_id = parent_id)
-
-            #retorna mensagem de erro caso não haja sucesso
-            if type(id_ou_erro) == str:
-                return HttpResponse("Error|" + id_ou_erro)
+            parent_field = None
             
-            if "model_child" in row.keys():
-                for child in row["model_child"]:
-                    self.SaveJson(json_data = child, parent_id = id_ou_erro)
+            if "parent_field" in json_data.keys():
+                parent_field = json_data["parent_field"]
             
+            chaves = str();
+            if "chaves" in json_data.keys():
+                chaves = json_data["chaves"]
+            
+            rows = json_data["rws"]
+    
+            for row in rows:
+                self.str_lista_id_desktop += "|model=" + model.__name__ + ";"
+                
+                id_ou_erro = self.SaveRow(model = model, row = row, chaves = chaves, 
+                    parent_field = parent_field, parent_id = parent_id)
+    
+                #retorna mensagem de erro caso não haja sucesso
+                if type(id_ou_erro) == str:
+                    return HttpResponse("Error|" + id_ou_erro)
+                
+                if "model_child" in row.keys():
+                    for child in row["model_child"]:
+                        self.SaveJson(json_data = child, parent_id = id_ou_erro)
+        except Exception as e:
+            HttpResponse('Error|%s' % str(e))
         return HttpResponse("success|" + self.str_lista_id_desktop)
     
     #chaves deve vir no formato 'chavecomposta1,chavecomposta2|chavesimples'
