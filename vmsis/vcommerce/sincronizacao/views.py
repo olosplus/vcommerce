@@ -50,7 +50,7 @@ def SaveJsonAsModel(request):
         if data_str:
             data_dict = dict(json.loads(data_str))
     except Exception as e:
-        return HttpResponse('Error|%s' % str(e) )
+        return HttpResponse('Error|' + str(e) )
     
     upload = lib_sinc.UploadModel(usuario, senha)
     return upload.SaveJson(data_dict, parent_id = None)
