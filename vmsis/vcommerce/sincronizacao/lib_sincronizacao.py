@@ -103,7 +103,9 @@ class UploadModel(SincronizacaoBase):
                     for child in row["model_child"]:
                         self.SaveJson(json_data = child, parent_id = id_ou_erro)
         except Exception as e:
+            print(str(e))
             HttpResponse('Error|' + str(e))
+        
         return HttpResponse("success|" + self.str_lista_id_desktop)
     
     #chaves deve vir no formato 'chavecomposta1,chavecomposta2|chavesimples'
