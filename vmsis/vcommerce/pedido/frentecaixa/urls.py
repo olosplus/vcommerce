@@ -2,9 +2,10 @@
 from django.conf.urls import patterns, include, url
 from vlib.view_lib import CrudView
 from pedido.frentecaixa.models import Pedido
-from pedido.frentecaixa.views import ViewFrentecaixaCreate, ViewFrentecaixaUpdate
 
+crud = CrudView(Pedido)
+urlpatterns = crud.AsUrl()
 
-Crud = CrudView(Pedido)
-
-urlpatterns = Crud.AsUrl(MediaFilesInsert = ['js/pedido.js'],MediaFilesUpdate = ['js/pedido.js'],ClassCreate = ViewFrentecaixaCreate,ClassUpdate = ViewFrentecaixaUpdate,GridFields  = ('idtipopedido','vrpedido'))
+#urlpatterns = patterns('',
+#                       url('pedido', 'pedido.frentecaixa.views.CarregarPedido'),
+#                    )
