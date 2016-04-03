@@ -55,7 +55,7 @@ apps_on_menu = (
 
    # TELAS DO PEDIDO
     {'app': 'pedido', 'verbose_name' : 'Pedido', 'imgmenu' : 'fa fa-building-o'},
-    #{'app': 'pedido.frentecaixa', 'verbose_name' : 'Pedido'},
+    {'app': 'pedido.frentecaixa', 'verbose_name' : 'Pedido'},
     {'app': 'pedido.itemreti', 'verbose_name' : 'Ajuste de Pedido'},
     {'app': 'pedido.cadastro_pedido', 'verbose_name' : 'Cadastros Pedido'},
     {'app': 'pedido.cadastro_pedido.mesa', 'verbose_name' : 'Mesa'},
@@ -72,11 +72,11 @@ apps_on_menu = (
     #TELAS DO FINANCEIRO
      {'app': 'financeiro', 'verbose_name':'Financeiro', 'imgmenu':'fa fa-dollar'},
      {'app': 'financeiro.cartao_bandeira', 'verbose_name':'Bandeiras de Cartão'},
-    # {'app': 'financeiro.banco', 'verbose_name': 'Banco', 'visible': False},
-    # {'app': 'financeiro.conta', 'verbose_name': 'Conta'},
-    # {'app': 'financeiro.mov_financeira','verbose_name': 'Transferencia Financeira'},
-    # {'app': 'financeiro.contapagar', 'verbose_name' : 'Conta a Pagar'},
-    # {'app': 'financeiro.contareceber', 'verbose_name' : 'Conta a Receber'},
+     {'app': 'financeiro.banco', 'verbose_name': 'Banco'},
+     {'app': 'financeiro.conta', 'verbose_name': 'Conta'},
+     {'app': 'financeiro.mov_financeira','verbose_name': 'Transferencia Financeira'},
+     {'app': 'financeiro.contapagar', 'verbose_name' : 'Conta a Pagar'},
+     {'app': 'financeiro.contareceber', 'verbose_name' : 'Conta a Receber'},
     
     {'app': 'imagens', 'verbose_name':'imaagens', 'visible': False},
 
